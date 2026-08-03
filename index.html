@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH BOX AI — Select Your Language</title>
+    <meta name="description"
+        content="Experience TECH BOX AI in your preferred language. Choose between English, Hindi, and Telugu.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome for high-tech icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Dynamic Animated Grid Canvas -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient Glowing Color Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- Floating Futuristic Smartphone Illustrations -->
+    <div class="floating-phones-container" id="floatingPhones">
+
+        <!-- Phone 1: Top Left -->
+        <div class="floating-phone phone-top-left" data-speed="2">
+            <div class="phone-wrapper">
+                <div class="phone-glow"></div>
+                <img src="assets/futuristic_phone_1.jpg" alt="Futuristic Smartphone AI" class="phone-img">
+                <div class="phone-holo-badge badge-1">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>NEURAL 9.4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 2: Top Right -->
+        <div class="floating-phone phone-top-right" data-speed="-2">
+            <div class="phone-wrapper">
+                <div class="phone-glow cyan"></div>
+                <div class="svg-phone-mockup">
+                    <div class="phone-screen">
+                        <div class="screen-header">
+                            <div class="notch"></div>
+                            <span class="battery"><i class="fa-solid fa-bolt"></i> 99%</span>
+                        </div>
+                        <div class="ai-orb-graphic">
+                            <div class="ai-core"></div>
+                            <div class="ai-ring ring-1"></div>
+                            <div class="ai-ring ring-2"></div>
+                        </div>
+                        <div class="screen-text">TECH BOX AI</div>
+                        <div class="screen-bars">
+                            <div class="bar bar-1"></div>
+                            <div class="bar bar-2"></div>
+                            <div class="bar bar-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phone-holo-badge badge-2">
+                    <i class="fa-solid fa-wifi"></i>
+                    <span>5G ULTRA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 3: Bottom Left -->
+        <div class="floating-phone phone-bottom-left" data-speed="1.5">
+            <div class="phone-wrapper">
+                <div class="phone-glow purple"></div>
+                <div class="svg-phone-mockup mini">
+                    <div class="phone-screen purple-theme">
+                        <div class="screen-header">
+                            <div class="notch"></div>
+                        </div>
+                        <div class="ai-code-lines">
+                            <span>&lt;AI_CORE&gt;</span>
+                            <span class="highlight">SELECT_LANG()</span>
+                            <span>READY_STATE = TRUE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 4: Bottom Right -->
+        <div class="floating-phone phone-bottom-right" data-speed="-1.5">
+            <div class="phone-wrapper">
+                <div class="phone-glow blue"></div>
+                <img src="assets/futuristic_phone_1.jpg" alt="AI Phone 3D" class="phone-img alt-crop">
+                <div class="phone-holo-badge badge-3">
+                    <i class="fa-solid fa-atom"></i>
+                    <span>QUANTUM</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Container -->
+    <main class="page-container">
+
+        <!-- Glassmorphism Card -->
+        <div class="glass-card" id="glassCard">
+
+            <!-- Futuristic Card Border Highlight -->
+            <div class="card-border-glow"></div>
+            <div class="card-corner corner-tl"></div>
+            <div class="card-corner corner-tr"></div>
+            <div class="card-corner corner-bl"></div>
+            <div class="card-corner corner-br"></div>
+
+            <!-- Logo Section -->
+            <div class="logo-wrapper">
+                <div class="logo-ring-outer"></div>
+                <div class="logo-ring-pulse"></div>
+                <div class="logo-circle">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-cube"></i>
+                        <span class="logo-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+                    </div>
+                </div>
+                <div class="logo-title">
+                    <span class="tech-text">TECH BOX</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+            </div>
+
+            <!-- Heading Section -->
+            <div class="heading-section">
+                <h1 class="main-heading">Choose Your Language</h1>
+                <p class="sub-heading">Select your preferred language to customize your AI experience</p>
+            </div>
+
+            <!-- Language Buttons Group -->
+            <div class="language-buttons-group">
+
+                <!-- Button 1: English -->
+                <button class="lang-btn" data-lang="en" data-name="English" aria-label="Select English Language">
+                    <div class="btn-glow"></div>
+                    <div class="flag-wrapper">
+                        <span class="flag-emoji">🇬🇧</span>
+                    </div>
+                    <div class="lang-info">
+                        <span class="lang-name lang-en">English</span>
+                        <span class="lang-subtitle">Default System Language</span>
+                    </div>
+                    <div class="btn-action">
+                        <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <span class="btn-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                    </div>
+                </button>
+
+                <!-- Button 2: Hindi -->
+                <button class="lang-btn" data-lang="hi" data-name="हिन्दी" aria-label="हिन्दी भाषा चुनें">
+                    <div class="btn-glow"></div>
+                    <div class="flag-wrapper">
+                        <span class="flag-emoji">🇮🇳</span>
+                    </div>
+                    <div class="lang-info">
+                        <span class="lang-name lang-hi">हिन्दी</span>
+                        <span class="lang-subtitle">हिंदी में अनुभव करें</span>
+                    </div>
+                    <div class="btn-action">
+                        <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <span class="btn-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                    </div>
+                </button>
+
+                <!-- Button 3: Telugu -->
+                <button class="lang-btn" data-lang="te" data-name="తెలుగు" aria-label="తెలుగు భాషను ఎంచుకోండి">
+                    <div class="btn-glow"></div>
+                    <div class="flag-wrapper">
+                        <span class="flag-emoji">🇮🇳</span>
+                    </div>
+                    <div class="lang-info">
+                        <span class="lang-name lang-te">తెలుగు</span>
+                        <span class="lang-subtitle">తెలుగులో అనుభవించండి</span>
+                    </div>
+                    <div class="btn-action">
+                        <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                        <span class="btn-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                    </div>
+                </button>
+
+            </div>
+
+            <!-- Card Footer / Status indicator -->
+            <div class="card-footer">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">AI Engine Online • v3.8</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Toast Notification for selection state -->
+    <div id="toastNotification" class="toast">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span id="toastMessage">Language Saved. Redirecting...</span>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>
