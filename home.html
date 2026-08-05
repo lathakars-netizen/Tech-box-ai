@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH BOX AI — Next-Gen Mobile Intelligence</title>
+    <meta name="description"
+        content="Explore the future of smartphones with TECH BOX AI. Compare specs, analyze camera capabilities, track performance, and interact with your personal AI mobile assistant.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+
+    <!-- Interactive Cyber Particle Canvas -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient Glowing Color Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+            
+            <!-- TECH BOX AI Logo -->
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-cube logo-icon"></i>
+                </div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="home.html" class="nav-link active">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#mobiles" class="nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobiles</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#compare" class="nav-link">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Compare</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ai-assistant" class="nav-link ai-badge-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>AI Assistant</span>
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#news" class="nav-link">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>News</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Navigation Action Tools -->
+            <div class="nav-actions">
+                
+                <!-- Search Icon Button -->
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+                <!-- Dark / Light Mode Toggle -->
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                    <div class="theme-icon-wrapper">
+                        <i class="fa-solid fa-sun icon-sun"></i>
+                        <i class="fa-solid fa-moon icon-moon"></i>
+                    </div>
+                </button>
+
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div class="mobile-nav-drawer" id="mobileDrawer" aria-hidden="true">
+            <div class="mobile-drawer-inner">
+                <div class="mobile-nav-header">
+                    <span class="mobile-logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+                    <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <ul class="mobile-nav-list">
+                    <li>
+                        <a href="home.html" class="mobile-nav-link active">
+                            <i class="fa-solid fa-house"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#mobiles" class="mobile-nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Mobiles
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#compare" class="mobile-nav-link">
+                            <i class="fa-solid fa-code-compare"></i> Compare
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#ai-assistant" class="mobile-nav-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#news" class="mobile-nav-link">
+                            <i class="fa-solid fa-newspaper"></i> News
+                        </a>
+                    </li>
+                </ul>
+                <div class="mobile-drawer-footer">
+                    <div class="mobile-theme-wrapper">
+                        <span>Theme Mode</span>
+                        <button class="mobile-theme-btn" id="mobileThemeBtn">
+                            <i class="fa-solid fa-circle-half-stroke"></i> Switch Theme
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ==========================================================================
+       HERO SECTION
+       ========================================================================== -->
+    <main class="hero-wrapper">
+        <section class="hero-section" id="hero">
+            <div class="hero-container">
+
+                <!-- Left Hero Content Column -->
+                <div class="hero-content">
+                    
+                    <!-- AI Status Tag -->
+                    <div class="hero-badge anim-fade-up" style="--delay: 0.1s;">
+                        <span class="badge-pulse"></span>
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>TECH BOX AI NEURAL ENGINE 3.0</span>
+                    </div>
+
+                    <!-- Large Premium Headline -->
+                    <h1 class="hero-headline anim-fade-up" style="--delay: 0.2s;">
+                        REVOLUTIONIZE YOUR <br>
+                        <span class="gradient-text">MOBILE EXPERIENCE</span> <br>
+                        WITH AI INTELLIGENCE
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="hero-subtitle anim-fade-up" style="--delay: 0.3s;">
+                        Discover flagship smartphones, evaluate real-world camera capabilities, benchmark neural processing power, and compare devices side-by-side with instant AI precision.
+                    </p>
+
+                    <!-- Futuristic Search Bar -->
+                    <div class="hero-search-box anim-fade-up" style="--delay: 0.4s;">
+                        <div class="search-input-wrapper">
+                            <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
+                            <input type="text" id="heroSearchInput" class="hero-input" placeholder="Search phones e.g. 'Best camera phone under $900'..." autocomplete="off">
+                            <span class="kbd-badge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
+                            <button class="search-action-btn" id="heroSearchBtn">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>Search</span>
+                            </button>
+                        </div>
+                        <div class="hero-search-tags">
+                            <span class="tag-title">Popular:</span>
+                            <button class="hero-tag">iPhone 16 Pro</button>
+                            <button class="hero-tag">Samsung S25</button>
+                            <button class="hero-tag">Best 5G Camera</button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="hero-cta-group anim-fade-up" style="--delay: 0.5s;">
+                        <a href="#mobiles" class="btn btn-primary">
+                            <span class="btn-text">Explore Mobiles</span>
+                            <i class="fa-solid fa-arrow-right btn-icon"></i>
+                        </a>
+                        <a href="#compare" class="btn btn-secondary">
+                            <i class="fa-solid fa-code-compare btn-icon"></i>
+                            <span class="btn-text">Compare Phones</span>
+                        </a>
+                    </div>
+
+                    <!-- Micro Metrics Bar -->
+                    <div class="hero-metrics-bar anim-fade-up" style="--delay: 0.6s;">
+                        <div class="metric-box">
+                            <span class="metric-val" id="metricPhones">500+</span>
+                            <span class="metric-lbl">Devices Cataloged</span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-box">
+                            <span class="metric-val">99.8%</span>
+                            <span class="metric-lbl">Neural Precision</span>
+                        </div>
+                        <div class="metric-divider"></div>
+                        <div class="metric-box">
+                            <span class="metric-val">100%</span>
+                            <span class="metric-lbl">Unbiased Insights</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Hero Visual Column (3D Interactive Smartphone Illustration) -->
+                <div class="hero-visual anim-fade-up" style="--delay: 0.3s;">
+                    <div class="phone-stage-container" id="phoneStage">
+                        
+                        <!-- Ambient Behind Glow -->
+                        <div class="stage-ambient-glow"></div>
+                        
+                        <!-- Rotating Holographic Rings -->
+                        <div class="stage-holo-ring ring-outer"></div>
+                        <div class="stage-holo-ring ring-inner"></div>
+
+                        <!-- 3D Smartphone Illustration Card -->
+                        <div class="phone-3d-card" id="phoneCard">
+                            <div class="phone-screen-frame">
+                                <!-- Image placeholder from assets/ if available, with automatic CSS illustration fallback -->
+                                <img src="assets/futuristic_phone_1.jpg" alt="TECH BOX AI Smartphone" class="phone-hero-img" id="heroPhoneImg" onerror="this.style.display='none'; document.getElementById('phoneCssFallback').style.display='flex';">
+                                
+                                <!-- Modern CSS Illustration Placeholder Container (Fallback if image is missing) -->
+                                <div class="phone-css-illustration" id="phoneCssFallback" style="display: none;">
+                                    <div class="css-phone-header">
+                                        <div class="css-notch"></div>
+                                        <span class="css-battery"><i class="fa-solid fa-bolt"></i> 100%</span>
+                                    </div>
+                                    <div class="css-ai-orb-graphic">
+                                        <div class="css-ai-core"></div>
+                                        <div class="css-ai-ring ring-1"></div>
+                                        <div class="css-ai-ring ring-2"></div>
+                                    </div>
+                                    <div class="css-screen-brand">TECH BOX AI</div>
+                                    <div class="css-specs-list">
+                                        <div class="css-spec-row"><i class="fa-solid fa-microchip"></i> <span>SNAPDRAGON 8 GEN 4</span></div>
+                                        <div class="css-spec-row"><i class="fa-solid fa-camera"></i> <span>200MP OPTIC AI</span></div>
+                                    </div>
+                                    <div class="css-screen-bars">
+                                        <div class="css-bar bar-1"></div>
+                                        <div class="css-bar bar-2"></div>
+                                        <div class="css-bar bar-3"></div>
+                                    </div>
+                                </div>
+
+                                <div class="phone-glare"></div>
+                                <div class="phone-overlay-hud">
+                                    <div class="hud-top">
+                                        <span class="hud-badge"><i class="fa-solid fa-signal"></i> 5G ULTRA</span>
+                                        <span class="hud-badge cyan"><i class="fa-solid fa-bolt"></i> 120W</span>
+                                    </div>
+                                    <div class="hud-center">
+                                        <div class="ai-core-ring">
+                                            <div class="ai-core-dot"></div>
+                                        </div>
+                                    </div>
+                                    <div class="hud-bottom">
+                                        <div class="hud-title">SNAPDRAGON 8 GEN 4</div>
+                                        <div class="hud-bar"><div class="hud-fill"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Holographic Badges Floating Around Device -->
+                            <div class="stage-holo-badge badge-top-left" data-speed="1.2">
+                                <div class="badge-icon"><i class="fa-solid fa-brain"></i></div>
+                                <div class="badge-text">
+                                    <span class="badge-title">NEURAL NPU</span>
+                                    <span class="badge-sub">45 TOPS AI Processing</span>
+                                </div>
+                            </div>
+
+                            <div class="stage-holo-badge badge-bottom-right" data-speed="-1.5">
+                                <div class="badge-icon purple"><i class="fa-solid fa-camera font-awesome"></i></div>
+                                <div class="badge-text">
+                                    <span class="badge-title">OPTIC AI 200MP</span>
+                                    <span class="badge-sub">Periscope 10x Zoom</span>
+                                </div>
+                            </div>
+
+                            <div class="stage-holo-badge badge-top-right" data-speed="1.8">
+                                <div class="badge-icon cyan"><i class="fa-solid fa-battery-charging"></i></div>
+                                <div class="badge-text">
+                                    <span class="badge-title">5500 mAh</span>
+                                    <span class="badge-sub">Silicon-Carbon Battery</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom JS -->
+    <script src="home.js"></script>
+</body>
+
+</html>
