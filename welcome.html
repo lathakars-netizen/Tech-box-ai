@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH BOX AI — Welcome</title>
+    <meta name="description" content="Welcome to TECH BOX AI. Your personal AI mobile workspace is loading.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Welcome CSS -->
+    <link rel="stylesheet" href="welcome.css">
+</head>
+
+<body>
+
+    <!-- Interactive Cyber Particle Canvas -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient Glowing Color Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- Floating Smartphone Background Elements -->
+    <div class="floating-phones-container" id="floatingPhones">
+
+        <!-- Phone 1: Top Left -->
+        <div class="floating-phone phone-top-left" data-speed="2">
+            <div class="phone-wrapper">
+                <div class="phone-glow"></div>
+                <img src="assets/futuristic_phone_1.jpg" alt="Futuristic Smartphone AI" class="phone-img">
+                <div class="phone-holo-badge badge-1">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span>NEURAL 9.4</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 2: Top Right -->
+        <div class="floating-phone phone-top-right" data-speed="-2">
+            <div class="phone-wrapper">
+                <div class="phone-glow cyan"></div>
+                <div class="svg-phone-mockup">
+                    <div class="phone-screen">
+                        <div class="screen-header">
+                            <div class="notch"></div>
+                            <span class="battery"><i class="fa-solid fa-bolt"></i> 100%</span>
+                        </div>
+                        <div class="ai-orb-graphic">
+                            <div class="ai-core"></div>
+                            <div class="ai-ring ring-1"></div>
+                            <div class="ai-ring ring-2"></div>
+                        </div>
+                        <div class="screen-text">TECH BOX AI</div>
+                        <div class="screen-bars">
+                            <div class="bar bar-1"></div>
+                            <div class="bar bar-2"></div>
+                            <div class="bar bar-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phone-holo-badge badge-2">
+                    <i class="fa-solid fa-wifi"></i>
+                    <span>5G ULTRA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 3: Bottom Left -->
+        <div class="floating-phone phone-bottom-left" data-speed="1.5">
+            <div class="phone-wrapper">
+                <div class="phone-glow purple"></div>
+                <div class="svg-phone-mockup mini">
+                    <div class="phone-screen purple-theme">
+                        <div class="screen-header">
+                            <div class="notch"></div>
+                        </div>
+                        <div class="ai-code-lines">
+                            <span>&lt;AI_CORE&gt;</span>
+                            <span class="highlight">INIT_HOME()</span>
+                            <span>STATUS = REDIRECTING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phone 4: Bottom Right -->
+        <div class="floating-phone phone-bottom-right" data-speed="-1.5">
+            <div class="phone-wrapper">
+                <div class="phone-glow blue"></div>
+                <img src="assets/futuristic_phone_1.jpg" alt="AI Phone 3D" class="phone-img alt-crop">
+                <div class="phone-holo-badge badge-3">
+                    <i class="fa-solid fa-atom"></i>
+                    <span>QUANTUM</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main Container -->
+    <main class="page-container">
+
+        <!-- Glassmorphism Card -->
+        <div class="glass-card" id="welcomeGlassCard">
+
+            <!-- Futuristic Card Border Highlight -->
+            <div class="card-border-glow"></div>
+            <div class="card-corner corner-tl"></div>
+            <div class="card-corner corner-tr"></div>
+            <div class="card-corner corner-bl"></div>
+            <div class="card-corner corner-br"></div>
+
+            <!-- Glowing Circular Logo Section -->
+            <div class="logo-wrapper">
+                <div class="logo-ring-outer"></div>
+                <div class="logo-ring-pulse"></div>
+                <div class="logo-circle">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-cube"></i>
+                        <span class="logo-sparkle"><i class="fa-solid fa-sparkles"></i></span>
+                    </div>
+                </div>
+                <div class="logo-title">
+                    <span class="tech-text">TECH BOX</span>
+                    <span class="ai-badge">AI</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Multilingual Welcome Message -->
+            <div class="welcome-section">
+                <h1 class="welcome-heading" id="welcomeHeading">
+                    <!-- Injected dynamically via welcome.js -->
+                    Welcome to TECH BOX AI
+                </h1>
+                <div class="status-badge" id="statusBadge">
+                    <i class="fa-solid fa-circle-notch fa-spin status-icon"></i>
+                    <span class="status-text" id="statusText">Initializing Experience...</span>
+                </div>
+            </div>
+
+            <!-- Futuristic 2-Second Progress Loader -->
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="card-footer">
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <span class="system-text">AI ENGINE ONLINE</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Welcome Script -->
+    <script src="welcome.js"></script>
+</body>
+
+</html>
