@@ -2108,3 +2108,302 @@ body.light-mode .phone-card:hover {
     }
 }
 
+
+/* ==========================================================================
+   11. Search Feature Styles
+   ========================================================================== */
+
+/* ── Clear button inside the search bar ─────────────────────────────────── */
+.search-clear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid var(--border-glass);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-right: 8px;
+    flex-shrink: 0;
+    transition: var(--transition-spring);
+}
+
+.search-clear-btn:hover {
+    background: rgba(244, 63, 94, 0.18);
+    border-color: rgba(244, 63, 94, 0.5);
+    color: #f43f5e;
+    transform: rotate(90deg) scale(1.1);
+}
+
+body.light-mode .search-clear-btn {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ── Search Results Section ─────────────────────────────────────────────── */
+.search-results-section {
+    position: relative;
+    z-index: 10;
+    padding: 60px 0 80px;
+    width: 100%;
+    /* entrance animation */
+    animation: searchSectionIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes searchSectionIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Search Results Header ──────────────────────────────────────────────── */
+.search-results-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.search-results-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.search-results-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: var(--color-cyan-bright);
+    box-shadow: 0 0 14px rgba(6, 182, 212, 0.18);
+}
+
+.search-results-badge i {
+    font-size: 0.72rem;
+    animation: searchIconPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes searchIconPulse {
+    0%   { opacity: 0.7; transform: scale(0.9); }
+    100% { opacity: 1;   transform: scale(1.1); }
+}
+
+.search-results-title {
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.search-query-highlight {
+    background: linear-gradient(135deg, var(--color-cyan-bright), var(--color-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-style: italic;
+}
+
+.search-results-count {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.search-results-count strong {
+    color: var(--color-cyan-bright);
+    font-weight: 700;
+}
+
+/* ── Dismiss / Close Button ─────────────────────────────────────────────── */
+.search-dismiss-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    font-family: var(--font-heading);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    backdrop-filter: blur(16px);
+    transition: var(--transition-spring);
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+.search-dismiss-btn:hover {
+    background: rgba(244, 63, 94, 0.12);
+    border-color: rgba(244, 63, 94, 0.45);
+    color: #f43f5e;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.2);
+}
+
+.search-dismiss-btn i { font-size: 0.82rem; }
+
+/* ── Search Results Card entrance stagger ───────────────────────────────── */
+#searchResultsGrid .phone-card {
+    animation: cardSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+#searchResultsGrid .phone-card:nth-child(1) { animation-delay: 0.04s; }
+#searchResultsGrid .phone-card:nth-child(2) { animation-delay: 0.08s; }
+#searchResultsGrid .phone-card:nth-child(3) { animation-delay: 0.12s; }
+#searchResultsGrid .phone-card:nth-child(4) { animation-delay: 0.16s; }
+#searchResultsGrid .phone-card:nth-child(5) { animation-delay: 0.20s; }
+#searchResultsGrid .phone-card:nth-child(6) { animation-delay: 0.24s; }
+#searchResultsGrid .phone-card:nth-child(7) { animation-delay: 0.28s; }
+#searchResultsGrid .phone-card:nth-child(8) { animation-delay: 0.32s; }
+
+@keyframes cardSlideIn {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Match highlight inside card text ───────────────────────────────────── */
+.search-match-highlight {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.35), rgba(139, 92, 246, 0.25));
+    border-radius: 3px;
+    padding: 0 2px;
+    color: var(--color-cyan-bright);
+    font-weight: 700;
+}
+
+/* ── No Results State ───────────────────────────────────────────────────── */
+.search-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px;
+    gap: 16px;
+    animation: searchSectionIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.no-results-icon {
+    font-size: 4.5rem;
+    color: var(--text-muted);
+    opacity: 0.4;
+    filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.25));
+    animation: satelliteSpin 6s linear infinite;
+}
+
+@keyframes satelliteSpin {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(10deg) scale(1.06); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+
+.no-results-title {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.no-results-msg {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 440px;
+}
+
+.no-results-msg strong {
+    color: var(--color-cyan-bright);
+}
+
+/* Suggestion tags inside no-results */
+.no-results-suggestions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.nr-suggestion-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.nr-suggestion-tag {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-glass);
+    color: var(--text-secondary);
+    padding: 7px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-spring);
+}
+
+.nr-suggestion-tag:hover {
+    color: var(--color-cyan-bright);
+    border-color: rgba(56, 189, 248, 0.45);
+    background: rgba(6, 182, 212, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px var(--color-cyan-glow);
+}
+
+/* ── Search active state — dim trending section ─────────────────────────── */
+.trending-section.search-dimmed {
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+/* ── kbd-badge hidden while search is active ────────────────────────────── */
+.kbd-badge.search-active {
+    display: none;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .search-results-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-results-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 580px) {
+    .search-results-section {
+        padding: 40px 0 60px;
+    }
+
+    .search-results-title {
+        font-size: 1.45rem;
+    }
+
+    .no-results-title {
+        font-size: 1.4rem;
+    }
+
+    .no-results-icon {
+        font-size: 3.2rem;
+    }
+}

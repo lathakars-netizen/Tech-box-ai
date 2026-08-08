@@ -542,7 +542,8 @@ function getPhoneFeatures(phone) {
    ========================================================================== */
 function initActionButtons(phone) {
     // Back button
-    const btnBack = document.getElementById('btnBack');
+    // id='btnBack'
+const btnBack = document.getElementById("btnBack");
     if (btnBack) {
         btnBack.addEventListener('click', () => {
             if (document.referrer && document.referrer.includes(location.hostname)) {

@@ -231,20 +231,328 @@ function init3DParallax() {
 }
 
 /* ==========================================================================
-   6. Search Component UI Interaction (Pure UI Component)
+   6. Live Search Engine
    ========================================================================== */
 function initSearchUI() {
-    const heroInput = document.getElementById('heroSearchInput');
-    const heroTags = document.querySelectorAll('.hero-tag');
+    // ── DOM refs ─────────────────────────────────────────────────────────────
+    const input         = document.getElementById('heroSearchInput');
+    const searchBtn     = document.getElementById('heroSearchBtn');
+    const clearBtn      = document.getElementById('searchClearBtn');
+    const kbdBadge      = document.getElementById('kbdBadge');
+    const resultsSection= document.getElementById('searchResultsSection');
+    const resultsGrid   = document.getElementById('searchResultsGrid');
+    const resultsCount  = document.getElementById('searchResultsCount');
+    const queryDisplay  = document.getElementById('searchQueryDisplay');
+    const noResults     = document.getElementById('searchNoResults');
+    const noResultsQ    = document.getElementById('noResultsQuery');
+    const dismissBtn    = document.getElementById('searchDismissBtn');
+    const trendingSection = document.getElementById('mobiles');
+    const heroTags      = document.querySelectorAll('.hero-tag');
+    const nrSuggestions = document.querySelectorAll('.nr-suggestion-tag');
 
-    // Popular tag fill helper for UI feedback (no search execution)
+    if (!input) return;
+
+    // ── Data source ───────────────────────────────────────────────────────────
+    const dataList = (typeof phonesData !== 'undefined' ? phonesData : null)
+                   || (window.phonesData || []);
+
+    // ── Debounce helper ───────────────────────────────────────────────────────
+    let debounceTimer = null;
+    function debounce(fn, ms) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(fn, ms);
+    }
+
+    // ── Build a flat searchable string for a phone ────────────────────────────
+    function buildSearchCorpus(phone) {
+        const parts = [
+            phone.name,
+            phone.brand,
+            phone.category,
+            phone.highlightTag && phone.highlightTag.text,
+            phone.price,
+        ];
+        // Add all spec text values
+        if (phone.specs) {
+            phone.specs.forEach(s => parts.push(s.text));
+        }
+        return parts.filter(Boolean).join(' ').toLowerCase();
+    }
+
+    // Pre-build corpora once
+    const corpora = dataList.map(buildSearchCorpus);
+
+    // ── Core search function ──────────────────────────────────────────────────
+    function searchPhones(rawQuery) {
+        const q = rawQuery.trim().toLowerCase();
+        if (!q) return dataList; // empty → all
+
+        // Support multi-word: every word must appear somewhere in corpus
+        const words = q.split(/\s+/).filter(Boolean);
+        return dataList.filter((_, i) =>
+            words.every(word => corpora[i].includes(word))
+        );
+    }
+
+    // ── Escape HTML (for safe injection) ─────────────────────────────────────
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // ── Wrap matched term in a highlight span ─────────────────────────────────
+    function highlight(text, query) {
+        if (!query || !query.trim()) return escapeHtml(text);
+        const words = query.trim().split(/\s+/).filter(Boolean);
+        const pattern = new RegExp(`(${words.map(w =>
+            w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        ).join('|')})`, 'gi');
+        return escapeHtml(text).replace(pattern,
+            '<mark class="search-match-highlight">$1</mark>'
+        );
+    }
+
+    // ── Build a single phone card HTML (identical to trending, + highlight) ───
+    function buildCardHtml(phone, query, index) {
+        const delay = ((index + 1) * 0.08).toFixed(2);
+        const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
+        const specsHtml = (phone.specs || []).map(spec => `
+            <span class="spec-pill"><i class="${escapeHtml(spec.icon)}"></i> ${highlight(spec.text, query)}</span>
+        `).join('');
+
+        return `
+            <div class="phone-card" style="--delay: ${delay}s;">
+                <div class="card-top-bar">
+                    <span class="card-brand-badge ${escapeHtml(phone.brandClass)}">
+                        <i class="${escapeHtml(phone.brandIcon)}"></i>
+                        ${highlight(phone.brand, query)}
+                    </span>
+                    <div class="card-action-group">
+                        <button class="card-icon-btn compare-btn"
+                            title="Add to Compare"
+                            aria-label="Compare ${escapeHtml(phone.name)}">
+                            <i class="fa-solid fa-code-compare"></i>
+                        </button>
+                        <button class="card-icon-btn fav-btn"
+                            title="Add to Favorites"
+                            aria-label="Favorite ${escapeHtml(phone.name)}">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-img-wrapper">
+                    <span class="tech-highlight-tag ${escapeHtml(phone.highlightTag.colorClass)}">
+                        <i class="${escapeHtml(phone.highlightTag.icon)}"></i>
+                        ${escapeHtml(phone.highlightTag.text)}
+                    </span>
+                    <div class="card-img-glow${glowHtml}"></div>
+                    <img src="${escapeHtml(phone.image)}"
+                        alt="${escapeHtml(phone.name)}"
+                        class="phone-card-img"
+                        loading="lazy"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="phone-fallback-art" style="display:none;">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <span>${escapeHtml(phone.fallbackName || phone.name)}</span>
+                    </div>
+                </div>
+
+                <div class="card-info">
+                    <div class="card-header-meta">
+                        <span class="phone-brand">${highlight(phone.brand, query)}</span>
+                        <div class="star-rating" title="${escapeHtml(String(phone.rating))} out of 5 stars">
+                            <i class="fa-solid fa-star"></i>
+                            <span class="rating-num">${escapeHtml(String(phone.rating))}</span>
+                            <span class="rating-count">${escapeHtml(phone.ratingCount)}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="phone-name">${highlight(phone.name, query)}</h3>
+
+                    <div class="phone-specs-pills">${specsHtml}</div>
+
+                    <div class="card-footer">
+                        <div class="price-box">
+                            <span class="price-lbl">Starting at</span>
+                            <span class="price-val">${escapeHtml(phone.price)}</span>
+                        </div>
+                        <a href="details.html?id=${escapeHtml(phone.id)}"
+                            class="btn-view-details"
+                            aria-label="View Details for ${escapeHtml(phone.name)}">
+                            <span>Details</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ── Attach interactive handlers to newly rendered search cards ────────────
+    function wireSearchCardHandlers() {
+        resultsGrid.querySelectorAll('.fav-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                const isActive = btn.classList.toggle('active');
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-regular', !isActive);
+                    icon.classList.toggle('fa-solid', isActive);
+                }
+            });
+        });
+
+        resultsGrid.querySelectorAll('.compare-btn').forEach(btn => {
+            btn.addEventListener('click', e => {
+                e.stopPropagation();
+                btn.classList.toggle('active');
+            });
+        });
+    }
+
+    // ── Show / hide results UI ────────────────────────────────────────────────
+    function showResults(matches, query) {
+        const hasMatches = matches.length > 0;
+
+        // Section visibility
+        resultsSection.style.display = 'block';
+        // Force CSS animation replay on re-search
+        resultsSection.style.animation = 'none';
+        void resultsSection.offsetHeight; // reflow
+        resultsSection.style.animation = '';
+
+        // Update header
+        if (queryDisplay) queryDisplay.textContent = `"${query}"`;
+        if (resultsCount) {
+            resultsCount.innerHTML = hasMatches
+                ? `Found <strong>${matches.length}</strong> phone${matches.length !== 1 ? 's' : ''} matching your search`
+                : '';
+        }
+
+        // Render cards or no-results
+        if (hasMatches) {
+            resultsGrid.style.display = '';
+            noResults.style.display = 'none';
+            resultsGrid.innerHTML = matches.map((p, i) => buildCardHtml(p, query, i)).join('');
+            wireSearchCardHandlers();
+        } else {
+            resultsGrid.style.display = 'none';
+            noResults.style.display = 'flex';
+            if (noResultsQ) noResultsQ.textContent = `"${query}"`;
+        }
+
+        // Dim trending
+        if (trendingSection) trendingSection.classList.add('search-dimmed');
+
+        // Scroll results into view smoothly
+        setTimeout(() => {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+    }
+
+    function hideResults() {
+        resultsSection.style.display = 'none';
+        resultsGrid.innerHTML = '';
+        noResults.style.display = 'none';
+        if (trendingSection) trendingSection.classList.remove('search-dimmed');
+    }
+
+    // ── Toggle clear button & kbd badge visibility ────────────────────────────
+    function syncClearButton(hasValue) {
+        if (clearBtn) clearBtn.style.display = hasValue ? 'flex' : 'none';
+        if (kbdBadge) kbdBadge.classList.toggle('search-active', hasValue);
+    }
+
+    // ── Execute a search ──────────────────────────────────────────────────────
+    function executeSearch(query) {
+        const q = query.trim();
+        syncClearButton(q.length > 0);
+
+        if (!q) {
+            hideResults();
+            input.setAttribute('aria-expanded', 'false');
+            return;
+        }
+
+        const matches = searchPhones(q);
+        showResults(matches, q);
+        input.setAttribute('aria-expanded', 'true');
+    }
+
+    // ── Clear / dismiss ───────────────────────────────────────────────────────
+    function clearSearch() {
+        input.value = '';
+        syncClearButton(false);
+        hideResults();
+        input.setAttribute('aria-expanded', 'false');
+        input.focus();
+    }
+
+    // ── Event bindings ────────────────────────────────────────────────────────
+
+    // Live search while typing (debounced 180ms for responsiveness)
+    input.addEventListener('input', () => {
+        debounce(() => executeSearch(input.value), 180);
+    });
+
+    // Search button click
+    if (searchBtn) {
+        searchBtn.addEventListener('click', () => executeSearch(input.value));
+    }
+
+    // Enter key
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+            clearTimeout(debounceTimer);
+            executeSearch(input.value);
+        }
+        if (e.key === 'Escape') {
+            clearSearch();
+        }
+    });
+
+    // Clear button
+    if (clearBtn) {
+        clearBtn.addEventListener('click', clearSearch);
+    }
+
+    // Dismiss / close results
+    if (dismissBtn) {
+        dismissBtn.addEventListener('click', clearSearch);
+    }
+
+    // Popular tag buttons → fill input + trigger search
     heroTags.forEach(tag => {
         tag.addEventListener('click', () => {
-            if (heroInput) {
-                heroInput.value = tag.textContent.trim();
-                heroInput.focus();
-            }
+            const query = tag.textContent.trim();
+            input.value = query;
+            syncClearButton(true);
+            executeSearch(query);
+            input.focus();
         });
+    });
+
+    // No-results suggestion tags → fill input + trigger search
+    nrSuggestions.forEach(tag => {
+        tag.addEventListener('click', () => {
+            const query = tag.dataset.query || tag.textContent.trim();
+            input.value = query;
+            syncClearButton(true);
+            executeSearch(query);
+        });
+    });
+
+    // Ctrl + K global shortcut → focus search input
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            input.focus();
+            input.select();
+        }
     });
 }
 

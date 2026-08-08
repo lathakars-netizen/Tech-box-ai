@@ -192,14 +192,18 @@
                     <div class="hero-search-box anim-fade-up" style="--delay: 0.4s;">
                         <div class="search-input-wrapper">
                             <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
-                            <input type="text" id="heroSearchInput" class="hero-input" placeholder="Search phones e.g. 'Best camera phone under $900'..." autocomplete="off">
-                            <span class="kbd-badge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
-                            <button class="search-action-btn" id="heroSearchBtn">
+                            <input type="text" id="heroSearchInput" class="hero-input" placeholder="Search phones e.g. 'Best camera phone under $900'..." autocomplete="off" aria-label="Search phones" aria-controls="searchResultsSection" aria-expanded="false">
+                            <!-- Clear button (hidden until query exists) -->
+                            <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear search" style="display:none;" title="Clear search">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                            <span class="kbd-badge" id="kbdBadge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
+                            <button class="search-action-btn" id="heroSearchBtn" aria-label="Execute search">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                                 <span>Search</span>
                             </button>
                         </div>
-                        <div class="hero-search-tags">
+                        <div class="hero-search-tags" id="heroSearchTags">
                             <span class="tag-title">Popular:</span>
                             <button class="hero-tag">iPhone 16 Pro</button>
                             <button class="hero-tag">Samsung S25</button>
@@ -324,6 +328,56 @@
 
                         </div>
 
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+           SEARCH RESULTS SECTION (shown only when a query is active)
+           ========================================================================== -->
+        <section class="search-results-section" id="searchResultsSection" aria-live="polite" aria-label="Search results" style="display:none;">
+            <div class="trending-container">
+
+                <!-- Search Results Header -->
+                <div class="search-results-header">
+                    <div class="search-results-meta">
+                        <div class="search-results-badge">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>SEARCH RESULTS</span>
+                        </div>
+                        <h2 class="search-results-title">
+                            Results for <span class="search-query-highlight" id="searchQueryDisplay"></span>
+                        </h2>
+                        <p class="search-results-count" id="searchResultsCount"></p>
+                    </div>
+                    <button class="search-dismiss-btn" id="searchDismissBtn" aria-label="Close search results">
+                        <i class="fa-solid fa-xmark"></i>
+                        <span>Close</span>
+                    </button>
+                </div>
+
+                <!-- Results Grid (reuses phone-card design from trending) -->
+                <div class="trending-grid" id="searchResultsGrid"></div>
+
+                <!-- No Results State -->
+                <div class="search-no-results" id="searchNoResults" style="display:none;">
+                    <div class="no-results-icon">
+                        <i class="fa-solid fa-satellite-dish"></i>
+                    </div>
+                    <h3 class="no-results-title">No phones found</h3>
+                    <p class="no-results-msg">
+                        No results for <strong id="noResultsQuery"></strong>.<br>
+                        Try searching by brand, model, processor, or camera specs.
+                    </p>
+                    <div class="no-results-suggestions">
+                        <span class="nr-suggestion-label">Try:</span>
+                        <button class="nr-suggestion-tag" data-query="Samsung">Samsung</button>
+                        <button class="nr-suggestion-tag" data-query="Apple">Apple</button>
+                        <button class="nr-suggestion-tag" data-query="camera">Camera</button>
+                        <button class="nr-suggestion-tag" data-query="gaming">Gaming</button>
+                        <button class="nr-suggestion-tag" data-query="5G">5G</button>
                     </div>
                 </div>
 
