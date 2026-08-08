@@ -450,8 +450,18 @@ function filterPhoneList() {
 }
 
 function initComparePage() {
+    // Existing listeners
     $('#addPhoneBtn')?.addEventListener('click', openModal);
     $('#closeModalBtn')?.addEventListener('click', closeModal);
+    // Close modal when clicking outside content
+    const modal = $('#phoneModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
     renderComparison();
 }
 
