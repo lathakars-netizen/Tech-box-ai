@@ -1,0 +1,189 @@
+/* compare.css */
+/* Global theme variables come from home.css – we reuse them */
+/* Modal overlay */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6); /* darker backdrop */
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    max-width: 90%;
+    width: 650px; /* fixed width within range */
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Hero section centering */
+.hero-wrapper {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+/* Phone list items hover */
+.phone-item:hover {
+    background: var(--glass-bg);
+    backdrop-filter: blur(4px);
+}
+
+/* Ensure modal close button aligns */
+.modal-header button {
+    color: var(--glass-border);
+    font-size: 1.2rem;
+}
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --highlight-color: #22c55e; /* green for better specs */
+}
+body.light-mode {
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.6);
+}
+
+/* Compare hero layout */
+/* Compare hero layout */
+.compare-hero {
+    max-width: 800px;
+    margin: 6rem auto 0; /* increased top spacing to avoid navbar overlap */
+    text-align: center;
+    padding: 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem; /* more vertical spacing between elements */
+}
+
+/* Modal overlay already set to flex center */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6); /* darker backdrop */
+    backdrop-filter: blur(6px);
+    z-index: 1000;
+}
+
+/* Modal content width adjustment for desktop */
+.modal-content {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    max-width: 90%;
+    width: 650px; /* fixed width within range */
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+
+
+.compare-hero .btn {
+    margin-top: 0.5rem;
+}
+
+.selected-phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+.phone-chip {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: fadeIn 0.4s ease;
+    position: relative;
+}
+.phone-chip img {
+    width: 40px;
+    height: auto;
+    border-radius: 0.3rem;
+}
+.phone-chip .remove-btn {
+    background: none;
+    border: none;
+    color: var(--glass-border);
+    cursor: pointer;
+    font-size: 0.9rem;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+}
+.phone-chip .remove-btn:hover {
+    color: #f87171; /* red */
+}
+
+/* Comparison table */
+.compare-table {
+    display: grid;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    animation: fadeIn 0.4s ease;
+}
+.compare-table .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    gap: 0.5rem;
+}
+.compare-table .row.header {
+    background: rgba(0,0,0,0.15);
+    font-weight: 600;
+}
+.compare-table .cell {
+    text-align: center;
+}
+.compare-table .cell.highlight {
+    color: var(--highlight-color);
+    font-weight: 600;
+    text-shadow: 0 0 6px rgba(34,197,94,0.6);
+}
+.compare-table .spec-label {
+    font-weight: 500;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .compare-table .row {
+        grid-template-columns: 1fr;
+    }
+    .compare-table .row.header .cell {
+        text-align: left;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity:0; transform:translateY(10px); }
+    to { opacity:1; transform:translateY(0); }
+}

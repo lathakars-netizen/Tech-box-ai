@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Phones — TECH BOX AI</title>
+    <meta name="description" content="Side‑by‑side comparison of smartphones powered by TECH BOX AI.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="home.css">
+    <!-- Compare specific CSS -->
+    <link rel="stylesheet" href="compare.css">
+</head>
+<body>
+    <!-- Navigation (copy from home.html) -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box"><i class="fa-solid fa-cube logo-icon"></i></div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="home.html" class="nav-link active"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
+                    <li class="nav-item"><a href="#mobiles" class="nav-link"><i class="fa-solid fa-mobile-screen-button"></i><span>Mobiles</span></a></li>
+                    <li class="nav-item"><a href="compare.html" class="nav-link"><i class="fa-solid fa-code-compare"></i><span>Compare</span></a></li>
+                    <li class="nav-item"><a href="#ai-assistant" class="nav-link ai-badge-link"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span><span class="ai-sparkle-pill">PRO</span></a></li>
+                    <li class="nav-item"><a href="#news" class="nav-link"><i class="fa-solid fa-newspaper"></i><span>News</span></a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme"><div class="theme-icon-wrapper"><i class="fa-solid fa-sun icon-sun"></i><i class="fa-solid fa-moon icon-moon"></i></div></button>
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false"><span class="bar bar-1"></span><span class="bar bar-2"></span><span class="bar bar-3"></span></button>
+            </div>
+        </div>
+        <!-- Mobile drawer omitted for brevity (same as home.html) -->
+    </header>
+
+    <main class="main-content">
+        <section class="compare-hero">
+            <h1 class="hero-headline">Compare Phones</h1>
+            <p class="hero-subtitle">Select devices to see their specs side‑by‑side.</p>
+            <button class="btn btn-main" id="addPhoneBtn">+ Add Phone</button>
+
+            <!-- Phone selection modal -->
+            <div id="phoneModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h2 style="margin:0; font-size:1.25rem;">Select a Phone</h2>
+                        <button id="closeModalBtn" aria-label="Close" class="icon-btn" style="background:none; border:none; font-size:1.2rem; cursor:pointer; color:var(--glass-border);"><i class="fa-solid fa-times"></i></button>
+                    </div>
+                    <input type="text" id="modalSearchInput" class="hero-input" placeholder="Search…" style="width:100%; margin-bottom:1rem;" />
+                    <ul id="phoneList" style="list-style:none; padding:0; margin:0; max-height:60vh; overflow-y:auto;">
+                        <!-- Phone items will be injected here -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Selected phones chips -->
+        <section class="selected-phones-section" style="margin:2rem auto; max-width:1200px;">
+            <div id="selectedPhones" class="selected-phones"></div>
+        </section>
+
+        <!-- Comparison table -->
+        <section class="compare-table-section" style="margin:2rem auto; max-width:1200px; overflow-x:auto;">
+            <div id="compareTable" class="compare-table"></div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="data/phones.js"></script>
+    <script src="compare.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
