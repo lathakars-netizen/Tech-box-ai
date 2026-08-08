@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Details — TECH BOX AI</title>
+    <meta name="description" content="Explore full specifications, camera details, battery life, and AI performance metrics for the latest flagship smartphones on TECH BOX AI.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="details.css">
+</head>
+
+<body>
+
+    <!-- Particle canvas background -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient glow orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- ======================================================================
+       NAVIGATION BAR
+       ====================================================================== -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+
+            <!-- Logo -->
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-cube logo-icon"></i>
+                </div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="home.html" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#mobiles" class="nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobiles</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#compare" class="nav-link">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Compare</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#ai-assistant" class="nav-link ai-badge-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>AI Assistant</span>
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#news" class="nav-link">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>News</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Actions -->
+            <div class="nav-actions">
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Theme" title="Toggle Theme">
+                    <div class="theme-icon-wrapper">
+                        <i class="fa-solid fa-sun icon-sun"></i>
+                        <i class="fa-solid fa-moon icon-moon"></i>
+                    </div>
+                </button>
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer -->
+        <div class="mobile-nav-drawer" id="mobileDrawer" aria-hidden="true">
+            <div class="mobile-drawer-inner">
+                <div class="mobile-nav-header">
+                    <span class="mobile-logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+                    <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <ul class="mobile-nav-list">
+                    <li><a href="home.html" class="mobile-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li><a href="home.html#mobiles" class="mobile-nav-link"><i class="fa-solid fa-mobile-screen-button"></i> Mobiles</a></li>
+                    <li><a href="home.html#compare" class="mobile-nav-link"><i class="fa-solid fa-code-compare"></i> Compare</a></li>
+                    <li><a href="home.html#ai-assistant" class="mobile-nav-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant <span class="ai-sparkle-pill">PRO</span></a></li>
+                    <li><a href="home.html#news" class="mobile-nav-link"><i class="fa-solid fa-newspaper"></i> News</a></li>
+                </ul>
+                <div class="mobile-drawer-footer">
+                    <div class="mobile-theme-wrapper">
+                        <span>Theme Mode</span>
+                        <button class="mobile-theme-btn" id="mobileThemeBtn">
+                            <i class="fa-solid fa-circle-half-stroke"></i> Switch Theme
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================================
+       MAIN CONTENT - PHONE DETAILS
+       ====================================================================== -->
+    <main class="details-main" id="detailsMain">
+
+        <!-- Loading Skeleton -->
+        <div class="details-loader" id="detailsLoader">
+            <div class="loader-ring"></div>
+            <p class="loader-label">Loading device data…</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="details-error" id="detailsError" style="display:none;">
+            <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h2 class="error-title">Device Not Found</h2>
+            <p class="error-msg">The phone you're looking for doesn't exist in our database.</p>
+            <a href="home.html#mobiles" class="btn-back-err">
+                <i class="fa-solid fa-arrow-left"></i> Back to Mobiles
+            </a>
+        </div>
+
+        <!-- Details Container (rendered by JS) -->
+        <div class="details-container" id="detailsContainer" style="display:none;">
+
+            <!-- Breadcrumb + Back button row -->
+            <div class="breadcrumb-row" id="breadcrumbRow">
+                <button class="btn-back" id="btnBack" aria-label="Go back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Back</span>
+                </button>
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <a href="home.html" class="bc-link">Home</a>
+                    <i class="fa-solid fa-chevron-right bc-sep"></i>
+                    <a href="home.html#mobiles" class="bc-link">Mobiles</a>
+                    <i class="fa-solid fa-chevron-right bc-sep"></i>
+                    <span class="bc-current" id="bcCurrent">Device</span>
+                </nav>
+            </div>
+
+            <!-- ============================================================
+               HERO SECTION: Image + Primary Info
+               ============================================================ -->
+            <section class="dh-hero">
+
+                <!-- Left: Image Panel -->
+                <div class="dh-img-panel">
+                    <div class="dh-img-glow" id="dhImgGlow"></div>
+                    <div class="dh-img-wrapper">
+                        <span class="dh-highlight-tag" id="dhHighlightTag"></span>
+                        <img id="dhPhoneImg" class="dh-phone-img" src="" alt="" loading="eager"
+                            onerror="this.style.display='none'; document.getElementById('dhFallback').style.display='flex';">
+                        <div class="dh-fallback" id="dhFallback" style="display:none;">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span id="dhFallbackName"></span>
+                        </div>
+                    </div>
+
+                    <!-- Floating spec badges around image -->
+                    <div class="dh-float-badge badge-tl" id="dhBadge0">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span id="dhBadge0Text">—</span>
+                    </div>
+                    <div class="dh-float-badge badge-tr" id="dhBadge1">
+                        <i class="fa-solid fa-camera"></i>
+                        <span id="dhBadge1Text">—</span>
+                    </div>
+                    <div class="dh-float-badge badge-br" id="dhBadge2">
+                        <i class="fa-solid fa-battery-full"></i>
+                        <span id="dhBadge2Text">—</span>
+                    </div>
+                </div>
+
+                <!-- Right: Info Panel -->
+                <div class="dh-info-panel">
+
+                    <!-- Brand badge -->
+                    <div class="dh-brand-badge" id="dhBrandBadge">
+                        <i id="dhBrandIcon"></i>
+                        <span id="dhBrandName"></span>
+                    </div>
+
+                    <!-- Phone name -->
+                    <h1 class="dh-phone-name" id="dhPhoneName">Loading…</h1>
+
+                    <!-- Rating row -->
+                    <div class="dh-rating-row">
+                        <div class="dh-stars" id="dhStars"></div>
+                        <span class="dh-rating-num" id="dhRatingNum"></span>
+                        <span class="dh-rating-count" id="dhRatingCount"></span>
+                        <span class="dh-category-pill" id="dhCategory"></span>
+                    </div>
+
+                    <!-- Price block -->
+                    <div class="dh-price-block">
+                        <span class="dh-price-lbl">Starting at</span>
+                        <span class="dh-price-val" id="dhPrice"></span>
+                    </div>
+
+                    <!-- Quick spec summary pills -->
+                    <div class="dh-spec-pills" id="dhSpecPills"></div>
+
+                    <!-- Action buttons -->
+                    <div class="dh-action-row">
+                        <button class="dh-btn-buy" id="btnBuy" aria-label="Buy Now">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>Buy Now</span>
+                        </button>
+                        <button class="dh-btn-fav" id="btnFav" aria-label="Add to Favorites">
+                            <i class="fa-regular fa-heart" id="favIcon"></i>
+                        </button>
+                        <button class="dh-btn-compare" id="btnCompare" aria-label="Add to Compare">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Compare</span>
+                        </button>
+                    </div>
+
+                    <!-- Micro toast notification -->
+                    <div class="dh-toast" id="dhToast"></div>
+
+                </div>
+            </section>
+
+            <!-- ============================================================
+               FULL SPECIFICATIONS TABLE
+               ============================================================ -->
+            <section class="dh-specs-section">
+                <div class="dh-specs-header">
+                    <div class="section-badge-inner">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>FULL SPECIFICATIONS</span>
+                    </div>
+                    <h2 class="dh-specs-title">Complete <span class="gradient-text">Tech Sheet</span></h2>
+                </div>
+
+                <div class="dh-specs-grid" id="dhSpecsGrid">
+                    <!-- Spec cards rendered by JS -->
+                </div>
+            </section>
+
+            <!-- ============================================================
+               FEATURE BADGES SECTION
+               ============================================================ -->
+            <section class="dh-features-section">
+                <div class="dh-features-header">
+                    <div class="section-badge-inner purple">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>KEY FEATURES</span>
+                    </div>
+                    <h2 class="dh-features-title">Why Choose <span class="gradient-text-purple" id="dhFeatPhoneName">This Phone</span>?</h2>
+                </div>
+                <div class="dh-feature-badges" id="dhFeatureBadges">
+                    <!-- Feature badges rendered by JS -->
+                </div>
+            </section>
+
+            <!-- ============================================================
+               EXPLORE MORE SECTION
+               ============================================================ -->
+            <section class="dh-explore-section">
+                <div class="dh-explore-inner">
+                    <i class="fa-solid fa-fire-flame-curved dh-explore-icon"></i>
+                    <div class="dh-explore-text">
+                        <h3>Explore More Flagships</h3>
+                        <p>Compare with other top-rated smartphones in our database</p>
+                    </div>
+                    <a href="home.html#mobiles" class="dh-explore-btn">
+                        <span>View All Mobiles</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </section>
+
+        </div><!-- /details-container -->
+
+    </main>
+
+    <!-- Data source + page scripts -->
+    <script src="data/phones.js"></script>
+    <script src="details.js"></script>
+</body>
+
+</html>

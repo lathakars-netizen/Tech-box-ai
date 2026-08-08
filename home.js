@@ -359,10 +359,10 @@ function renderTrendingCards() {
                             <span class="price-lbl">Starting at</span>
                             <span class="price-val">${phone.price}</span>
                         </div>
-                        <button class="btn-view-details" aria-label="View Details for ${phone.name}">
+                        <a href="details.html?id=${phone.id}" class="btn-view-details" aria-label="View Details for ${phone.name}">
                             <span>Details</span>
                             <i class="fa-solid fa-chevron-right"></i>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
