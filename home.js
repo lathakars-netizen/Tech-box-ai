@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavbarScroll();
     init3DParallax();
     initSearchUI();
+    initTrendingUI();
 });
 
 /* ==========================================================================
@@ -226,6 +227,9 @@ function init3DParallax() {
         badges.forEach(badge => {
             badge.style.transform = `translate(0px, 0px)`;
         });
+    });
+}
+
 /* ==========================================================================
    6. Search Component UI Interaction (Pure UI Component)
    ========================================================================== */
@@ -243,3 +247,126 @@ function initSearchUI() {
         });
     });
 }
+
+/* ==========================================================================
+   7. Trending Mobiles Section UI & Dynamic Rendering
+   ========================================================================== */
+function initTrendingUI() {
+    // 1. Dynamically render phone cards from phonesData array
+    renderTrendingCards();
+
+    // 2. Favorite Heart Toggle Handler
+    const favButtons = document.querySelectorAll('.fav-btn');
+    favButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = btn.classList.toggle('active');
+            const icon = btn.querySelector('i');
+            if (icon) {
+                if (isActive) {
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+                } else {
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                }
+            }
+        });
+    });
+
+    // 3. Compare Button Toggle Handler
+    const compareButtons = document.querySelectorAll('.compare-btn');
+    compareButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btn.classList.toggle('active');
+        });
+    });
+
+    // 4. Filter Tabs Toggle Handler
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            filterTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+}
+
+/**
+ * Render phone cards into .trending-grid from centralized phonesData array
+ */
+function renderTrendingCards() {
+    const grid = document.getElementById('trendingGrid') || document.querySelector('.trending-grid');
+    if (!grid) return;
+
+    const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
+    if (!dataList || !dataList.length) return;
+
+    grid.innerHTML = dataList.map((phone, index) => {
+        const delay = ((index + 1) * 0.1).toFixed(1);
+        const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
+        const specsHtml = phone.specs.map(spec => `
+            <span class="spec-pill"><i class="${spec.icon}"></i> ${spec.text}</span>
+        `).join('');
+
+        return `
+            <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
+                <div class="card-top-bar">
+                    <span class="card-brand-badge ${phone.brandClass}">
+                        <i class="${phone.brandIcon}"></i> ${phone.brand}
+                    </span>
+                    <div class="card-action-group">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name}">
+                            <i class="fa-solid fa-code-compare"></i>
+                        </button>
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-img-wrapper">
+                    <span class="tech-highlight-tag ${phone.highlightTag.colorClass}">
+                        <i class="${phone.highlightTag.icon}"></i> ${phone.highlightTag.text}
+                    </span>
+                    <div class="card-img-glow${glowHtml}"></div>
+                    <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="phone-fallback-art" style="display:none;">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <span>${phone.fallbackName}</span>
+                    </div>
+                </div>
+
+                <div class="card-info">
+                    <div class="card-header-meta">
+                        <span class="phone-brand">${phone.brand}</span>
+                        <div class="star-rating" title="${phone.rating} out of 5 stars">
+                            <i class="fa-solid fa-star"></i>
+                            <span class="rating-num">${phone.rating}</span>
+                            <span class="rating-count">${phone.ratingCount}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="phone-name">${phone.name}</h3>
+
+                    <div class="phone-specs-pills">
+                        ${specsHtml}
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="price-box">
+                            <span class="price-lbl">Starting at</span>
+                            <span class="price-val">${phone.price}</span>
+                        </div>
+                        <button class="btn-view-details" aria-label="View Details for ${phone.name}">
+                            <span>Details</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+

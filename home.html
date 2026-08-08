@@ -162,8 +162,8 @@
     <!-- ==========================================================================
        HERO SECTION
        ========================================================================== -->
-    <main class="hero-wrapper">
-        <section class="hero-section" id="hero">
+    <main class="main-content">
+        <section class="hero-wrapper hero-section" id="hero">
             <div class="hero-container">
 
                 <!-- Left Hero Content Column -->
@@ -329,9 +329,71 @@
 
             </div>
         </section>
+
+        <!-- ==========================================================================
+           TRENDING MOBILES SECTION
+           ========================================================================== -->
+        <section class="trending-section" id="mobiles">
+            <div class="trending-container">
+                
+                <!-- Section Header -->
+                <div class="section-header anim-fade-up">
+                    <div class="section-header-left">
+                        <div class="section-badge">
+                            <i class="fa-solid fa-fire-flame-curved badge-fire"></i>
+                            <span>NEURAL RANKED FLAGSHIPS</span>
+                        </div>
+                        <h2 class="section-title">
+                            Trending <span class="gradient-text">Mobiles</span>
+                        </h2>
+                        <p class="section-subtitle">
+                            Explore top-rated smartphones benchmarked by AI performance, camera optics, and battery endurance.
+                        </p>
+                    </div>
+                    
+                    <div class="section-header-right">
+                        <!-- View All Button (UI only) -->
+                        <button class="view-all-btn" id="viewAllMobilesBtn" aria-label="View All Mobiles">
+                            <span class="btn-text">View All</span>
+                            <div class="btn-arrow-box">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UI Category Filter Tabs -->
+                <div class="filter-tabs-wrapper anim-fade-up" style="--delay: 0.15s;">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">
+                            <i class="fa-solid fa-border-all"></i> All Mobiles
+                        </button>
+                        <button class="filter-tab" data-filter="flagship">
+                            <i class="fa-solid fa-crown"></i> Flagship AI
+                        </button>
+                        <button class="filter-tab" data-filter="camera">
+                            <i class="fa-solid fa-camera"></i> Camera Beasts
+                        </button>
+                        <button class="filter-tab" data-filter="gaming">
+                            <i class="fa-solid fa-gamepad"></i> Gaming Beasts
+                        </button>
+                        <button class="filter-tab" data-filter="value">
+                            <i class="fa-solid fa-bolt"></i> Value Killers
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Responsive 8 Phone Cards Grid (Dynamically rendered from data/phones.js) -->
+                <div class="trending-grid" id="trendingGrid">
+                    <!-- Dynamic Phone Cards rendered by home.js -->
+                </div>
+
+            </div>
+        </section>
     </main>
 
-    <!-- Custom JS -->
+    <!-- Data Source & Custom JS -->
+    <script src="data/phones.js"></script>
     <script src="home.js"></script>
 </body>
 
