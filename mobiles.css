@@ -1,0 +1,125 @@
+/* mobiles.css */
+/* Additional layout adjustments */
+/* Reuse core design tokens from style.css */
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin: 2rem 0;
+    padding: 0 1rem;
+}
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.filter-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.filter-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s, transform 0.1s;
+}
+.filter-btn.active,
+.filter-btn:hover {
+    background: var(--accent-gradient);
+    color: #fff;
+    transform: translateY(-1px);
+}
+.price-select,
+.sort-select {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+/* Phone Grid */
+.phone-grid {
+    display: grid;
+    gap: 1.5rem;
+    /* Desktop */
+    grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 1200px) {
+    .phone-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 992px) {
+    .phone-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .phone-grid { grid-template-columns: 1fr; }
+}
+
+
+
+/* Reuse existing phone-card styles (from style.css) */
+/* Ensure glassmorphism effect */
+.phone-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+/* Phone image container */
+.phone-card .phone-card-img {
+    height: 260px;
+    width: 100%;
+    object-fit: contain;
+}
+/* Prevent spec overflow */
+.phone-card .specs {
+    max-height: 4.5rem;
+    overflow: hidden;
+}
+.phone-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .phone-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Favorite & Compare button active states */
+.card-icon-btn.active i {
+    color: var(--accent-color);
+}
+
+/* Search input clear button */
+.search-clear-btn {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: none;
+}
+.search-clear-btn.visible {
+    display: block;
+}

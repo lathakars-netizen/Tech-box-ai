@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Mobiles — TECH BOX AI</title>
+    <meta name="description" content="Explore premium smartphones with AI-powered insights. Search, filter, sort and compare the latest mobiles.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="mobiles.css">
+</head>
+<body>
+    <!-- Canvas & Ambient Orbs (same as other pages) -->
+    <canvas id="cyberCanvas"></canvas>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- Navigation Bar (reuse from home.html) -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box"><i class="fa-solid fa-cube logo-icon"></i></div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="home.html" class="nav-link active"><i class="fa-solid fa-house"></i><span>Home</span></a></li>
+                    <li class="nav-item"><a href="mobiles.html" class="nav-link"><i class="fa-solid fa-mobile-screen-button"></i><span>Mobiles</span></a></li>
+                    <li class="nav-item"><a href="compare.html" class="nav-link"><i class="fa-solid fa-code-compare"></i><span>Compare</span></a></li>
+                    <li class="nav-item"><a href="#ai-assistant" class="nav-link ai-badge-link"><i class="fa-solid fa-wand-magic-sparkles"></i><span>AI Assistant</span><span class="ai-sparkle-pill">PRO</span></a></li>
+                    <li class="nav-item"><a href="#news" class="nav-link"><i class="fa-solid fa-newspaper"></i><span>News</span></a></li>
+                </ul>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                    <div class="theme-icon-wrapper"><i class="fa-solid fa-sun icon-sun"></i><i class="fa-solid fa-moon icon-moon"></i></div>
+                </button>
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false"><span class="bar bar-1"></span><span class="bar bar-2"></span><span class="bar bar-3"></span></button>
+            </div>
+        </div>
+        <!-- Mobile drawer omitted for brevity (same as home.html) -->
+    </header>
+
+    <main class="main-content">
+        <!-- Hero Section with heading and optional tagline -->
+        <section class="hero-wrapper hero-section" id="hero">
+            <div class="hero-container">
+                <h1 class="hero-headline">Explore Mobiles</h1>
+                <p class="hero-subtitle">Search, filter, sort and compare the latest flagship and value smartphones powered by AI.</p>
+                <div class="hero-search-box anim-fade-up" style="--delay: 0.4s;">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
+                        <input type="text" id="mobilesSearchInput" class="hero-input" placeholder="Search phones…" autocomplete="off" aria-label="Search phones" aria-controls="mobilesGrid" aria-expanded="false">
+                        <button class="search-clear-btn" id="mobilesSearchClearBtn" aria-label="Clear search" style="display:none;" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
+                        <span class="kbd-badge" id="mobilesKbdBadge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Bar -->
+        <section class="filter-bar" id="filterBar">
+            <div class="filter-group brands">
+                <span class="filter-label">Brand:</span>
+                <button class="filter-btn brand-btn" data-brand="All">All</button>
+                <button class="filter-btn brand-btn" data-brand="Samsung">Samsung</button>
+                <button class="filter-btn brand-btn" data-brand="Apple">Apple</button>
+                <button class="filter-btn brand-btn" data-brand="Google">Google</button>
+                <button class="filter-btn brand-btn" data-brand="OnePlus">OnePlus</button>
+                <button class="filter-btn brand-btn" data-brand="Xiaomi">Xiaomi</button>
+                <button class="filter-btn brand-btn" data-brand="Nothing">Nothing</button>
+                <button class="filter-btn brand-btn" data-brand="ASUS ROG">ASUS ROG</button>
+                <button class="filter-btn brand-btn" data-brand="Vivo">Vivo</button>
+            </div>
+            <div class="filter-group price">
+                <span class="filter-label">Price:</span>
+                <select id="priceFilter" class="price-select">
+                    <option value="all">All</option>
+                    <option value="0-500">Under $500</option>
+                    <option value="500-900">$500 – $900</option>
+                    <option value="900-1300">$900 – $1300</option>
+                    <option value="1300+">Above $1300</option>
+                </select>
+            </div>
+            <div class="filter-group sort">
+                <span class="filter-label">Sort by:</span>
+                <select id="sortSelect" class="sort-select">
+                    <option value="price-asc">Price – Low to High</option>
+                    <option value="price-desc">Price – High to Low</option>
+                    <option value="rating-desc">Rating – High to Low</option>
+                    <option value="newest">Newest</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Phone Grid -->
+        <section class="mobiles-section" id="mobilesSection">
+            <div class="phone-grid" id="mobilesGrid"></div>
+        </section>
+    </main>
+
+    <!-- Global Scripts -->
+    <script src="data/phones.js"></script>
+    <script src="mobiles.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
