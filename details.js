@@ -57,7 +57,8 @@ function loadPhoneDetails() {
     renderSpecsGrid(phone);
     renderFeatureBadges(phone);
     initActionButtons(phone);
-}
+    initGalleryModal(phone);
+};
 
 function showError(loader, errorEl) {
     loader.style.display = 'none';
@@ -604,6 +605,53 @@ function showToast(message, _type = 'cyan') {
     toast._timeout = setTimeout(() => {
         toast.classList.remove('show');
     }, 2800);
+}
+
+/* ==========================================================================
+   5b. Lightbox / Gallery Modal
+   ========================================================================== */
+function initGalleryModal(phone) {
+    const modal = document.getElementById('galleryModal');
+    const overlay = document.getElementById('galleryOverlay');
+    const galleryImg = document.getElementById('galleryImg');
+    const closeBtn = document.getElementById('galleryClose');
+    const phoneImg = document.getElementById('dhPhoneImg');
+    const imgWrapper = document.querySelector('.dh-img-wrapper');
+
+    if (!modal || !phoneImg) return;
+
+    if (imgWrapper) {
+        imgWrapper.style.cursor = 'pointer';
+        imgWrapper.title = 'Click to enlarge image';
+    }
+
+    function openModal() {
+        if (!galleryImg || !phone.image) return;
+        galleryImg.src = phone.image;
+        galleryImg.alt = phone.name;
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+        document.body.style.overflow = '';
+    }
+
+    if (phoneImg) phoneImg.addEventListener('click', openModal);
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (overlay) overlay.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
 }
 
 /* ==========================================================================
