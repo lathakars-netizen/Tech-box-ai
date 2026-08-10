@@ -333,6 +333,7 @@ function initSearchUI() {
                     <div class="card-action-group">
                         <button class="card-icon-btn compare-btn"
                             title="Add to Compare"
+                            data-id="${escapeHtml(phone.id)}"
                             aria-label="Compare ${escapeHtml(phone.name)}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
@@ -409,7 +410,16 @@ function initSearchUI() {
         resultsGrid.querySelectorAll('.compare-btn').forEach(btn => {
             btn.addEventListener('click', e => {
                 e.stopPropagation();
-                btn.classList.toggle('active');
+                const phoneId = btn.dataset.id;
+                if (!phoneId) return;
+                const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
+                if (!stored.includes(phoneId)) {
+                    if (stored.length < 3) {
+                        stored.push(phoneId);
+                    }
+                    localStorage.setItem('compareSelection', JSON.stringify(stored));
+                }
+                window.location.href = `compare.html?ids=${stored.join(',')}`;
             });
         });
     }
@@ -587,7 +597,16 @@ function initTrendingUI() {
     compareButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            btn.classList.toggle('active');
+            const phoneId = btn.dataset.id;
+            if (!phoneId) return;
+            const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
+            if (!stored.includes(phoneId)) {
+                if (stored.length < 3) {
+                    stored.push(phoneId);
+                }
+                localStorage.setItem('compareSelection', JSON.stringify(stored));
+            }
+            window.location.href = `compare.html?ids=${stored.join(',')}`;
         });
     });
 
@@ -625,7 +644,7 @@ function renderTrendingCards() {
                         <i class="${phone.brandIcon}"></i> ${phone.brand}
                     </span>
                     <div class="card-action-group">
-                        <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name}">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id}" aria-label="Compare ${phone.name}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
                         <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">

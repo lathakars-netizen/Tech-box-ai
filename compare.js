@@ -1,469 +1,629 @@
-/* compare.js */
-/*
-   Compare Phones page controller.
-   - Loads phone data from global window.phonesData (data/phones.js).
-   - Allows user to add up to 3 phones via search input.
-   - Renders selected phone chips with remove buttons.
-   - Builds a side‑by‑side comparison table.
-   - Highlights the better specification for each numeric field.
-   - Re‑uses the enriched spec map from details.js (same source of truth).
-*/
+/**
+ * TECH BOX AI — Compare Phones Page Controller
+ * Handles device selection modal, side-by-side spec comparison,
+ * winner spec highlights, localStorage persistence, and responsive UI.
+ */
 
-// ------------ 1. Data loading & enrichment ------------ //
-const allPhones = typeof window.phonesData !== 'undefined' ? window.phonesData : [];
+document.addEventListener('DOMContentLoaded', () => {
+    initCyberCanvas();
+    initThemeToggle();
+    initMobileNav();
+    initNavbarScroll();
+    initComparePage();
+});
 
-function getEnrichedSpecs(phoneId) {
-    const map = {
-        's25-ultra': {
-            processor: 'Snapdragon 8 Gen 4',
-            processorSub: '4nm, 45 TOPS AI — Galaxy AI onboard',
-            camera: '200MP Wide + 50MP Tele + 12MP Ultra',
-            cameraSub: 'Periscope 5x optical zoom, AI-upscaled 100x Space Zoom',
-            battery: '5000 mAh',
-            batterySub: '45W wired • 15W wireless charging',
-            charging: '45W',
-            display: '6.9″ Dynamic AMOLED 2X, 120Hz',
-            displaySub: '2600 nits peak brightness, HDR10+',
-            ram: '12 GB',
-            ramSub: 'LPDDR5X high-bandwidth memory',
-            storage: '256 GB / 512 GB / 1 TB',
-            storageSub: 'UFS 4.0 ultra-fast flash storage',
-            connectivity: '5G + Wi‑Fi 7 (802.11be)',
-            connectivitySub: 'Bluetooth 5.4, NFC, USB‑C 3.2',
-            build: 'Titanium frame + Gorilla Glass Armor 2',
-            buildSub: 'IP68 (6m / 30 min) water resistance',
-            os: 'Android 15 — One UI 7',
-            osSub: '7 years of OS & security updates guaranteed',
-            charging: '45W'
-        },
-        'iphone-16-pro-max': {
-            processor: 'Apple A18 Pro',
-            processorSub: '3nm TSMC — 16‑core Neural Engine 35 TOPS',
-            camera: '48MP Fusion + 48MP Ultra Wide + 12MP Tele',
-            cameraSub: '5x optical tetraprism zoom • 4K 120fps ProRes video',
-            battery: '4685 mAh',
-            batterySub: '27W wired • MagSafe 25W wireless',
-            charging: '27W',
-            display: '6.9″ Super Retina XDR OLED, 120Hz',
-            displaySub: '2000 nits outdoor brightness, Always‑On',
-            ram: '8 GB',
-            ramSub: 'LPDDR5 unified memory architecture',
-            storage: '256 GB / 512 GB / 1 TB',
-            storageSub: 'NVMe A‑grade flash storage',
-            connectivity: '5G mmWave + Wi‑Fi 7',
-            connectivitySub: 'Bluetooth 5.3, NFC, USB‑C 3 (10Gbps)',
-            build: 'Grade 5 Titanium + Ceramic Shield',
-            buildSub: 'IP68 — 6m depth / 30 min rated',
-            os: 'iOS 18 with Apple Intelligence',
-            osSub: 'Multi‑year update support guaranteed',
-            charging: '27W'
-        },
-        'pixel-9-pro-xl': {
-            processor: 'Google Tensor G4',
-            processorSub: 'Custom ARM Cortex + Titan M3 security chip',
-            camera: '50MP Wide + 48MP Ultra Wide + 48MP Tele',
-            cameraSub: '5x optical zoom • Video Boost with Gemini',
-            battery: '5060 mAh',
-            batterySub: '37W wired • 23W wireless • Reverse wireless',
-            charging: '37W',
-            display: '6.8″ LTPO OLED, 1–120Hz',
-            displaySub: '3000 nits, HDR10+, Always‑On Display',
-            ram: '16 GB',
-            ramSub: 'LPDDR5X high‑bandwidth memory',
-            storage: '128 GB / 256 GB / 512 GB / 1 TB',
-            storageSub: 'UFS 3.1 flash storage',
-            connectivity: '5G + Wi‑Fi 7 (802.11be)',
-            connectivitySub: 'Bluetooth 5.3, NFC, USB‑C 3.2 Gen 2',
-            build: 'Polished titanium + Gorilla Glass Victus 2',
-            buildSub: 'IP68 — 2m depth / 30 min rated',
-            os: 'Android 15 — stock Google experience',
-            osSub: '7 years of OS updates guaranteed',
-            charging: '37W'
-        },
-        'oneplus-13-pro': {
-            processor: 'Snapdragon 8 Gen 4',
-            processorSub: '4nm, OxygenOS AI with on‑device AI features',
-            camera: '50MP Hasselblad + 64MP Periscope + 50MP Ultra',
-            cameraSub: 'Hasselblad Master Edition tuning, 6x optical zoom',
-            battery: '6000 mAh',
-            batterySub: '100W SUPERVOOC • 50W AirVOOC wireless',
-            charging: '100W',
-            display: '6.82″ ProXDR AMOLED, 1–120Hz LTPO',
-            displaySub: '4500 nits peak, 2K resolution, HDR10+',
-            ram: '12 GB / 16 GB / 24 GB',
-            ramSub: 'LPDDR5X ultra‑fast memory',
-            storage: '256 GB / 512 GB / 1 TB',
-            storageSub: 'UFS 4.0 flash storage',
-            connectivity: '5G + Wi‑Fi 7',
-            connectivitySub: 'Bluetooth 5.4, NFC, USB‑C 3.2',
-            build: 'Aluminum frame + Gorilla Glass 7i',
-            buildSub: 'IP69 dust & water resistance',
-            os: 'Android 15 — OxygenOS 15',
-            osSub: '4 years OS + 5 years security updates',
-            charging: '100W'
-        },
-        'nothing-phone-3-pro': {
-            processor: 'Snapdragon 8s Gen 3',
-            processorSub: '4nm chip optimized for Nothing OS efficiency',
-            camera: '50MP Wide + 50MP Ultra Wide + 50MP Tele',
-            cameraSub: '3x optical zoom • AI scene detection',
-            battery: '5000 mAh',
-            batterySub: '65W fast charging • 15W wireless charging',
-            charging: '65W',
-            display: '6.77″ LTPO AMOLED, 1–120Hz',
-            displaySub: '3000 nits peak, FHD+, HDR10+',
-            ram: '12 GB',
-            ramSub: 'LPDDR5 RAM with RAM‑Vita extension',
-            storage: '256 GB / 512 GB',
-            storageSub: 'UFS 3.1 flash storage',
-            connectivity: '5G + Wi‑Fi 6E',
-            connectivitySub: 'Bluetooth 5.3, NFC, USB‑C 2.0',
-            build: 'Recycled aluminium + Gorilla Glass 5',
-            buildSub: 'IP64 dust & splash resistance',
-            os: 'Android 15 — Nothing OS 3.0',
-            osSub: '3 years OS + 4 years security updates',
-            charging: '65W'
-        },
-        'xiaomi-15-ultra': {
-            processor: 'Snapdragon 8 Gen 4',
-            processorSub: '4nm, Xiaomi HyperOS AI acceleration',
-            camera: '50MP Leica 1‑inch + 200MP Tele + 50MP Ultra',
-            cameraSub: 'Leica Summilux optics, 10x optical periscope zoom',
-            battery: '5500 mAh',
-            batterySub: '90W HyperCharge • 80W wireless • 10W reverse',
-            charging: '90W',
-            display: '6.73″ LTPO AMOLED, 1–120Hz',
-            displaySub: '3200 nits, 2K QHD+, Dolby Vision HDR',
-            ram: '16 GB / 24 GB',
-            ramSub: 'LPDDR5X with HyperMemory fusion',
-            storage: '512 GB / 1 TB',
-            storageSub: 'UFS 4.0 ultra‑fast flash',
-            connectivity: '5G + Wi‑Fi 7',
-            connectivitySub: 'Bluetooth 5.4, NFC, USB‑C 3.2',
-            build: 'Titanium frame + Xiaomi Shield Glass',
-            buildSub: 'IP68 dust & water resistance',
-            os: 'Android 15 — Xiaomi HyperOS 2',
-            osSub: '4 years OS + 5 years security updates',
-            charging: '90W'
-        },
-        'rog-phone-9-ultimate': {
-            processor: 'Snapdragon 8 Gen 4 (OC)',
-            processorSub: 'Overclocked 3.4GHz + ROG GameCool 9 cooling',
-            camera: '50MP Wide + 13MP Ultra + 32MP Selfie',
-            cameraSub: 'OIS, 8K video recording @ 30fps',
-            battery: '5800 mAh',
-            batterySub: '65W HyperCharge • By‑pass charging for gaming',
-            charging: '65W',
-            display: '6.78″ AMOLED, 185Hz adaptive',
-            displaySub: '2500 nits, FHD+, 1ms touch latency, HDR10+',
-            ram: '16 GB / 24 GB',
-            ramSub: 'LPDDR5X — extreme gaming performance',
-            storage: '512 GB / 1 TB',
-            storageSub: 'UFS 4.0 ultra‑fast storage',
-            connectivity: '5G + Wi‑Fi 7 (3.6Gbps)',
-            connectivitySub: 'Bluetooth 5.4, NFC, USB‑C 3.2 + pogo pins',
-            build: 'Aerospace‑grade aluminum + Gorilla Glass Victus 2',
-            buildSub: 'IP54 splash resistance + AeroCooler 9 clip‑on fan',
-            os: 'Android 15 — ROG UI / ASUS ZenUI',
-            osSub: '2 years OS + 3 years security updates',
-            charging: '65W'
-        },
-        'vivo-x100-ultra': {
-            processor: 'Snapdragon 8 Gen 3 + Vivo V3+ imaging chip',
-            processorSub: 'Dual‑chip architecture for AI photography',
-            camera: '200MP Tele + 50MP Wide + 50MP Ultra',
-            cameraSub: 'ZEISS APO Summicron optics, 10x optical periscope',
-            battery: '5500 mAh',
-            batterySub: '100W FlashCharge • 50W wireless charging',
-            charging: '100W',
-            display: '6.78″ AMOLED, 120Hz LTPO',
-            displaySub: '3000 nits peak, QHD+, Dolby Vision',
-            ram: '16 GB',
-            ramSub: 'LPDDR5X high‑bandwidth memory',
-            storage: '512 GB / 1 TB',
-            storageSub: 'UFS 4.0 flash storage',
-            connectivity: '5G + Wi‑Fi 7',
-            connectivitySub: 'Bluetooth 5.4, NFC, USB‑C 3.2',
-            build: 'Vegan leather / Glass + Aluminium alloy frame',
-            buildSub: 'IP68 dust & water resistance',
-            os: 'Android 15 — OriginOS 5',
-            osSub: '3 years OS + 4 years security updates',
-            charging: '100W'
+// ------------ State & Data ------------ //
+const MAX_PHONES = 3;
+let selectedPhones = [];
+
+function getPhonesDatabase() {
+    return (typeof window.phonesData !== 'undefined' ? window.phonesData : []) || [];
+}
+
+// ------------ 1. Initialization ------------ //
+function initComparePage() {
+    loadInitialSelection();
+    bindUIEvents();
+    renderAll();
+}
+
+function loadInitialSelection() {
+    const allPhones = getPhonesDatabase();
+    if (!allPhones.length) return;
+
+    // 1. Check URL parameters e.g., ?ids=s25-ultra,iphone-16-pro-max
+    const params = new URLSearchParams(window.location.search);
+    const urlIds = params.get('ids') || params.get('id');
+
+    let idsToLoad = [];
+    if (urlIds) {
+        idsToLoad = urlIds.split(',').map(s => s.trim()).filter(Boolean);
+    } else {
+        // 2. Check localStorage
+        try {
+            const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
+            if (Array.isArray(stored) && stored.length > 0) {
+                idsToLoad = stored;
+            }
+        } catch (e) {
+            console.error('Failed to parse compareSelection from localStorage', e);
         }
-    };
-    return map[phoneId] || {};
-}
-
-// ------------ 2. UI helpers ------------ //
-const selectedPhones = [];
-const maxPhones = 3;
-
-function $(sel) { return document.querySelector(sel); }
-function $$(sel) { return Array.from(document.querySelectorAll(sel)); }
-
-function renderSelectedChips() {
-    const container = $('#selectedPhones');
-    if (!container) return;
-    container.innerHTML = '';
-    selectedPhones.forEach((phone, idx) => {
-        const chip = document.createElement('div');
-        chip.className = 'phone-chip';
-        chip.innerHTML = `
-            <img src="${phone.image}" alt="${phone.name}" onerror="this.style.display='none'" />
-            <div>
-                <strong>${phone.name}</strong><br/>
-                <span>${phone.price}</span>
-            </div>
-            <button class="remove-btn" aria-label="Remove ${phone.name}" data-index="${idx}">&times;</button>
-        `;
-        container.appendChild(chip);
-        chip.querySelector('.remove-btn').addEventListener('click', (e) => {
-            const i = parseInt(e.currentTarget.dataset.index, 10);
-            selectedPhones.splice(i, 1);
-            renderSelectedChips();
-            renderComparison();
-        });
-    });
-}
-
-function parseNumber(str) {
-    if (!str) return null;
-    // extract first number (may have commas, spaces, etc.)
-    const m = str.replace(/,/g, '').match(/([0-9]+\.?[0-9]*)/);
-    return m ? parseFloat(m[1]) : null;
-}
-
-function extractHighestMP(cameraStr) {
-    if (!cameraStr) return null;
-    const matches = cameraStr.match(/([0-9]+)\s*MP/gi);
-    if (!matches) return null;
-    const numbers = matches.map(s => parseInt(s.match(/[0-9]+/)[0], 10));
-    return Math.max(...numbers);
-}
-
-// ------------ 3. Comparison Table Rendering ------------ //
-function renderComparison() {
-    const table = $('#compareTable');
-    if (!table) return;
-    // Clear existing
-    table.innerHTML = '';
-    if (selectedPhones.length === 0) {
-        table.innerHTML = '<p style="text-align:center;">No phones selected. Use the search box above to add phones.</p>';
-        return;
     }
 
-    // Define rows (label and a getter function for each phone)
-    const rows = [
-        { label: 'Image', get: p => `<img src="${p.image}" alt="${p.name}" style="width:80px; height:auto;" onerror="this.style.display='none'"/>` },
-        { label: 'Name', get: p => p.name },
-        { label: 'Brand', get: p => p.brand },
-        { label: 'Processor/Chipset', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.processor || (p.specs?.find(s=>s.icon.includes('microchip'))?.text) || '—';
-        } },
-        { label: 'RAM', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.ram || (p.specs?.find(s=>s.icon.includes('memory'))?.text) || '—';
-        } },
-        { label: 'Storage', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.storage || (p.specs?.find(s=>s.icon.includes('hard-drive'))?.text) || '—';
-        } },
-        { label: 'Camera', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.camera || (p.specs?.find(s=>s.icon.includes('camera'))?.text) || '—';
-        } },
-        { label: 'Battery', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.battery || (p.specs?.find(s=>s.icon.includes('battery'))?.text) || '—';
-        } },
-        { label: 'Charging', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.charging || (p.specs?.find(s=>s.icon.includes('bolt'))?.text) || '—';
-        } },
-        { label: 'Operating System', get: p => {
-            const e = getEnrichedSpecs(p.id);
-            return e.os || (p.brand === 'Apple' ? 'iOS' : 'Android');
-        } },
-        { label: 'Price', get: p => p.price },
-        { label: 'Rating', get: p => p.rating?.toString() || '—' },
-    ];
+    // 3. Fallback to default 2 flagship devices if empty
+    if (!idsToLoad.length) {
+        idsToLoad = ['s25-ultra', 'iphone-16-pro-max'];
+    }
 
-    // Compute best values for numeric rows
-    const numericRows = ['RAM', 'Storage', 'Camera', 'Battery', 'Charging', 'Price', 'Rating'];
-    const bestIndexes = {};
-    rows.forEach((row, rowIdx) => {
-        if (!numericRows.includes(row.label)) return;
-        const values = selectedPhones.map(p => {
-            const val = row.get(p);
-            if (row.label === 'Price') {
-                // price like "$1,299"
-                const num = parseNumber(val.replace(/[^0-9.,]/g, ''));
-                return num !== null ? num : null;
-            } else if (row.label === 'Rating') {
-                const num = parseFloat(val);
-                return isNaN(num) ? null : num;
-            } else if (row.label === 'Camera') {
-                const num = extractHighestMP(val);
-                return num !== null ? num : null;
-            } else if (row.label === 'Charging') {
-                const num = parseNumber(val);
-                return num !== null ? num : null;
-            } else {
-                // RAM, Storage, Battery – assume number with unit
-                const num = parseNumber(val);
-                return num !== null ? num : null;
-            }
-        });
-        // Determine the best index according to rule (higher is better except Price lower is better)
-        let bestIdx = null;
-        values.forEach((v, i) => {
-            if (v === null) return;
-            if (bestIdx === null) { bestIdx = i; return; }
-            const bestVal = values[bestIdx];
-            if (row.label === 'Price') {
-                if (v < bestVal) bestIdx = i;
-            } else {
-                if (v > bestVal) bestIdx = i;
-            }
-        });
-        if (bestIdx !== null) bestIndexes[rowIdx] = bestIdx;
+    // Resolve phone objects from database
+    selectedPhones = [];
+    idsToLoad.forEach(id => {
+        const found = allPhones.find(p => p.id === id);
+        if (found && selectedPhones.length < MAX_PHONES && !selectedPhones.some(p => p.id === found.id)) {
+            selectedPhones.push(found);
+        }
     });
 
-    // Render header row (empty first cell then each phone name)
-    const header = document.createElement('div');
-    header.className = 'row header';
-    header.innerHTML = `<div class="spec-label"></div>` + selectedPhones.map(p => `<div class="cell"><strong>${p.name}</strong></div>`).join('');
-    table.appendChild(header);
+    saveState();
+}
 
-    rows.forEach((row, rIdx) => {
-        const rowEl = document.createElement('div');
-        rowEl.className = 'row';
-        // spec label cell
-        rowEl.innerHTML = `<div class="spec-label">${row.label}</div>`;
-        // value cells
-        selectedPhones.forEach((phone, cIdx) => {
-            const raw = row.get(phone);
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            if (bestIndexes[rIdx] === cIdx) {
-                cell.classList.add('highlight');
-            }
-            cell.innerHTML = raw;
-            rowEl.appendChild(cell);
+function saveState() {
+    const ids = selectedPhones.map(p => p.id);
+    localStorage.setItem('compareSelection', JSON.stringify(ids));
+
+    // Update URL query parameters silently
+    if (window.history && window.history.replaceState) {
+        const newUrl = ids.length > 0
+            ? `${window.location.pathname}?ids=${ids.join(',')}`
+            : window.location.pathname;
+        window.history.replaceState(null, '', newUrl);
+    }
+}
+
+// ------------ 2. UI Bindings ------------ //
+function bindUIEvents() {
+    const addBtn = document.getElementById('addPhoneBtn');
+    const clearBtn = document.getElementById('clearAllBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const modal = document.getElementById('phoneModal');
+    const modalSearch = document.getElementById('modalSearchInput');
+
+    if (addBtn) addBtn.addEventListener('click', openModal);
+    if (clearBtn) clearBtn.addEventListener('click', clearAllPhones);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
         });
-        table.appendChild(rowEl);
-    });
-}
+    }
 
-// ------------ 4. Search & Add Logic ------------ //
-function addPhoneByQuery(query) {
-    if (!query) return;
-    const q = query.trim().toLowerCase();
-    const phone = allPhones.find(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
-    if (!phone) {
-        alert('Phone not found. Try a different name or brand.');
-        return;
+    if (modalSearch) {
+        modalSearch.addEventListener('input', filterPhoneList);
     }
-    if (selectedPhones.some(p => p.id === phone.id)) {
-        alert('Phone already selected.');
-        return;
-    }
-    if (selectedPhones.length >= maxPhones) {
-        alert(`You can compare a maximum of ${maxPhones} phones.`);
-        return;
-    }
-    selectedPhones.push(phone);
-    renderSelectedChips();
-    renderComparison();
-    $('#compareSearchInput').value = '';
-}
 
-// ------------ 4. Search & Add Logic ------------ //
-function addPhoneById(phoneId) {
-    const phone = allPhones.find(p => p.id === phoneId);
-    if (!phone) return;
-    // Checks
-    if (selectedPhones.some(p => p.id === phone.id)) {
-        alert('Phone already selected.');
-        return;
-    }
-    if (selectedPhones.length >= maxPhones) {
-        alert(`You can compare a maximum of ${maxPhones} phones.`);
-        return;
-    }
-    selectedPhones.push(phone);
-    renderSelectedChips();
-    renderComparison();
-}
-
-function openModal() {
-    console.log('openModal called');
-    const modal = $('#phoneModal');
-    if (!modal) return;
-    modal.style.display = 'flex';
-    // Populate list
-    const list = $('#phoneList');
-    list.innerHTML = '';
-    allPhones.forEach(phone => {
-        const li = document.createElement('li');
-        li.className = 'phone-item';
-        li.dataset.id = phone.id;
-        li.style.cursor = 'pointer';
-        li.style.padding = '0.5rem';
-        li.style.display = 'flex';
-        li.style.alignItems = 'center';
-        li.style.gap = '0.75rem';
-        li.innerHTML = `
-            <img src="${phone.image}" alt="${phone.name}" style="width:40px;height:auto;border-radius:0.3rem;" onerror="this.style.display='none'" />
-            <div>
-                <strong>${phone.name}</strong><br/>
-                <span>${phone.brand}</span>
-            </div>`;
-        li.addEventListener('click', () => {
-            addPhoneById(phone.id);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
             closeModal();
-        });
-        list.appendChild(li);
+        }
     });
-    // Focus search input
-    const modalSearch = $('#modalSearchInput');
-    modalSearch.value = '';
-    modalSearch.focus();
-    modalSearch.addEventListener('input', filterPhoneList);
+}
+
+// ------------ 3. Modal Handlers ------------ //
+function openModal() {
+    if (selectedPhones.length >= MAX_PHONES) {
+        showToast(`⚠️ Maximum ${MAX_PHONES} devices can be compared at once.`);
+        return;
+    }
+
+    const modal = document.getElementById('phoneModal');
+    const searchInput = document.getElementById('modalSearchInput');
+    if (!modal) return;
+
+    populateModalList();
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
 }
 
 function closeModal() {
-    const modal = $('#phoneModal');
-    if (modal) modal.style.display = 'none';
+    const modal = document.getElementById('phoneModal');
+    if (!modal) return;
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
+}
+
+function populateModalList() {
+    const list = document.getElementById('phoneList');
+    if (!list) return;
+
+    const allPhones = getPhonesDatabase();
+    list.innerHTML = '';
+
+    allPhones.forEach(phone => {
+        const isSelected = selectedPhones.some(p => p.id === phone.id);
+        const li = document.createElement('li');
+        li.className = `phone-select-item${isSelected ? ' disabled' : ''}`;
+        
+        li.innerHTML = `
+            <div class="phone-item-main">
+                <img src="${phone.image}" alt="${phone.name}" class="phone-item-img" onerror="this.style.display='none'" />
+                <div>
+                    <div class="phone-item-name">${phone.name}</div>
+                    <div class="phone-item-sub">${phone.brand} • ${phone.price}</div>
+                </div>
+            </div>
+            <div class="phone-item-action ${isSelected ? 'selected-action' : 'add-action'}">
+                <i class="${isSelected ? 'fa-solid fa-check' : 'fa-solid fa-plus'}"></i>
+                <span>${isSelected ? 'Selected' : 'Select'}</span>
+            </div>
+        `;
+
+        if (!isSelected) {
+            li.addEventListener('click', () => {
+                addPhone(phone);
+                closeModal();
+            });
+        }
+
+        list.appendChild(li);
+    });
 }
 
 function filterPhoneList() {
-    const query = $('#modalSearchInput').value.trim().toLowerCase();
-    const items = $$('#phoneList .phone-item');
+    const query = (document.getElementById('modalSearchInput')?.value || '').trim().toLowerCase();
+    const items = document.querySelectorAll('#phoneList .phone-select-item');
+
     items.forEach(item => {
-        const name = item.querySelector('strong').textContent.toLowerCase();
-        const brand = item.querySelector('span').textContent.toLowerCase();
-        const match = name.includes(query) || brand.includes(query);
+        const name = item.querySelector('.phone-item-name')?.textContent.toLowerCase() || '';
+        const sub = item.querySelector('.phone-item-sub')?.textContent.toLowerCase() || '';
+        const match = name.includes(query) || sub.includes(query);
         item.style.display = match ? 'flex' : 'none';
     });
 }
 
-function initComparePage() {
-    // Existing listeners
-    $('#addPhoneBtn')?.addEventListener('click', openModal);
-    $('#closeModalBtn')?.addEventListener('click', closeModal);
-    // Close modal when clicking outside content
-    const modal = $('#phoneModal');
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
+// ------------ 4. Add / Remove Actions ------------ //
+function addPhone(phone) {
+    if (selectedPhones.some(p => p.id === phone.id)) {
+        showToast(`⚠️ ${phone.name} is already selected.`);
+        return;
     }
-    renderComparison();
+    if (selectedPhones.length >= MAX_PHONES) {
+        showToast(`⚠️ Maximum ${MAX_PHONES} devices allowed.`);
+        return;
+    }
+
+    selectedPhones.push(phone);
+    saveState();
+    renderAll();
+    showToast(`✅ Added ${phone.name} to comparison.`);
 }
 
-// Run after DOM ready
-document.addEventListener('DOMContentLoaded', initComparePage);
+function removePhone(index) {
+    if (index >= 0 && index < selectedPhones.length) {
+        const removed = selectedPhones.splice(index, 1)[0];
+        saveState();
+        renderAll();
+        showToast(`🗑️ Removed ${removed.name}.`);
+    }
+}
+
+function clearAllPhones() {
+    if (!selectedPhones.length) return;
+    selectedPhones = [];
+    saveState();
+    renderAll();
+    showToast(`🧹 Comparison cleared.`);
+}
+
+// ------------ 5. Render Selected Chips & Table ------------ //
+function renderAll() {
+    renderChips();
+    renderTable();
+    updateCounter();
+}
+
+function updateCounter() {
+    const counter = document.getElementById('selectionCounter');
+    const clearBtn = document.getElementById('clearAllBtn');
+    if (counter) counter.textContent = `${selectedPhones.length} of ${MAX_PHONES} Selected`;
+    if (clearBtn) clearBtn.style.display = selectedPhones.length > 0 ? 'inline-flex' : 'none';
+}
+
+function renderChips() {
+    const container = document.getElementById('selectedPhones');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Render chips for selected devices
+    selectedPhones.forEach((phone, idx) => {
+        const chip = document.createElement('div');
+        chip.className = 'phone-chip';
+        chip.innerHTML = `
+            <img src="${phone.image}" alt="${phone.name}" class="phone-chip-img" onerror="this.style.display='none'" />
+            <div class="phone-chip-info">
+                <span class="phone-chip-brand">${phone.brand}</span>
+                <h4 class="phone-chip-name">${phone.name}</h4>
+                <span class="phone-chip-price">${phone.price}</span>
+            </div>
+            <button class="remove-btn" title="Remove ${phone.name}" aria-label="Remove ${phone.name}">&times;</button>
+        `;
+
+        chip.querySelector('.remove-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            removePhone(idx);
+        });
+
+        container.appendChild(chip);
+    });
+
+    // Render "+ Add Device" slot card if < MAX_PHONES
+    if (selectedPhones.length < MAX_PHONES) {
+        const slotCard = document.createElement('div');
+        slotCard.className = 'add-slot-card';
+        slotCard.innerHTML = `
+            <div class="add-slot-icon"><i class="fa-solid fa-plus"></i></div>
+            <div class="add-slot-text">Add Device to Compare</div>
+        `;
+        slotCard.addEventListener('click', openModal);
+        container.appendChild(slotCard);
+    }
+}
+
+// ------------ 6. Side-by-Side Comparison Table Rendering ------------ //
+function renderTable() {
+    const table = document.getElementById('compareTable');
+    if (!table) return;
+
+    table.innerHTML = '';
+    table.className = `compare-table cols-${Math.max(selectedPhones.length, 1)}`;
+
+    if (selectedPhones.length === 0) {
+        table.innerHTML = `
+            <div class="compare-empty-state">
+                <i class="fa-solid fa-scale-balanced empty-icon"></i>
+                <h3>No Devices Selected</h3>
+                <p>Click the <strong>+ Add Device</strong> button above to start comparing specs side-by-side.</p>
+                <button class="btn-compare-add" onclick="openModal()" style="margin-top:0.5rem;">
+                    <i class="fa-solid fa-plus"></i> Select Smartphones
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    // Define table rows
+    const rows = [
+        {
+            key: 'display',
+            icon: 'fa-solid fa-tv',
+            label: 'Display & Refresh',
+            get: p => p.display ? `${p.display}${p.displaySub ? `<span class="cell-sub">${p.displaySub}</span>` : ''}` : '—',
+            numericGetter: p => parseNumber(p.display)
+        },
+        {
+            key: 'processor',
+            icon: 'fa-solid fa-microchip',
+            label: 'Processor / Chipset',
+            get: p => p.processor ? `${p.processor}${p.processorSub ? `<span class="cell-sub">${p.processorSub}</span>` : ''}` : '—'
+        },
+        {
+            key: 'ram',
+            icon: 'fa-solid fa-memory',
+            label: 'RAM Memory',
+            get: p => p.ram ? `${p.ram}${p.ramSub ? `<span class="cell-sub">${p.ramSub}</span>` : ''}` : '—',
+            numericGetter: p => parseNumber(p.ram)
+        },
+        {
+            key: 'storage',
+            icon: 'fa-solid fa-hard-drive',
+            label: 'Storage Capacity',
+            get: p => p.storage ? `${p.storage}${p.storageSub ? `<span class="cell-sub">${p.storageSub}</span>` : ''}` : '—',
+            numericGetter: p => parseStorageGB(p.storage)
+        },
+        {
+            key: 'camera',
+            icon: 'fa-solid fa-camera',
+            label: 'Camera System',
+            get: p => p.camera ? `${p.camera}${p.cameraSub ? `<span class="cell-sub">${p.cameraSub}</span>` : ''}` : '—',
+            numericGetter: p => parseHighestMP(p.camera)
+        },
+        {
+            key: 'battery',
+            icon: 'fa-solid fa-battery-full',
+            label: 'Battery Capacity',
+            get: p => p.battery ? `${p.battery}${p.batterySub ? `<span class="cell-sub">${p.batterySub}</span>` : ''}` : '—',
+            numericGetter: p => parseNumber(p.battery)
+        },
+        {
+            key: 'charging',
+            icon: 'fa-solid fa-bolt',
+            label: 'Fast Charging',
+            get: p => p.charging ? `${p.charging}${p.chargingSub ? `<span class="cell-sub">${p.chargingSub}</span>` : ''}` : '—',
+            numericGetter: p => parseNumber(p.charging)
+        },
+        {
+            key: 'os',
+            icon: 'fa-solid fa-mobile-screen',
+            label: 'Operating System',
+            get: p => p.os ? `${p.os}${p.osSub ? `<span class="cell-sub">${p.osSub}</span>` : ''}` : '—'
+        },
+        {
+            key: 'build',
+            icon: 'fa-solid fa-shield-halved',
+            label: 'Build & Security',
+            get: p => p.build ? `${p.build}${p.buildSub ? `<span class="cell-sub">${p.buildSub}</span>` : ''}` : '—'
+        },
+        {
+            key: 'rating',
+            icon: 'fa-solid fa-star',
+            label: 'User Rating',
+            get: p => p.rating ? `<strong>${p.rating} / 5</strong> ⭐ <span class="cell-sub">${p.ratingCount || ''}</span>` : '—',
+            numericGetter: p => p.rating
+        },
+        {
+            key: 'price',
+            icon: 'fa-solid fa-tag',
+            label: 'Starting Price',
+            get: p => `<strong class="header-phone-price">${p.price}</strong>`,
+            numericGetter: p => parseNumber(p.price),
+            lowerIsBetter: true
+        }
+    ];
+
+    // Compute best index for numeric rows (only if 2+ phones are selected and values differ)
+    const bestIndexes = {};
+    if (selectedPhones.length > 1) {
+        rows.forEach((row, rowIdx) => {
+            if (!row.numericGetter) return;
+            const values = selectedPhones.map(p => row.numericGetter(p));
+            
+            // Check if at least 2 non-null values exist and are not all equal
+            const valid = values.filter(v => v !== null && !isNaN(v));
+            if (valid.length < 2) return;
+            const allEqual = valid.every(v => v === valid[0]);
+            if (allEqual) return;
+
+            let bestIdx = null;
+            values.forEach((v, i) => {
+                if (v === null || isNaN(v)) return;
+                if (bestIdx === null) { bestIdx = i; return; }
+                const currentBest = values[bestIdx];
+                if (row.lowerIsBetter) {
+                    if (v < currentBest) bestIdx = i;
+                } else {
+                    if (v > currentBest) bestIdx = i;
+                }
+            });
+
+            if (bestIdx !== null) bestIndexes[rowIdx] = bestIdx;
+        });
+    }
+
+    // Render Sticky Header Row
+    const headerRow = document.createElement('div');
+    headerRow.className = 'row row-header';
+    headerRow.innerHTML = `
+        <div class="spec-label-cell">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Specification</span>
+        </div>
+        ${selectedPhones.map(p => `
+            <div class="header-cell">
+                <img src="${p.image}" alt="${p.name}" class="header-phone-img" onerror="this.style.display='none'" />
+                <h3 class="header-phone-name">${p.name}</h3>
+                <span class="header-phone-price">${p.price}</span>
+            </div>
+        `).join('')}
+    `;
+    table.appendChild(headerRow);
+
+    // Render Data Spec Rows
+    rows.forEach((row, rIdx) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'row';
+        
+        rowEl.innerHTML = `
+            <div class="spec-label-cell">
+                <i class="${row.icon}"></i>
+                <span>${row.label}</span>
+            </div>
+        `;
+
+        selectedPhones.forEach((phone, cIdx) => {
+            const rawHtml = row.get(phone);
+            const isWinner = bestIndexes[rIdx] === cIdx;
+            
+            const cell = document.createElement('div');
+            cell.className = `cell${isWinner ? ' highlight' : ''}`;
+            
+            if (isWinner) {
+                cell.innerHTML = `
+                    <span class="badge-best"><i class="fa-solid fa-crown"></i> BEST</span>
+                    <div>${rawHtml}</div>
+                `;
+            } else {
+                cell.innerHTML = rawHtml;
+            }
+
+            rowEl.appendChild(cell);
+        });
+
+        table.appendChild(rowEl);
+    });
+}
+
+// ------------ 7. Parsing Utilities ------------ //
+function parseNumber(str) {
+    if (!str) return null;
+    const cleaned = String(str).replace(/,/g, '');
+    const match = cleaned.match(/([0-9]+\.?[0-9]*)/);
+    return match ? parseFloat(match[1]) : null;
+}
+
+function parseStorageGB(str) {
+    if (!str) return null;
+    if (str.toLowerCase().includes('tb')) {
+        const num = parseNumber(str);
+        return num ? num * 1024 : null;
+    }
+    return parseNumber(str);
+}
+
+function parseHighestMP(cameraStr) {
+    if (!cameraStr) return null;
+    const matches = cameraStr.match(/([0-9]+)\s*MP/gi);
+    if (!matches) return null;
+    const numbers = matches.map(s => {
+        const m = s.match(/[0-9]+/);
+        return m ? parseInt(m[0], 10) : 0;
+    });
+    return Math.max(...numbers);
+}
+
+// ------------ 8. Toast Helper ------------ //
+function showToast(message) {
+    const toast = document.getElementById('compareToast');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.classList.add('show');
+
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2800);
+}
+
+// ------------ 9. Theme Toggle ------------ //
+function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('techbox_theme') || 'dark';
+
+    if (savedTheme === 'light') document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
+
+    function toggleTheme() {
+        const isLight = document.body.classList.toggle('light-mode');
+        localStorage.setItem('techbox_theme', isLight ? 'light' : 'dark');
+    }
+
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+}
+
+// ------------ 10. Mobile Drawer ------------ //
+function initMobileNav() {
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+
+    if (!hamburgerBtn || !mobileDrawer) return;
+
+    function openMobileNav() {
+        hamburgerBtn.classList.add('is-active');
+        mobileDrawer.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+        hamburgerBtn.classList.remove('is-active');
+        mobileDrawer.classList.remove('is-open');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', () => {
+        if (mobileDrawer.classList.contains('is-open')) closeMobileNav();
+        else openMobileNav();
+    });
+
+    if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', closeMobileNav);
+}
+
+// ------------ 11. Navbar Scroll Effect ------------ //
+function initNavbarScroll() {
+    const navbar = document.getElementById('navbar');
+    if (!navbar) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 30) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+    });
+}
+
+// ------------ 12. Cyber Canvas Background Particles ------------ //
+function initCyberCanvas() {
+    const canvas = document.getElementById('cyberCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    let particles = [];
+    const particleCount = Math.min(Math.floor((width * height) / 18000), 65);
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.5;
+            this.vy = (Math.random() - 0.5) * 0.5;
+            this.radius = Math.random() * 1.6 + 0.6;
+            this.alpha = Math.random() * 0.4 + 0.2;
+            this.color = Math.random() > 0.4 ? '#38bdf8' : (Math.random() > 0.5 ? '#a855f7' : '#06b6d4');
+        }
+        update() {
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.globalAlpha = this.alpha;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = this.color;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        const isLight = document.body.classList.contains('light-mode');
+        const lineColor = isLight ? '#0284c7' : '#38bdf8';
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update(); particles[i].draw();
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = lineColor;
+                    ctx.globalAlpha = (1 - dist / 120) * (isLight ? 0.1 : 0.14);
+                    ctx.lineWidth = 0.8;
+                    ctx.stroke();
+                }
+            }
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+}

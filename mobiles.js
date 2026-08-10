@@ -174,6 +174,8 @@ function initMobilePage() {
     }
 
     function wireCardButtons() {
+        const storedCompare = JSON.parse(localStorage.getItem('compareSelection') || '[]');
+
         // Favorite toggle
         document.querySelectorAll('.fav-btn').forEach(btn => {
             btn.addEventListener('click', e => {
@@ -186,21 +188,23 @@ function initMobilePage() {
                 }
             });
         });
-        // Compare toggle + persistence
+
+        // Compare toggle + persistence + redirect
         document.querySelectorAll('.compare-btn').forEach(btn => {
+            const phoneId = btn.dataset.id;
+            if (storedCompare.includes(phoneId)) {
+                btn.classList.add('active');
+            }
             btn.addEventListener('click', e => {
                 e.stopPropagation();
-                const phoneId = btn.dataset.id;
-                const isActive = btn.classList.toggle('active');
-                // Update localStorage array
                 const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
-                if (isActive) {
-                    if (!stored.includes(phoneId)) stored.push(phoneId);
-                } else {
-                    const idx = stored.indexOf(phoneId);
-                    if (idx > -1) stored.splice(idx, 1);
+                if (!stored.includes(phoneId)) {
+                    if (stored.length < 3) {
+                        stored.push(phoneId);
+                    }
+                    localStorage.setItem('compareSelection', JSON.stringify(stored));
                 }
-                localStorage.setItem('compareSelection', JSON.stringify(stored));
+                window.location.href = `compare.html?ids=${stored.join(',')}`;
             });
         });
     }
