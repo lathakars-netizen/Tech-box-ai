@@ -556,14 +556,8 @@ function initSearchUI() {
         });
     });
 
-    // Ctrl + K global shortcut → focus search input
-    document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            input.focus();
-            input.select();
-        }
-    });
+    // Ctrl + K global shortcut → open global search modal (handled by search.js)
+    // No local override needed — search.js handles Ctrl+K globally
 }
 
 /* ==========================================================================

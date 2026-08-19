@@ -19,6 +19,7 @@
 
     <!-- Page CSS -->
     <link rel="stylesheet" href="details.css">
+    <link rel="stylesheet" href="search.css">
 </head>
 
 <body>
@@ -84,6 +85,9 @@
 
             <!-- Actions -->
             <div class="nav-actions">
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
                 <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Theme" title="Toggle Theme">
                     <div class="theme-icon-wrapper">
                         <i class="fa-solid fa-sun icon-sun"></i>
@@ -310,6 +314,7 @@
 
     <!-- Data source + page scripts -->
     <script src="data/phones.js"></script>
+    <script src="search.js"></script>
     <script src="details.js"></script>
 </body>
 
