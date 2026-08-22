@@ -566,6 +566,7 @@ function initSearchUI() {
 function initTrendingUI() {
     // 1. Dynamically render phone cards from phonesData array
     renderTrendingCards();
+    renderUpcomingCards();
 
     // 2. Favorite Heart Toggle Handler
     const favButtons = document.querySelectorAll('.fav-btn');
@@ -625,6 +626,100 @@ function renderTrendingCards() {
     if (!dataList || !dataList.length) return;
 
     grid.innerHTML = dataList.map((phone, index) => {
+        const delay = ((index + 1) * 0.1).toFixed(1);
+        const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
+        const specsHtml = phone.specs.map(spec => `
+            <span class="spec-pill"><i class="${spec.icon}"></i> ${spec.text}</span>
+        `).join('');
+
+        return `
+            <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
+                <div class="card-top-bar">
+                    <span class="card-brand-badge ${phone.brandClass}">
+                        <i class="${phone.brandIcon}"></i> ${phone.brand}
+                    </span>
+                    <div class="card-action-group">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id}" aria-label="Compare ${phone.name}">
+                            <i class="fa-solid fa-code-compare"></i>
+                        </button>
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
+                            <i class="fa-regular fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-img-wrapper">
+                    <span class="tech-highlight-tag ${phone.highlightTag.colorClass}">
+                        <i class="${phone.highlightTag.icon}"></i> ${phone.highlightTag.text}
+                    </span>
+                    <div class="card-img-glow${glowHtml}"></div>
+                    <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="phone-fallback-art" style="display:none;">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                        <span>${phone.fallbackName}</span>
+                    </div>
+                </div>
+
+                <div class="card-info">
+                    <div class="card-header-meta">
+                        <span class="phone-brand">${phone.brand}</span>
+                        <div class="star-rating" title="${phone.rating} out of 5 stars">
+                            <i class="fa-solid fa-star"></i>
+                            <span class="rating-num">${phone.rating}</span>
+                            <span class="rating-count">${phone.ratingCount}</span>
+                        </div>
+                    </div>
+
+                    <h3 class="phone-name">${phone.name}</h3>
+
+                    <div class="phone-specs-pills">
+                        ${specsHtml}
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="price-box">
+                            <span class="price-lbl">Starting at</span>
+                            <span class="price-val">${phone.price}</span>
+                        </div>
+                        <a href="details.html?id=${phone.id}" class="btn-view-details" aria-label="View Details for ${phone.name}">
+                            <span>Details</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Render phone cards into .upcomingGrid from centralized phonesData array
+ */
+function renderUpcomingCards() {
+    const grid = document.getElementById('upcomingGrid');
+    if (!grid) return;
+
+    const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
+    
+    // Determine upcoming status strictly by checking if the data supports it
+    const upcomingData = dataList.filter(phone => phone.status === 'upcoming');
+
+    if (upcomingData.length === 0) {
+        grid.innerHTML = `
+            <div class="search-no-results" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 4rem 1rem; text-align: center;">
+                <div class="no-results-icon" style="margin-bottom: 1.5rem;">
+                    <i class="fa-regular fa-calendar-xmark" style="font-size: 3rem; color: var(--text-muted, #9ca3af);"></i>
+                </div>
+                <h3 class="no-results-title" style="margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--text-main, #f3f4f6);">Upcoming Mobiles</h3>
+                <p class="no-results-msg" style="color: var(--text-muted, #9ca3af); max-width: 400px; line-height: 1.5;">
+                    New launches will appear here when verified release information is available.
+                </p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = upcomingData.map((phone, index) => {
         const delay = ((index + 1) * 0.1).toFixed(1);
         const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
         const specsHtml = phone.specs.map(spec => `
