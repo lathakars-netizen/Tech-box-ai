@@ -107,47 +107,76 @@ function updatePhoneDisplay(phone) {
     const resultState = document.getElementById('summaryResultState');
     
     if (!phone) {
-        emptyState.style.display = 'block';
-        resultState.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        if (resultState) resultState.style.display = 'none';
         currentOriginalPrice = 0;
         return;
     }
 
-    emptyState.style.display = 'none';
-    resultState.style.display = 'flex';
+    if (emptyState) emptyState.style.display = 'none';
+    if (resultState) resultState.style.display = 'flex';
 
-    document.getElementById('sumImg').src = phone.image;
-    document.getElementById('sumImg').alt = phone.name;
-    document.getElementById('sumBrand').textContent = phone.brand;
-    document.getElementById('sumTitle').textContent = phone.name;
+    const sumImg = document.getElementById('sumImg');
+    if (sumImg) {
+        sumImg.src = phone.image || '';
+        sumImg.alt = phone.name || 'Phone';
+        sumImg.style.display = 'block';
+    }
+    
+    const sumBrand = document.getElementById('sumBrand');
+    if (sumBrand) sumBrand.textContent = phone.brand || '';
+    
+    const sumTitle = document.getElementById('sumTitle');
+    if (sumTitle) sumTitle.textContent = phone.name || '';
+
+    // Render basic specifications
+    const sumSpecs = document.getElementById('sumSpecs');
+    if (sumSpecs) {
+        if (phone.specs && phone.specs.length > 0) {
+            sumSpecs.innerHTML = phone.specs.map(s => 
+                `<span class="spec-badge"><i class="${s.icon}"></i> ${s.text}</span>`
+            ).join('');
+        } else {
+            sumSpecs.innerHTML = '';
+        }
+    }
 
     // Parse numeric price from "$1,299" -> 1299
-    currentOriginalPrice = parseFloat(phone.price.replace(/[^0-9.-]+/g, '')) || 0;
+    currentOriginalPrice = parseFloat((phone.price || '').replace(/[^0-9.-]+/g, '')) || 0;
 }
 
 function calculateEstimate() {
+    const sumEstimate = document.getElementById('sumEstimate');
+    if (!sumEstimate) return;
+
     if (currentOriginalPrice === 0) {
-        document.getElementById('sumEstimate').textContent = '$0';
+        sumEstimate.textContent = '$0';
         return;
     }
 
     // Base value is a percentage of original price depending on condition
-    const condition = document.querySelector('input[name="condition"]:checked').value;
-    let multiplier = 0;
+    const conditionEl = document.querySelector('input[name="condition"]:checked');
+    const condition = conditionEl ? conditionEl.value : 'like-new';
+    let multiplier = 0.60;
 
     switch (condition) {
-        case 'like-new': multiplier = 0.60; break; // 60% of original
+        case 'like-new': multiplier = 0.60; break;
         case 'excellent': multiplier = 0.50; break;
         case 'good': multiplier = 0.40; break;
         case 'fair': multiplier = 0.25; break;
+        default: multiplier = 0.50;
     }
 
     let estimate = currentOriginalPrice * multiplier;
 
     // Adjustments
-    const hasCharger = document.getElementById('chkCharger').checked;
-    const hasBox = document.getElementById('chkBox').checked;
-    const hasDamage = document.getElementById('chkDamage').checked;
+    const chkCharger = document.getElementById('chkCharger');
+    const chkBox = document.getElementById('chkBox');
+    const chkDamage = document.getElementById('chkDamage');
+
+    const hasCharger = chkCharger ? chkCharger.checked : false;
+    const hasBox = chkBox ? chkBox.checked : false;
+    const hasDamage = chkDamage ? chkDamage.checked : false;
 
     if (!hasCharger) estimate -= 20;
     if (!hasBox) estimate -= 10;
@@ -158,16 +187,25 @@ function calculateEstimate() {
     // Floor
     if (estimate < 10) estimate = 10; // Minimum trade-in value
 
-    document.getElementById('sumEstimate').textContent = '$' + Math.round(estimate).toLocaleString();
+    sumEstimate.textContent = '$' + Math.round(estimate).toLocaleString();
     
     // Update summary rows
-    const cLabel = document.querySelector(`input[name="condition"]:checked + .radio-label .radio-label-title`).textContent;
-    document.getElementById('sumCondition').textContent = cLabel;
+    const cLabelEl = document.querySelector(`input[name="condition"]:checked + .radio-label .radio-label-title`);
+    const cLabel = cLabelEl ? cLabelEl.textContent : 'Like New';
+    const sumCondition = document.getElementById('sumCondition');
+    if (sumCondition) sumCondition.textContent = cLabel;
     
     let accessories = [];
     if (hasCharger) accessories.push('Charger');
     if (hasBox) accessories.push('Box');
     
-    document.getElementById('sumAccessories').textContent = accessories.length ? accessories.join(', ') : 'None';
-    document.getElementById('sumDamage').textContent = hasDamage ? 'Yes (Value reduced)' : 'No';
+    const sumAccessories = document.getElementById('sumAccessories');
+    if (sumAccessories) {
+        sumAccessories.textContent = accessories.length ? accessories.join(', ') : 'None';
+    }
+
+    const sumDamage = document.getElementById('sumDamage');
+    if (sumDamage) {
+        sumDamage.textContent = hasDamage ? 'Yes (Value reduced)' : 'No';
+    }
 }
