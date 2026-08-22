@@ -619,7 +619,7 @@ function initTrendingUI() {
  * Render phone cards into .trending-grid from centralized phonesData array
  */
 function renderTrendingCards() {
-    const grid = document.getElementById('trendingGrid') || document.querySelector('.trending-grid');
+    const grid = document.getElementById('trendingGrid');
     if (!grid) return;
 
     const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);

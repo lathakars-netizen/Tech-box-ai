@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECH BOX AI — Mobile News & Tech Updates</title>
+    <meta name="description"
+        content="Stay updated with the latest mobile launches, smartphone technology, AI advancements, and tech reviews.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="search.css">
+</head>
+
+<body>
+
+    <!-- Interactive Cyber Particle Canvas -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient Glowing Color Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+            
+            <!-- TECH BOX AI Logo -->
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-cube logo-icon"></i>
+                </div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="home.html" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#mobiles" class="nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobiles</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                    <a href="compare.html" class="nav-link">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Compare</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ai-assistant.html" class="nav-link ai-badge-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>AI Assistant</span>
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link active">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>News</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Navigation Action Tools -->
+            <div class="nav-actions">
+                
+                <!-- Search Icon Button -->
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
+                <!-- Dark / Light Mode Toggle -->
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                    <div class="theme-icon-wrapper">
+                        <i class="fa-solid fa-sun icon-sun"></i>
+                        <i class="fa-solid fa-moon icon-moon"></i>
+                    </div>
+                </button>
+
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div class="mobile-nav-drawer" id="mobileDrawer" aria-hidden="true">
+            <div class="mobile-drawer-inner">
+                <div class="mobile-nav-header">
+                    <span class="mobile-logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+                    <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <ul class="mobile-nav-list">
+                    <li>
+                        <a href="home.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-house"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="home.html#mobiles" class="mobile-nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Mobiles
+                        </a>
+                    </li>
+                    <li>
+                        <a href="compare.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-code-compare"></i> Compare
+                        </a>
+                    </li>
+                    <li>
+                        <a href="ai-assistant.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="news.html" class="mobile-nav-link active">
+                            <i class="fa-solid fa-newspaper"></i> News
+                        </a>
+                    </li>
+                </ul>
+                <div class="mobile-drawer-footer">
+                    <div class="mobile-theme-wrapper">
+                        <span>Theme Mode</span>
+                        <button class="mobile-theme-btn" id="mobileThemeBtn">
+                            <i class="fa-solid fa-circle-half-stroke"></i> Switch Theme
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content" style="padding-top: 100px;">
+        <section class="trending-section" id="news-section">
+            <div class="trending-container">
+                
+                <!-- Section Header -->
+                <div class="section-header anim-fade-up">
+                    <div class="section-header-left">
+                        <div class="section-badge" style="color: var(--pink); background: rgba(236, 72, 153, 0.1);">
+                            <i class="fa-solid fa-satellite-dish" style="color: var(--pink);"></i>
+                            <span>LIVE FEED</span>
+                        </div>
+                        <h2 class="section-title">
+                            Tech <span class="gradient-text">News</span>
+                        </h2>
+                        <p class="section-subtitle">
+                            Stay up-to-date with the latest tech advancements and mobile industry news.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Category Filter Tabs -->
+                <div class="filter-tabs-wrapper anim-fade-up" style="--delay: 0.15s;">
+                    <div class="filter-tabs" id="newsFilterTabs">
+                        <button class="filter-tab active" data-category="all">
+                            <i class="fa-solid fa-border-all"></i> All News
+                        </button>
+                        <button class="filter-tab" data-category="smartphones">
+                            <i class="fa-solid fa-mobile-screen"></i> Smartphones
+                        </button>
+                        <button class="filter-tab" data-category="launches">
+                            <i class="fa-solid fa-rocket"></i> Launches
+                        </button>
+                        <button class="filter-tab" data-category="technology">
+                            <i class="fa-solid fa-microchip"></i> Technology
+                        </button>
+                        <button class="filter-tab" data-category="ai">
+                            <i class="fa-solid fa-brain"></i> AI
+                        </button>
+                        <button class="filter-tab" data-category="reviews">
+                            <i class="fa-solid fa-star"></i> Reviews
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Featured / Grid Area -->
+                <div class="trending-grid" id="newsGrid" style="margin-top: 2rem;">
+                    <!-- News cards will be dynamically injected here via JS -->
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="data/phones.js"></script>
+    <script src="search.js"></script>
+    <script src="home.js"></script>
+    <script src="news.js"></script>
+</body>
+</html>
