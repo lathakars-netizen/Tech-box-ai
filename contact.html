@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us — TECH BOX AI</title>
+    <meta name="description"
+        content="Get in touch with the TECH BOX AI team. Submit questions, feedback, or inquiries about our mobile intelligence catalog.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="contact.css">
+</head>
+
+<body>
+    <!-- Interactive Cyber Particle Canvas -->
+    <canvas id="cyberCanvas"></canvas>
+
+    <!-- Ambient Glowing Color Orbs -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+
+    <!-- ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== -->
+    <header class="navbar-header" id="navbar">
+        <div class="navbar-container">
+            
+            <a href="home.html" class="nav-logo" aria-label="TECH BOX AI Home">
+                <div class="logo-icon-box">
+                    <i class="fa-solid fa-cube logo-icon"></i>
+                </div>
+                <span class="logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+            </a>
+
+            <nav class="nav-menu" id="navMenu">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="home.html" class="nav-link">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="home.html#mobiles" class="nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobiles</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="compare.html" class="nav-link">
+                            <i class="fa-solid fa-code-compare"></i>
+                            <span>Compare</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="sell-phone.html" class="nav-link">
+                            <i class="fa-solid fa-tags"></i>
+                            <span>Sell Phone</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="ai-assistant.html" class="nav-link ai-badge-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>AI Assistant</span>
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="news.html" class="nav-link">
+                            <i class="fa-solid fa-newspaper"></i>
+                            <span>News</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="contact.html" class="nav-link active">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>Contact</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="icon-btn search-trigger-btn" id="searchBtn" aria-label="Toggle Search" title="Search (Ctrl + K)">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="icon-btn theme-toggle-btn" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                    <div class="theme-icon-wrapper">
+                        <i class="fa-solid fa-sun icon-sun"></i>
+                        <i class="fa-solid fa-moon icon-moon"></i>
+                    </div>
+                </button>
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle Mobile Menu" aria-expanded="false">
+                    <span class="bar bar-1"></span>
+                    <span class="bar bar-2"></span>
+                    <span class="bar bar-3"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-nav-drawer" id="mobileDrawer" aria-hidden="true">
+            <div class="mobile-drawer-inner">
+                <div class="mobile-nav-header">
+                    <span class="mobile-logo-text">TECH BOX <span class="logo-accent">AI</span></span>
+                    <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <ul class="mobile-nav-list">
+                    <li>
+                        <a href="home.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-house"></i> Home
+                        </a>
+                    </li>
+                    <li>
+                        <a href="home.html#mobiles" class="mobile-nav-link">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Mobiles
+                        </a>
+                    </li>
+                    <li>
+                        <a href="compare.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-code-compare"></i> Compare
+                        </a>
+                    </li>
+                    <li>
+                        <a href="sell-phone.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-tags"></i> Sell Phone
+                        </a>
+                    </li>
+                    <li>
+                        <a href="ai-assistant.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant
+                            <span class="ai-sparkle-pill">PRO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="news.html" class="mobile-nav-link">
+                            <i class="fa-solid fa-newspaper"></i> News
+                        </a>
+                    </li>
+                    <li>
+                        <a href="contact.html" class="mobile-nav-link active">
+                            <i class="fa-solid fa-envelope"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+                <div class="mobile-drawer-footer">
+                    <div class="mobile-theme-wrapper">
+                        <span>Theme Mode</span>
+                        <button class="mobile-theme-btn" id="mobileThemeBtn">
+                            <i class="fa-solid fa-circle-half-stroke"></i> Switch Theme
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="contact-section">
+            <div class="section-header anim-fade-up">
+                <div class="section-header-left" style="align-items: center; text-align: center;">
+                    <div class="section-badge" style="color: var(--cyan); background: rgba(6, 182, 212, 0.1); margin: 0 auto 1rem;">
+                        <i class="fa-solid fa-paper-plane" style="color: var(--cyan);"></i>
+                        <span>GET IN TOUCH & DIRECTORY</span>
+                    </div>
+                    <h2 class="section-title">
+                        Connect with <span class="gradient-text">TECH BOX AI</span>
+                    </h2>
+                    <p class="section-subtitle" style="margin: 0 auto;">
+                        Have questions, feedback, or need assistance? Reach out to our team, view head office details, or explore our brand store and service centre directory.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SECTION 1: Contact Details & Inquiry Portal -->
+            <div class="contact-container anim-fade-up" style="--delay: 0.2s;">
+                
+                <!-- Left: Contact Form Card -->
+                <div class="contact-card">
+                    <div id="formContainer">
+                        <h3 class="card-heading">
+                            <i class="fa-solid fa-envelope-open-text"></i> Send Us a Message
+                        </h3>
+                        <p class="card-subtext">
+                            Fill out the details below and we will get back to you as soon as possible.
+                        </p>
+
+                        <form id="contactForm" novalidate>
+                            <div class="form-row two-cols">
+                                <div class="form-group">
+                                    <label for="fullName" class="form-label">Full Name *</label>
+                                    <input type="text" id="fullName" class="form-input" placeholder="e.g. Alex Mercer" autocomplete="name" required>
+                                    <span class="field-error">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        <span class="field-error-text">Please enter your name.</span>
+                                    </span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="emailAddress" class="form-label">Email Address *</label>
+                                    <input type="email" id="emailAddress" class="form-input" placeholder="e.g. alex@example.com" autocomplete="email" required>
+                                    <span class="field-error">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        <span class="field-error-text">Please enter a valid email address.</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-row two-cols">
+                                <div class="form-group">
+                                    <label for="phoneNumber" class="form-label">
+                                        Phone Number <span class="optional-tag">(Optional)</span>
+                                    </label>
+                                    <input type="tel" id="phoneNumber" class="form-input" placeholder="e.g. +1 (555) 019-2834" autocomplete="tel">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="subject" class="form-label">Subject *</label>
+                                    <select id="subject" class="form-select" required>
+                                        <option value="" disabled selected>Select a subject</option>
+                                        <option value="General Inquiry">General Inquiry</option>
+                                        <option value="Device Data Feedback">Device Data / Spec Feedback</option>
+                                        <option value="AI Assistant Query">AI Assistant Question</option>
+                                        <option value="Trade-In Support">Trade-In / Sell Phone Support</option>
+                                        <option value="Partnership">Partnership / Collaboration</option>
+                                    </select>
+                                    <span class="field-error">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                        <span class="field-error-text">Please select a subject.</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea id="message" class="form-textarea" placeholder="Describe your question or feedback in detail..." required></textarea>
+                                <span class="field-error">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span class="field-error-text">Please enter your message.</span>
+                                </span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+                                <span class="btn-text">Send Message</span>
+                                <i class="fa-solid fa-arrow-right btn-icon"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Client-Side Success Notification Preview -->
+                    <div id="successCard" class="success-card">
+                        <div class="success-icon-box">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <span class="success-preview-badge">CLIENT-SIDE PREVIEW</span>
+                        <h3 class="success-title">Message Received!</h3>
+                        <p class="success-msg">
+                            Thank you, <strong id="submittedName">User</strong>! Your inquiry was validated successfully.
+                            <br><br>
+                            <em>Note: In this client-side version, live backend dispatch is simulated. No external email server is connected.</em>
+                        </p>
+                        <button type="button" class="btn btn-secondary reset-btn" id="resetFormBtn">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Send Another Message</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Information & Contact Details Card -->
+                <div class="info-card">
+                    <h3 class="card-heading">
+                        <i class="fa-solid fa-address-card"></i> Official Contact Details
+                    </h3>
+                    <p class="card-subtext">
+                        Verified contact channels and support operation details for TECH BOX AI.
+                    </p>
+
+                    <!-- Contact Details Cards Grid -->
+                    <div class="contact-details-grid">
+                        <div class="detail-box">
+                            <div class="detail-icon-box">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Support Email</span>
+                                <span class="detail-value">Online Portal Monitored</span>
+                                <span class="status-badge active"><i class="fa-solid fa-circle-check"></i> 24/7 Monitored</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-box">
+                            <div class="detail-icon-box">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Telephone Line</span>
+                                <span class="detail-value">Support Desk</span>
+                                <span class="status-badge pending"><i class="fa-solid fa-clock"></i> Coming Soon</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-box">
+                            <div class="detail-icon-box">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Headquarters</span>
+                                <span class="detail-value">TECH BOX AI Operational Hub</span>
+                                <span class="status-badge info"><i class="fa-solid fa-circle-info"></i> Online Desk Active</span>
+                            </div>
+                        </div>
+
+                        <div class="detail-box">
+                            <div class="detail-icon-box">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">Working Hours</span>
+                                <span class="detail-value">Mon - Sun (24/7 Digital Desk)</span>
+                                <span class="status-badge active"><i class="fa-solid fa-circle-check"></i> Online Operational</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main, #f3f4f6); margin: 1.75rem 0 1rem;">
+                        <i class="fa-solid fa-circle-question" style="color: var(--cyan, #06b6d4); margin-right: 0.35rem;"></i> Quick Help & FAQs
+                    </h4>
+                    
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>How does the AI Assistant work?</span>
+                            </div>
+                            <div class="faq-answer">
+                                Our AI neural engine references our verified device database to provide tailored smartphone recommendations based on your preferences.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fa-solid fa-code-compare"></i>
+                                <span>Are phone comparison specs accurate?</span>
+                            </div>
+                            <div class="faq-answer">
+                                Yes. All specs, camera optics, processor benchmark data, and display metrics are maintained directly in our centralized datastore.
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <i class="fa-solid fa-tags"></i>
+                                <span>How are Sell Phone estimates calculated?</span>
+                            </div>
+                            <div class="faq-answer">
+                                Resale values are calculated based on device MSRP and the specific condition and accessory options you submit.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SECTION 2: Dedicated Head Office & Location Section -->
+            <div class="location-container anim-fade-up" style="--delay: 0.3s;">
+                <div class="location-header">
+                    <div class="section-badge" style="color: var(--purple, #8b5cf6); background: rgba(139, 92, 246, 0.1); margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-location-dot" style="color: var(--purple, #8b5cf6);"></i>
+                        <span>COMPANY HEADQUARTERS</span>
+                    </div>
+                    <h3 class="sub-section-title">Head Office & Location</h3>
+                    <p class="sub-section-desc">Official company headquarters location and physical desk availability status.</p>
+                </div>
+
+                <div class="location-card">
+                    <div class="location-card-main">
+                        <div class="location-info-column">
+                            <div class="location-badge-wrapper">
+                                <span class="status-badge info"><i class="fa-solid fa-globe"></i> Global Digital Operations Hub</span>
+                                <span class="status-badge pending"><i class="fa-solid fa-shield-halved"></i> Address Verification Pending</span>
+                            </div>
+
+                            <h4 class="location-title">
+                                <i class="fa-solid fa-city"></i> TECH BOX AI Corporate Desk
+                            </h4>
+
+                            <div class="location-meta-grid">
+                                <div class="meta-item">
+                                    <i class="fa-solid fa-building-flag"></i>
+                                    <div>
+                                        <strong>Head Office Status:</strong>
+                                        <p>Online Operational Hub Monitored 24/7</p>
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <i class="fa-solid fa-map-pin"></i>
+                                    <div>
+                                        <strong>Physical Address:</strong>
+                                        <p>Coming Soon (Verification Pending in Project Datastore)</p>
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <i class="fa-solid fa-business-time"></i>
+                                    <div>
+                                        <strong>Office Operating Hours:</strong>
+                                        <p>Online Desk: Mon - Sun (24/7) | Physical Desk: Coming Soon</p>
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <i class="fa-solid fa-headset"></i>
+                                    <div>
+                                        <strong>Direct Support:</strong>
+                                        <p>Accessible via Message Inquiry Portal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="location-map-preview">
+                            <div class="map-placeholder-box">
+                                <i class="fa-solid fa-map-location-dot map-icon"></i>
+                                <h5>Headquarters Location Map</h5>
+                                <p>Official verified map coordinates will be linked upon physical desk expansion.</p>
+                                <button type="button" class="btn btn-secondary btn-directions disabled" disabled title="Map link unavailable: Address data verification pending">
+                                    <i class="fa-solid fa-diamond-turn-right"></i>
+                                    <span>Get Directions (Map Link Unavailable)</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: Brand Stores Directory Section -->
+            <div class="directory-section anim-fade-up" style="--delay: 0.4s;">
+                <div class="directory-header">
+                    <div class="section-badge" style="color: var(--cyan); background: rgba(6, 182, 212, 0.1); margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-store" style="color: var(--cyan);"></i>
+                        <span>BRAND STORES DIRECTORY</span>
+                    </div>
+                    <h3 class="sub-section-title">Brand Stores</h3>
+                    <p class="sub-section-desc">Explore flagship brand experience stores for smartphones in our verified catalog.</p>
+                </div>
+
+                <!-- Brand Stores Filter Bar -->
+                <div class="filter-controls-card">
+                    <div class="filter-search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="storeSearchInput" class="directory-search-input" placeholder="Search brand stores by brand or city...">
+                        <button type="button" class="clear-search-btn" id="clearStoreSearchBtn" aria-label="Clear Search">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="brand-pills-scroll" id="storeBrandPills">
+                        <!-- Brand pills injected by contact.js -->
+                    </div>
+                </div>
+
+                <!-- Brand Stores Grid -->
+                <div class="directory-grid" id="storesGrid">
+                    <!-- Brand Store cards rendered dynamically by contact.js -->
+                </div>
+            </div>
+
+            <!-- SECTION 4: Service Centres Directory Section -->
+            <div class="directory-section anim-fade-up" style="--delay: 0.5s;">
+                <div class="directory-header">
+                    <div class="section-badge" style="color: var(--pink, #d946ef); background: rgba(217, 70, 239, 0.1); margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-screwdriver-wrench" style="color: var(--pink, #d946ef);"></i>
+                        <span>AUTHORIZED SERVICE & REPAIRS</span>
+                    </div>
+                    <h3 class="sub-section-title">Service Centres</h3>
+                    <p class="sub-section-desc">Find authorized diagnostic, warranty, and hardware service centres for catalog brands.</p>
+                </div>
+
+                <!-- Service Centres Filter Bar -->
+                <div class="filter-controls-card">
+                    <div class="filter-search-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="serviceSearchInput" class="directory-search-input" placeholder="Search service centres by brand, city, or supported service...">
+                        <button type="button" class="clear-search-btn" id="clearServiceSearchBtn" aria-label="Clear Search">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="brand-pills-scroll" id="serviceBrandPills">
+                        <!-- Service Brand pills injected by contact.js -->
+                    </div>
+                </div>
+
+                <!-- Service Centres Grid -->
+                <div class="directory-grid" id="servicesGrid">
+                    <!-- Service Centre cards rendered dynamically by contact.js -->
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="data/phones.js"></script>
+    <script src="search.js"></script>
+    <script src="home.js"></script>
+    <script src="contact.js"></script>
+</body>
+
+</html>
