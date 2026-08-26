@@ -378,6 +378,108 @@ body.light-mode .icon-moon {
     transform: rotate(90deg) scale(0.5);
 }
 
+/* Language Switcher */
+.lang-switcher-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.lang-switcher-btn {
+    display: flex;
+    gap: 4px;
+    padding: 0 8px;
+    width: auto;
+    min-width: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.lang-flag {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.lang-code {
+    font-family: var(--font-body);
+}
+
+.lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    padding: 6px;
+    width: 140px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition-spring);
+    z-index: 1000;
+}
+
+.lang-dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.lang-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.lang-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode .lang-dropdown-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.lang-dropdown-item.active {
+    background: var(--color-cyan-glow);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.lang-check {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--color-cyan-bright);
+}
+
+/* Language Font Overrides for Navbar Links */
+body.lang-hi-active .nav-link span,
+body.lang-hi-active .mobile-nav-link,
+body.lang-hi-active .mobile-theme-wrapper span {
+    font-family: var(--font-hindi);
+    font-weight: 600;
+}
+
+body.lang-te-active .nav-link span,
+body.lang-te-active .mobile-nav-link,
+body.lang-te-active .mobile-theme-wrapper span {
+    font-family: var(--font-telugu);
+    font-weight: 600;
+}
+
+
 /* Mobile Hamburger Button */
 .hamburger-btn {
     display: none;

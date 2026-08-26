@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@500;600;700&family=Noto+Sans+Telugu:wght@500;600;700&display=swap"
         rel="stylesheet">
 
     <!-- FontAwesome icons -->
@@ -20,6 +20,7 @@
     <!-- Page CSS -->
     <link rel="stylesheet" href="details.css">
     <link rel="stylesheet" href="search.css">
+    <script src="lang.js"></script>
 </head>
 
 <body>
@@ -52,44 +53,44 @@
                     <li class="nav-item">
                         <a href="home.html" class="nav-link">
                             <i class="fa-solid fa-house"></i>
-                            <span>Home</span>
+                            <span data-i18n="nav.home">Home</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="mobiles.html" class="nav-link">
                             <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>Mobiles</span>
+                            <span data-i18n="nav.mobiles">Mobiles</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="compare.html" class="nav-link">
                             <i class="fa-solid fa-code-compare"></i>
-                            <span>Compare</span>
+                            <span data-i18n="nav.compare">Compare</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="sell-phone.html" class="nav-link">
                             <i class="fa-solid fa-tags"></i>
-                            <span>Sell Phone</span>
+                            <span data-i18n="nav.sellPhone">Sell Phone</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="ai-assistant.html" class="nav-link ai-badge-link">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span>AI Assistant</span>
+                            <span data-i18n="nav.aiAssistant">AI Assistant</span>
                             <span class="ai-sparkle-pill">PRO</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="news.html" class="nav-link">
                             <i class="fa-solid fa-newspaper"></i>
-                            <span>News</span>
+                            <span data-i18n="nav.news">News</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="contact.html" class="nav-link">
                             <i class="fa-solid fa-envelope"></i>
-                            <span>Contact</span>
+                            <span data-i18n="nav.contact">Contact</span>
                         </a>
                     </li>
                 </ul>
@@ -124,19 +125,19 @@
                     </button>
                 </div>
                 <ul class="mobile-nav-list">
-                    <li><a href="home.html" class="mobile-nav-link"><i class="fa-solid fa-house"></i> Home</a></li>
-                    <li><a href="mobiles.html" class="mobile-nav-link"><i class="fa-solid fa-mobile-screen-button"></i> Mobiles</a></li>
-                    <li><a href="compare.html" class="mobile-nav-link"><i class="fa-solid fa-code-compare"></i> Compare</a></li>
-                    <li><a href="sell-phone.html" class="mobile-nav-link"><i class="fa-solid fa-tags"></i> Sell Phone</a></li>
-                    <li><a href="ai-assistant.html" class="mobile-nav-link"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Assistant <span class="ai-sparkle-pill">PRO</span></a></li>
-                    <li><a href="news.html" class="mobile-nav-link"><i class="fa-solid fa-newspaper"></i> News</a></li>
-                    <li><a href="contact.html" class="mobile-nav-link"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                    <li><a href="home.html" class="mobile-nav-link"><i class="fa-solid fa-house"></i> <span data-i18n="nav.home">Home</span></a></li>
+                    <li><a href="mobiles.html" class="mobile-nav-link"><i class="fa-solid fa-mobile-screen-button"></i> <span data-i18n="nav.mobiles">Mobiles</span></a></li>
+                    <li><a href="compare.html" class="mobile-nav-link"><i class="fa-solid fa-code-compare"></i> <span data-i18n="nav.compare">Compare</span></a></li>
+                    <li><a href="sell-phone.html" class="mobile-nav-link"><i class="fa-solid fa-tags"></i> <span data-i18n="nav.sellPhone">Sell Phone</span></a></li>
+                    <li><a href="ai-assistant.html" class="mobile-nav-link"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="nav.aiAssistant">AI Assistant</span> <span class="ai-sparkle-pill">PRO</span></a></li>
+                    <li><a href="news.html" class="mobile-nav-link"><i class="fa-solid fa-newspaper"></i> <span data-i18n="nav.news">News</span></a></li>
+                    <li><a href="contact.html" class="mobile-nav-link"><i class="fa-solid fa-envelope"></i> <span data-i18n="nav.contact">Contact</span></a></li>
                 </ul>
                 <div class="mobile-drawer-footer">
                     <div class="mobile-theme-wrapper">
-                        <span>Theme Mode</span>
+                        <span data-i18n="nav.themeMode">Theme Mode</span>
                         <button class="mobile-theme-btn" id="mobileThemeBtn">
-                            <i class="fa-solid fa-circle-half-stroke"></i> Switch Theme
+                            <i class="fa-solid fa-circle-half-stroke"></i> <span data-i18n="nav.switchTheme">Switch Theme</span>
                         </button>
                     </div>
                 </div>
@@ -256,7 +257,7 @@
                         </button>
                         <button class="dh-btn-compare" id="btnCompare" aria-label="Add to Compare">
                             <i class="fa-solid fa-code-compare"></i>
-                            <span>Compare</span>
+                            <span data-i18n="nav.compare">Compare</span>
                         </button>
                     </div>
 
