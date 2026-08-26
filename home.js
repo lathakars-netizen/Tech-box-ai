@@ -626,20 +626,24 @@ function renderTrendingCards() {
     if (!dataList || !dataList.length) return;
 
     grid.innerHTML = dataList.map((phone, index) => {
+        if (!phone) return ''; // Sanity check
+        
         const delay = ((index + 1) * 0.1).toFixed(1);
         const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
-        const specsHtml = phone.specs.map(spec => `
-            <span class="spec-pill"><i class="${spec.icon}"></i> ${spec.text}</span>
+        const specs = Array.isArray(phone.specs) ? phone.specs : [];
+        const specsHtml = specs.map(spec => `
+            <span class="spec-pill"><i class="${spec.icon || 'fa-solid fa-microchip'}"></i> ${spec.text || ''}</span>
         `).join('');
+        const highlightTag = phone.highlightTag || { icon: '', text: '', colorClass: '' };
 
         return `
             <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
                 <div class="card-top-bar">
-                    <span class="card-brand-badge ${phone.brandClass}">
-                        <i class="${phone.brandIcon}"></i> ${phone.brand}
+                    <span class="card-brand-badge ${phone.brandClass || ''}">
+                        <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
                     </span>
                     <div class="card-action-group">
-                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id}" aria-label="Compare ${phone.name}">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id || ''}" aria-label="Compare ${phone.name || 'Phone'}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
                         <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
@@ -649,28 +653,28 @@ function renderTrendingCards() {
                 </div>
 
                 <div class="card-img-wrapper">
-                    <span class="tech-highlight-tag ${phone.highlightTag.colorClass}">
-                        <i class="${phone.highlightTag.icon}"></i> ${phone.highlightTag.text}
+                    <span class="tech-highlight-tag ${highlightTag.colorClass}">
+                        <i class="${highlightTag.icon}"></i> ${highlightTag.text}
                     </span>
                     <div class="card-img-glow${glowHtml}"></div>
-                    <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="${phone.image || ''}" alt="${phone.name || 'Phone'}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="phone-fallback-art" style="display:none;">
                         <i class="fa-solid fa-mobile-screen-button"></i>
-                        <span>${phone.fallbackName}</span>
+                        <span>${phone.fallbackName || phone.name || 'Unknown'}</span>
                     </div>
                 </div>
 
                 <div class="card-info">
                     <div class="card-header-meta">
-                        <span class="phone-brand">${phone.brand}</span>
-                        <div class="star-rating" title="${phone.rating} out of 5 stars">
+                        <span class="phone-brand">${phone.brand || 'Unknown'}</span>
+                        <div class="star-rating" title="${phone.rating || 0} out of 5 stars">
                             <i class="fa-solid fa-star"></i>
-                            <span class="rating-num">${phone.rating}</span>
-                            <span class="rating-count">${phone.ratingCount}</span>
+                            <span class="rating-num">${phone.rating || 0}</span>
+                            <span class="rating-count">${phone.ratingCount || '(0)'}</span>
                         </div>
                     </div>
 
-                    <h3 class="phone-name">${phone.name}</h3>
+                    <h3 class="phone-name">${phone.name || 'Unknown'}</h3>
 
                     <div class="phone-specs-pills">
                         ${specsHtml}
@@ -702,7 +706,7 @@ function renderUpcomingCards() {
     const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
     
     // Determine upcoming status strictly by checking if the data supports it
-    const upcomingData = dataList.filter(phone => phone.status === 'upcoming');
+    const upcomingData = dataList.filter(phone => phone && phone.status === 'upcoming');
 
     if (upcomingData.length === 0) {
         grid.innerHTML = `
@@ -720,51 +724,55 @@ function renderUpcomingCards() {
     }
 
     grid.innerHTML = upcomingData.map((phone, index) => {
+        if (!phone) return ''; // Sanity check
+
         const delay = ((index + 1) * 0.1).toFixed(1);
         const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
-        const specsHtml = phone.specs.map(spec => `
-            <span class="spec-pill"><i class="${spec.icon}"></i> ${spec.text}</span>
+        const specs = Array.isArray(phone.specs) ? phone.specs : [];
+        const specsHtml = specs.map(spec => `
+            <span class="spec-pill"><i class="${spec.icon || 'fa-solid fa-microchip'}"></i> ${spec.text || ''}</span>
         `).join('');
+        const highlightTag = phone.highlightTag || { icon: '', text: '', colorClass: '' };
 
         return `
             <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
                 <div class="card-top-bar">
-                    <span class="card-brand-badge ${phone.brandClass}">
-                        <i class="${phone.brandIcon}"></i> ${phone.brand}
+                    <span class="card-brand-badge ${phone.brandClass || ''}">
+                        <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
                     </span>
                     <div class="card-action-group">
-                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id}" aria-label="Compare ${phone.name}">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id || ''}" aria-label="Compare ${phone.name || 'Phone'}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
-                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name || 'Phone'}">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
                 </div>
 
                 <div class="card-img-wrapper">
-                    <span class="tech-highlight-tag ${phone.highlightTag.colorClass}">
-                        <i class="${phone.highlightTag.icon}"></i> ${phone.highlightTag.text}
+                    <span class="tech-highlight-tag ${highlightTag.colorClass}">
+                        <i class="${highlightTag.icon}"></i> ${highlightTag.text}
                     </span>
                     <div class="card-img-glow${glowHtml}"></div>
-                    <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="${phone.image || ''}" alt="${phone.name || 'Phone'}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="phone-fallback-art" style="display:none;">
                         <i class="fa-solid fa-mobile-screen-button"></i>
-                        <span>${phone.fallbackName}</span>
+                        <span>${phone.fallbackName || phone.name || 'Unknown'}</span>
                     </div>
                 </div>
 
                 <div class="card-info">
                     <div class="card-header-meta">
-                        <span class="phone-brand">${phone.brand}</span>
-                        <div class="star-rating" title="${phone.rating} out of 5 stars">
+                        <span class="phone-brand">${phone.brand || 'Unknown'}</span>
+                        <div class="star-rating" title="${phone.rating || 0} out of 5 stars">
                             <i class="fa-solid fa-star"></i>
-                            <span class="rating-num">${phone.rating}</span>
-                            <span class="rating-count">${phone.ratingCount}</span>
+                            <span class="rating-num">${phone.rating || 0}</span>
+                            <span class="rating-count">${phone.ratingCount || '(0)'}</span>
                         </div>
                     </div>
 
-                    <h3 class="phone-name">${phone.name}</h3>
+                    <h3 class="phone-name">${phone.name || 'Unknown'}</h3>
 
                     <div class="phone-specs-pills">
                         ${specsHtml}
@@ -773,9 +781,9 @@ function renderUpcomingCards() {
                     <div class="card-footer">
                         <div class="price-box">
                             <span class="price-lbl">Starting at</span>
-                            <span class="price-val">${phone.price}</span>
+                            <span class="price-val">${phone.price || 'N/A'}</span>
                         </div>
-                        <a href="details.html?id=${phone.id}" class="btn-view-details" aria-label="View Details for ${phone.name}">
+                        <a href="details.html?id=${phone.id || ''}" class="btn-view-details" aria-label="View Details for ${phone.name || 'Phone'}">
                             <span>Details</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>

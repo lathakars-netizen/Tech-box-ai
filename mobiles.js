@@ -118,20 +118,23 @@ function initMobilePage() {
     }
 
     function buildCardHtml(phone, idx) {
+        if (!phone) return ''; // Sanity check
+
         const delay = ((idx + 1) * 0.08).toFixed(2);
-        const specsHtml = (phone.specs || []).map(spec => `
-            <span class="spec-pill"><i class="${spec.icon}"></i> ${spec.text}</span>`).join('');
+        const specs = Array.isArray(phone.specs) ? phone.specs : [];
+        const specsHtml = specs.map(spec => `
+            <span class="spec-pill"><i class="${spec.icon || 'fa-solid fa-microchip'}"></i> ${spec.text || ''}</span>`).join('');
         return `
             <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
                 <div class="card-top-bar">
                     <span class="card-brand-badge ${phone.brandClass || ''}">
-                        <i class="${phone.brandIcon || ''}"></i> ${phone.brand}
+                        <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
                     </span>
                     <div class="card-action-group">
-                        <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name}" data-id="${phone.id}">
+                        <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name || 'Phone'}" data-id="${phone.id || ''}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
-                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name || 'Phone'}">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
@@ -142,29 +145,29 @@ function initMobilePage() {
                         ${phone.highlightTag?.text || ''}
                     </span>
                     <div class="card-img-glow${phone.glowClass ? ` ${phone.glowClass}` : ''}"></div>
-                    <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <img src="${phone.image || ''}" alt="${phone.name || 'Phone'}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                     <div class="phone-fallback-art" style="display:none;">
                         <i class="fa-solid fa-mobile-screen-button"></i>
-                        <span>${phone.fallbackName || phone.name}</span>
+                        <span>${phone.fallbackName || phone.name || 'Unknown'}</span>
                     </div>
                 </div>
                 <div class="card-info">
                     <div class="card-header-meta">
-                        <span class="phone-brand">${phone.brand}</span>
-                        <div class="star-rating" title="${phone.rating} out of 5 stars">
+                        <span class="phone-brand">${phone.brand || 'Unknown'}</span>
+                        <div class="star-rating" title="${phone.rating || 0} out of 5 stars">
                             <i class="fa-solid fa-star"></i>
-                            <span class="rating-num">${phone.rating}</span>
-                            <span class="rating-count">${phone.ratingCount || ''}</span>
+                            <span class="rating-num">${phone.rating || 0}</span>
+                            <span class="rating-count">${phone.ratingCount || '(0)'}</span>
                         </div>
                     </div>
-                    <h3 class="phone-name">${phone.name}</h3>
+                    <h3 class="phone-name">${phone.name || 'Unknown'}</h3>
                     <div class="phone-specs-pills">${specsHtml}</div>
                     <div class="card-footer">
                         <div class="price-box">
                             <span class="price-lbl">Starting at</span>
-                            <span class="price-val">${phone.price}</span>
+                            <span class="price-val">${phone.price || 'N/A'}</span>
                         </div>
-                        <a href="details.html?id=${phone.id}" class="btn-view-details" aria-label="View Details for ${phone.name}">
+                        <a href="details.html?id=${phone.id || ''}" class="btn-view-details" aria-label="View Details for ${phone.name || 'Phone'}">
                             <span>Details</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
@@ -211,7 +214,7 @@ function initMobilePage() {
 
     // Utility to parse price strings like "$1,299"
     function parseNumber(str) {
-        if (!str) return 0;
+        if (!str || typeof str !== 'string') return 0;
         const cleaned = str.replace(/[^0-9.,]/g, '').replace(/,/g, '');
         return parseFloat(cleaned) || 0;
     }

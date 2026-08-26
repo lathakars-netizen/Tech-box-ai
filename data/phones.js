@@ -327,7 +327,33 @@ const phonesData = [
     }
 ];
 
+// Robust data sanitizer to prevent UI crashes
+function sanitizePhoneData(phone) {
+    if (!phone) return null;
+    return {
+        ...phone,
+        id: phone.id || 'unknown-id-' + Math.random().toString(36).substring(2, 9),
+        name: phone.name || 'Unknown Device',
+        brand: phone.brand || 'Unknown Brand',
+        brandIcon: phone.brandIcon || 'fa-solid fa-mobile-screen-button',
+        brandClass: phone.brandClass || 'brand-generic',
+        price: phone.price || 'N/A',
+        rating: typeof phone.rating === 'number' ? phone.rating : 0,
+        ratingCount: phone.ratingCount || '(0)',
+        image: phone.image || 'assets/placeholder.jpg',
+        fallbackName: phone.fallbackName || phone.name || 'Unknown',
+        highlightTag: phone.highlightTag || { text: 'New', icon: 'fa-solid fa-star', colorClass: 'cyan' },
+        glowClass: phone.glowClass || '',
+        category: phone.category || 'smartphone',
+        specs: Array.isArray(phone.specs) ? phone.specs.map(spec => ({
+            icon: spec.icon || 'fa-solid fa-microchip',
+            text: spec.text || 'Spec'
+        })) : []
+    };
+}
+
 // Attach to window object for global availability
 if (typeof window !== 'undefined') {
-    window.phonesData = phonesData;
+    // Sanitize the dataset before making it globally available
+    window.phonesData = phonesData.filter(Boolean).map(sanitizePhoneData);
 }

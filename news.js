@@ -29,16 +29,19 @@ function renderNewsCards(category) {
     const grid = document.getElementById('newsGrid');
     if (!grid) return;
 
+    // Data Validation and Sanity Check
+    const safeCategory = (typeof category === 'string' && category.trim() !== '') ? category.trim().toLowerCase() : 'all';
+
     // We do not have a real news source or API connected yet.
     // Instead of fabricating fake data, we display a professional empty state.
     // In the future, real news fetch logic (e.g., fetch('api/news')) would go here.
     
     let displayCat = '';
-    if (category !== 'all') {
-        if (category === 'ai') {
+    if (safeCategory !== 'all') {
+        if (safeCategory === 'ai') {
             displayCat = 'AI ';
         } else {
-            displayCat = category.charAt(0).toUpperCase() + category.slice(1) + ' ';
+            displayCat = safeCategory.charAt(0).toUpperCase() + safeCategory.slice(1) + ' ';
         }
     }
     

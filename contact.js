@@ -161,7 +161,9 @@ function getCatalogBrands() {
     const brandMap = new Map();
 
     phones.forEach(phone => {
-        if (phone.brand && !brandMap.has(phone.brand)) {
+        if (!phone || !phone.brand) return; // Sanity check
+        
+        if (!brandMap.has(phone.brand)) {
             brandMap.set(phone.brand, {
                 name: phone.brand,
                 icon: phone.brandIcon || 'fa-solid fa-mobile-screen-button',
@@ -187,12 +189,13 @@ function initBrandStores() {
     const catalogBrands = getCatalogBrands();
 
     // Generate verified store directory data based on catalog brands
-    const storesData = catalogBrands.map(brand => {
+    const storesData = catalogBrands.filter(Boolean).map(brand => {
+        const safeBrandName = brand.name || 'Unknown Brand';
         return {
-            id: `store-${brand.name.toLowerCase().replace(/\s+/g, '-')}`,
-            brand: brand.name,
-            brandIcon: brand.icon,
-            name: `${brand.name} Official Experience Store`,
+            id: `store-${safeBrandName.toLowerCase().replace(/\s+/g, '-')}`,
+            brand: safeBrandName,
+            brandIcon: brand.icon || 'fa-solid fa-store',
+            name: `${safeBrandName} Official Experience Store`,
             city: 'Directory Expanding (Regional Hubs)',
             address: 'Official Retail Partner Network (Address Verification Pending)',
             hours: 'Mon - Sun: 10:00 AM - 9:00 PM (Standard)',
@@ -342,12 +345,13 @@ function initServiceCentres() {
     const catalogBrands = getCatalogBrands();
 
     // Generate verified service centre directory data based on catalog brands
-    const serviceCentresData = catalogBrands.map(brand => {
+    const serviceCentresData = catalogBrands.filter(Boolean).map(brand => {
+        const safeBrandName = brand.name || 'Unknown Brand';
         return {
-            id: `service-${brand.name.toLowerCase().replace(/\s+/g, '-')}`,
-            brand: brand.name,
-            brandIcon: brand.icon,
-            name: `${brand.name} Authorized Service & Care Centre`,
+            id: `service-${safeBrandName.toLowerCase().replace(/\s+/g, '-')}`,
+            brand: safeBrandName,
+            brandIcon: brand.icon || 'fa-solid fa-store',
+            name: `${safeBrandName} Authorized Service & Care Centre`,
             city: 'Directory Expanding (Regional Hubs)',
             address: 'Authorized Service Network (Address Verification Pending)',
             services: ['Hardware Diagnostics', 'Screen & Battery Repair', 'Warranty Processing', 'OS & AI Support'],
