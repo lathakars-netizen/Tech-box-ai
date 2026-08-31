@@ -137,7 +137,7 @@ function initMobilePage() {
                         <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name || 'Phone'}" data-id="${phone.id || ''}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
-                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name || 'Phone'}">
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name || 'Phone'}" data-id="${phone.id || ''}" data-fav-id="${phone.id || ''}">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>

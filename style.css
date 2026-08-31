@@ -1009,3 +1009,270 @@ body.light-mode .specs-verified-banner {
     margin-left: auto;
 }
 
+/* ==========================================================================
+   Persistent Favorites UI & Side Drawer
+   ========================================================================== */
+.favorites-trigger-btn {
+    position: relative;
+    color: var(--text-primary);
+}
+.favorites-trigger-btn:hover {
+    color: #f43f5e;
+}
+.fav-count-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f43f5e;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px rgba(244, 63, 94, 0.6);
+}
+.fav-count-badge.pulse-anim {
+    animation: favPulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes favPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+/* Side Drawer Overlay */
+.fav-drawer-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(6, 8, 20, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fav-drawer-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fav-drawer-panel {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    background: rgba(11, 15, 30, 0.95);
+    border-left: 1px solid var(--border-glass, rgba(255,255,255,0.1));
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+body.light-mode .fav-drawer-panel {
+    background: rgba(248, 250, 252, 0.97);
+    border-left: 1px solid rgba(0,0,0,0.1);
+}
+.fav-drawer-overlay.is-open .fav-drawer-panel {
+    transform: translateX(0);
+}
+
+.fav-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-glass, rgba(255,255,255,0.1));
+}
+.fav-drawer-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Orbitron', sans-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.fav-drawer-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.fav-drawer-close:hover {
+    color: #f43f5e;
+    background: rgba(244, 63, 94, 0.1);
+}
+
+.fav-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.fav-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+}
+.fav-empty-icon {
+    font-size: 3rem;
+    color: #f43f5e;
+    opacity: 0.5;
+    margin-bottom: 16px;
+}
+.fav-empty-state h3 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.fav-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.fav-item-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-glass, rgba(255,255,255,0.08));
+    transition: all 0.2s ease;
+}
+.fav-item-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(244, 63, 94, 0.3);
+}
+.fav-item-img {
+    width: 52px; height: 52px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+    padding: 4px;
+}
+.fav-item-info {
+    flex: 1;
+    min-width: 0;
+}
+.fav-item-brand {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--color-cyan, #38bdf8);
+    font-weight: 700;
+}
+.fav-item-name {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 2px 0;
+}
+.fav-item-price {
+    font-size: 0.85rem;
+    color: #10b981;
+    font-weight: 700;
+}
+.fav-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-fav-view, .btn-fav-remove {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+.btn-fav-view {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--color-cyan, #38bdf8);
+    text-decoration: none;
+}
+.btn-fav-view:hover {
+    background: var(--color-cyan, #38bdf8);
+    color: #030712;
+}
+.btn-fav-remove {
+    background: rgba(244, 63, 94, 0.12);
+    color: #f43f5e;
+}
+.btn-fav-remove:hover {
+    background: #f43f5e;
+    color: #ffffff;
+}
+
+.fav-drawer-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-glass, rgba(255,255,255,0.1));
+    display: flex;
+    justify-content: flex-end;
+}
+.btn-clear-all-favs {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+    color: #f43f5e;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-clear-all-favs:hover {
+    background: #f43f5e;
+    color: #ffffff;
+}
+
+/* Global Toast for Favorites */
+.fav-global-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 30px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(244,63,94,0.3);
+    backdrop-filter: blur(12px);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+.fav-global-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+

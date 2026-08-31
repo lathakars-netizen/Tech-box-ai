@@ -649,7 +649,7 @@ function renderTrendingCards() {
                         <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id || ''}" aria-label="Compare ${phone.name || 'Phone'}">
                             <i class="fa-solid fa-code-compare"></i>
                         </button>
-                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name}">
+                        <button class="card-icon-btn fav-btn" title="Add to Favorites" data-id="${phone.id || ''}" data-fav-id="${phone.id || ''}" aria-label="Favorite ${phone.name}">
                             <i class="fa-regular fa-heart"></i>
                         </button>
                     </div>
