@@ -18,6 +18,9 @@
     <!-- FontAwesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Leaflet CSS for Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="search.css">
@@ -510,6 +513,21 @@
                     </div>
                 </div>
 
+                <!-- Interactive Service Centres Map Container -->
+                <div class="map-wrapper-card" id="mapWrapperCard">
+                    <div class="map-card-header">
+                        <div class="map-card-title">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>Interactive Service Centre Map</span>
+                        </div>
+                        <div class="map-status-pill" id="mapStatusPill">
+                            <i class="fa-solid fa-location-dot"></i> <span id="mapCountText">Initializing Map...</span>
+                        </div>
+                    </div>
+                    <div id="serviceMap" class="service-map-container"></div>
+                    <div id="mapToast" class="map-toast" aria-live="polite"></div>
+                </div>
+
                 <!-- Service Centres Grid -->
                 <div class="directory-grid" id="servicesGrid">
                     <!-- Service Centre cards rendered dynamically by contact.js -->
@@ -523,6 +541,8 @@
     <script src="data/phones.js"></script>
     <script src="search.js"></script>
     <script src="home.js"></script>
+    <!-- Leaflet JS for Interactive Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="contact.js"></script>
 </body>
 

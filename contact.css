@@ -820,3 +820,260 @@ body.light-mode .card-footer {
     font-size: 0.875rem;
     color: var(--text-muted, #9ca3af);
 }
+
+/* --------------------------------------------------------------------------
+   Interactive Service Centres Map Styling
+   -------------------------------------------------------------------------- */
+.map-wrapper-card {
+    background: rgba(17, 24, 39, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+body.light-mode .map-wrapper-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.map-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.map-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main, #f3f4f6);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.map-card-title i {
+    color: var(--pink, #d946ef);
+}
+
+.map-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(217, 70, 239, 0.12);
+    border: 1px solid rgba(217, 70, 239, 0.25);
+    color: var(--pink, #d946ef);
+}
+
+.service-map-container {
+    width: 100%;
+    height: 420px;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    z-index: 1;
+    background: #0f172a;
+}
+
+body.light-mode .service-map-container {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: #e2e8f0;
+}
+
+@media (max-width: 640px) {
+    .service-map-container {
+        height: 300px;
+    }
+}
+
+/* Custom Cyber Map Pin Marker */
+.cyber-leaflet-marker-wrapper {
+    background: transparent;
+    border: none;
+}
+
+.cyber-leaflet-pin {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--cyan, #06b6d4), var(--purple, #8b5cf6));
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.5);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cyber-leaflet-pin i {
+    transform: rotate(45deg);
+    color: #ffffff;
+    font-size: 1.05rem;
+}
+
+.cyber-leaflet-pin:hover {
+    transform: rotate(-45deg) scale(1.15);
+    box-shadow: 0 6px 20px rgba(217, 70, 239, 0.7);
+}
+
+/* Leaflet Cyber Popup Override */
+.leaflet-popup-content-wrapper {
+    background: rgba(15, 23, 42, 0.92) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 1rem !important;
+    color: #f3f4f6 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+    padding: 0.5rem !important;
+}
+
+body.light-mode .leaflet-popup-content-wrapper {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: #111827 !important;
+}
+
+.leaflet-popup-tip {
+    background: rgba(15, 23, 42, 0.92) !important;
+}
+
+body.light-mode .leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.map-popup-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 0.25rem;
+}
+
+.map-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.map-popup-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-main, #f3f4f6);
+    line-height: 1.3;
+    margin: 0.2rem 0;
+}
+
+body.light-mode .map-popup-title {
+    color: #111827;
+}
+
+.map-popup-row {
+    font-size: 0.775rem;
+    color: var(--text-muted, #9ca3af);
+    line-height: 1.35;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+}
+
+body.light-mode .map-popup-row {
+    color: #4b5563;
+}
+
+.map-popup-row i {
+    color: var(--cyan, #06b6d4);
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+}
+
+.map-popup-btn {
+    margin-top: 0.4rem;
+    background: rgba(6, 182, 212, 0.15);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    color: var(--cyan, #06b6d4);
+    padding: 0.35rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.775rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.map-popup-btn:hover {
+    background: var(--cyan, #06b6d4);
+    color: #ffffff;
+}
+
+/* Card Active Highlight Effect */
+.directory-card.card-active-highlight {
+    border-color: var(--pink, #d946ef) !important;
+    box-shadow: 0 0 25px rgba(217, 70, 239, 0.4) !important;
+    animation: cardPulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes cardPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.02); }
+}
+
+/* Map Toast Notification Banner */
+.map-toast {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(17, 24, 39, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-main, #f3f4f6);
+    padding: 0.65rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.825rem;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 1000;
+    max-width: 90%;
+    text-align: center;
+}
+
+.map-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.map-toast.warning {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: rgba(30, 27, 20, 0.95);
+    color: #fbbf24;
+}
+
+.map-toast.success {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 35, 28, 0.95);
+    color: #34d399;
+}
