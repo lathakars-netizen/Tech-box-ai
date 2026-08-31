@@ -282,10 +282,11 @@
                    data-id="${phone.id}">
                     <img src="${phone.image}" alt="${phone.name}" class="search-result-thumb" onerror="this.src='assets/s25_ultra.jpg';" />
                     <div class="search-result-info">
-                        <div class="search-result-header">
+                        <div class="search-result-header" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                             <span class="search-result-brand-pill">
                                 <i class="${brandIcon}"></i> ${phone.brand}
                             </span>
+                            <span class="verified-specs-pill" style="font-size:0.6rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> Verified</span>
                             <span class="search-result-title">${highlightedName}</span>
                         </div>
                         <div class="search-result-specs">

@@ -247,7 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="phone-card-img-wrapper">
                         <img src="${phone.image}" alt="${phone.name}" class="phone-card-img" onerror="this.style.display='none'">
                     </div>
-                    <div class="phone-card-title">${phone.name}</div>
+                    <div class="phone-card-title" style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                        <span>${phone.name}</span>
+                        <span class="verified-specs-pill" style="font-size:0.62rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                    </div>
                     <div class="phone-card-price">${phone.price}</div>
                     <div class="phone-card-specs">
                         <span><i class="${phone.specs[0]?.icon || 'fa-solid fa-microchip'}"></i> ${phone.processor.split(' ')[0]} ${phone.processor.split(' ')[1] || ''}</span>

@@ -127,9 +127,12 @@ function initMobilePage() {
         return `
             <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
                 <div class="card-top-bar">
-                    <span class="card-brand-badge ${phone.brandClass || ''}">
-                        <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
-                    </span>
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <span class="card-brand-badge ${phone.brandClass || ''}">
+                            <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
+                        </span>
+                        <span class="verified-specs-pill" title="Verified Phone Specs from Dataset"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                    </div>
                     <div class="card-action-group">
                         <button class="card-icon-btn compare-btn" title="Add to Compare" aria-label="Compare ${phone.name || 'Phone'}" data-id="${phone.id || ''}">
                             <i class="fa-solid fa-code-compare"></i>

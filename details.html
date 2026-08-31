@@ -220,10 +220,16 @@
                 <!-- Right: Info Panel -->
                 <div class="dh-info-panel">
 
-                    <!-- Brand badge -->
-                    <div class="dh-brand-badge" id="dhBrandBadge">
-                        <i id="dhBrandIcon"></i>
-                        <span id="dhBrandName"></span>
+                    <!-- Brand badge row with Verified Specs tag -->
+                    <div class="dh-brand-badge-row" style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+                        <div class="dh-brand-badge" id="dhBrandBadge">
+                            <i id="dhBrandIcon"></i>
+                            <span id="dhBrandName"></span>
+                        </div>
+                        <div class="verified-specs-badge" id="dhVerifiedBadge" title="Verified Specifications from TECH BOX AI Dataset">
+                            <i class="fa-solid fa-shield-check"></i>
+                            <span>Verified Specs</span>
+                        </div>
                     </div>
 
                     <!-- Phone name -->
@@ -277,6 +283,12 @@
                         <span>FULL SPECIFICATIONS</span>
                     </div>
                     <h2 class="dh-specs-title">Complete <span class="gradient-text">Tech Sheet</span></h2>
+                </div>
+
+                <!-- Verified Specs Banner -->
+                <div class="specs-verified-banner" id="specsVerifiedBanner">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span><strong>Verified Dataset Specifications</strong> — Sourced directly from official TECH BOX AI catalog dataset</span>
                 </div>
 
                 <div class="dh-specs-grid" id="dhSpecsGrid">

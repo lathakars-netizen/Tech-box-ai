@@ -247,7 +247,10 @@ function renderChips() {
         chip.innerHTML = `
             <img src="${phone.image}" alt="${phone.name}" class="phone-chip-img" onerror="this.style.display='none'" />
             <div class="phone-chip-info">
-                <span class="phone-chip-brand">${phone.brand}</span>
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <span class="phone-chip-brand">${phone.brand}</span>
+                    <span class="verified-specs-pill" style="font-size:0.62rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                </div>
                 <h4 class="phone-chip-name">${phone.name}</h4>
                 <span class="phone-chip-price">${phone.price}</span>
             </div>

@@ -345,6 +345,7 @@ function sanitizePhoneData(phone) {
         highlightTag: phone.highlightTag || { text: 'New', icon: 'fa-solid fa-star', colorClass: 'cyan' },
         glowClass: phone.glowClass || '',
         category: phone.category || 'smartphone',
+        verifiedSpecs: true,
         specs: Array.isArray(phone.specs) ? phone.specs.map(spec => ({
             icon: spec.icon || 'fa-solid fa-microchip',
             text: spec.text || 'Spec'
