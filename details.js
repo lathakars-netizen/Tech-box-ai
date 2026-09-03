@@ -200,7 +200,7 @@ function renderSpecsGrid(phone) {
             <div class="dh-spec-content">
                 <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
                     <span class="dh-spec-label">${card.label}</span>
-                    <span class="spec-verified-tag" title="Verified Dataset Spec"><i class="fa-solid fa-check"></i> Verified</span>
+                    <span class="spec-verified-tag" title="Verified Dataset Spec"><i class="fa-solid fa-check"></i> <span data-i18n="card.verified">Verified</span></span>
                 </div>
                 <span class="dh-spec-value">${card.value}</span>
                 ${card.sub ? `<span class="dh-spec-sub">${card.sub}</span>` : ''}

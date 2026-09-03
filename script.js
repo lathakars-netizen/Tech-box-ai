@@ -154,6 +154,7 @@ function initLanguageSelection() {
 
             // 2. Persist selection to localStorage
             localStorage.setItem('techbox_language', langCode);
+            localStorage.setItem('techboxLang', langCode);
             localStorage.setItem('techbox_language_name', langName);
             localStorage.setItem('techbox_lang_timestamp', new Date().toISOString());
 

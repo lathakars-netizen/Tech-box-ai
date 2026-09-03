@@ -88,12 +88,12 @@
         <!-- Hero Section with heading and optional tagline -->
         <section class="hero-wrapper hero-section" id="hero">
             <div class="hero-container">
-                <h1 class="hero-headline">Explore Mobiles</h1>
-                <p class="hero-subtitle">Search, filter, sort and compare the latest flagship and value smartphones powered by AI.</p>
+                <h1 class="hero-headline" data-i18n="mobiles.title">Explore Mobiles</h1>
+                <p class="hero-subtitle" data-i18n="mobiles.subtitle">Search, filter, sort and compare the latest flagship and value smartphones powered by AI.</p>
                 <div class="hero-search-box anim-fade-up" style="--delay: 0.4s;">
                     <div class="search-input-wrapper">
                         <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
-                        <input type="text" id="mobilesSearchInput" class="hero-input" placeholder="Search phones..." autocomplete="off" aria-label="Search phones" aria-controls="mobilesGrid" aria-expanded="false">
+                        <input type="text" id="mobilesSearchInput" class="hero-input" data-i18n-ph="mobiles.searchPh" placeholder="Search phones..." autocomplete="off" aria-label="Search phones" aria-controls="mobilesGrid" aria-expanded="false">
                         <button class="search-clear-btn" id="mobilesSearchClearBtn" aria-label="Clear search" style="display:none;" title="Clear search"><i class="fa-solid fa-xmark"></i></button>
                         <span class="kbd-badge" id="mobilesKbdBadge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
                     </div>
@@ -104,7 +104,7 @@
         <!-- Filter Bar -->
         <section class="filter-bar" id="filterBar">
             <div class="filter-group brands">
-                <span class="filter-label">Brand:</span>
+                <span class="filter-label" data-i18n="filter.brandLabel">Brand:</span>
                 <button class="filter-btn brand-btn" data-brand="All">All</button>
                 <button class="filter-btn brand-btn" data-brand="Samsung">Samsung</button>
                 <button class="filter-btn brand-btn" data-brand="Apple">Apple</button>
@@ -116,22 +116,22 @@
                 <button class="filter-btn brand-btn" data-brand="Vivo">Vivo</button>
             </div>
             <div class="filter-group price">
-                <span class="filter-label">Price:</span>
+                <span class="filter-label" data-i18n="filter.priceLabel">Price:</span>
                 <select id="priceFilter" class="price-select">
-                    <option value="all">All</option>
-                    <option value="0-500">Under $500</option>
-                    <option value="500-900">$500 – $900</option>
-                    <option value="900-1300">$900 – $1300</option>
-                    <option value="1300+">Above $1300</option>
+                    <option value="all" data-i18n="filter.priceAll">All</option>
+                    <option value="0-500" data-i18n="filter.priceUnder500">Under $500</option>
+                    <option value="500-900" data-i18n="filter.price500to900">$500 – $900</option>
+                    <option value="900-1300" data-i18n="filter.price900to1300">$900 – $1300</option>
+                    <option value="1300+" data-i18n="filter.priceAbove1300">Above $1300</option>
                 </select>
             </div>
             <div class="filter-group sort">
-                <span class="filter-label">Sort by:</span>
+                <span class="filter-label" data-i18n="filter.sortLabel">Sort by:</span>
                 <select id="sortSelect" class="sort-select">
-                    <option value="price-asc">Price – Low to High</option>
-                    <option value="price-desc">Price – High to Low</option>
-                    <option value="rating-desc">Rating – High to Low</option>
-                    <option value="newest">Newest</option>
+                    <option value="price-asc" data-i18n="sort.priceAsc">Price – Low to High</option>
+                    <option value="price-desc" data-i18n="sort.priceDesc">Price – High to Low</option>
+                    <option value="rating-desc" data-i18n="sort.ratingDesc">Rating – High to Low</option>
+                    <option value="newest" data-i18n="sort.newest">Newest</option>
                 </select>
             </div>
         </section>

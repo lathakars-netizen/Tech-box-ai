@@ -179,12 +179,12 @@
                 <div class="section-header-left" style="align-items: center; text-align: center;">
                     <div class="section-badge" style="color: var(--cyan); background: rgba(6, 182, 212, 0.1); margin: 0 auto 1rem;">
                         <i class="fa-solid fa-hand-holding-dollar" style="color: var(--cyan);"></i>
-                        <span>AI TRADE-IN</span>
+                        <span data-i18n="sell.badge">AI TRADE-IN</span>
                     </div>
                     <h2 class="section-title">
-                        Sell Your <span class="gradient-text">Phone</span>
+                        <span data-i18n="sell.title">Sell Your</span> <span class="gradient-text" data-i18n="sell.accent">Phone</span>
                     </h2>
-                    <p class="section-subtitle" style="margin: 0 auto;">
+                    <p class="section-subtitle" style="margin: 0 auto;" data-i18n="sell.subtitle">
                         Get an instant estimated value based on your device's condition and our market data.
                     </p>
                 </div>
@@ -194,69 +194,69 @@
                 
                 <!-- Left: Form -->
                 <form id="sellForm" class="sell-form-card">
-                    <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text-main);">Device Details</h3>
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text-main);" data-i18n="sell.detailsHeading">Device Details</h3>
                     
                     <div class="form-group">
-                        <label class="form-label">Brand</label>
+                        <label class="form-label" data-i18n="sell.brandLabel">Brand</label>
                         <select class="form-select" id="brandSelect">
-                            <option value="" disabled selected>Select Brand</option>
+                            <option value="" disabled selected data-i18n="sell.selectBrand">Select Brand</option>
                             <!-- Populated via JS -->
                         </select>
-                        <span class="error-msg">Please select a brand.</span>
+                        <span class="error-msg" data-i18n="sell.errBrand">Please select a brand.</span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Model</label>
+                        <label class="form-label" data-i18n="sell.modelLabel">Model</label>
                         <select class="form-select" id="modelSelect" disabled>
-                            <option value="" disabled selected>Select Model</option>
+                            <option value="" disabled selected data-i18n="sell.selectModel">Select Model</option>
                             <!-- Populated via JS -->
                         </select>
-                        <span class="error-msg">Please select a model.</span>
+                        <span class="error-msg" data-i18n="sell.errModel">Please select a model.</span>
                     </div>
 
                     <div class="form-group" style="margin-top: 2rem;">
-                        <label class="form-label">Condition</label>
+                        <label class="form-label" data-i18n="sell.conditionLabel">Condition</label>
                         <div class="radio-grid">
                             <input type="radio" name="condition" id="cond-likenew" value="like-new" class="radio-input" checked>
                             <label for="cond-likenew" class="radio-label">
-                                <span class="radio-label-title">Like New</span>
-                                <span class="radio-label-desc">Flawless, no scratches</span>
+                                <span class="radio-label-title" data-i18n="sell.condLikeNew">Like New</span>
+                                <span class="radio-label-desc" data-i18n="sell.condLikeNewDesc">Flawless, no scratches</span>
                             </label>
 
                             <input type="radio" name="condition" id="cond-excellent" value="excellent" class="radio-input">
                             <label for="cond-excellent" class="radio-label">
-                                <span class="radio-label-title">Excellent</span>
-                                <span class="radio-label-desc">Minor micro-scratches</span>
+                                <span class="radio-label-title" data-i18n="sell.condExcellent">Excellent</span>
+                                <span class="radio-label-desc" data-i18n="sell.condExcellentDesc">Minor micro-scratches</span>
                             </label>
 
                             <input type="radio" name="condition" id="cond-good" value="good" class="radio-input">
                             <label for="cond-good" class="radio-label">
-                                <span class="radio-label-title">Good</span>
-                                <span class="radio-label-desc">Visible wear & tear</span>
+                                <span class="radio-label-title" data-i18n="sell.condGood">Good</span>
+                                <span class="radio-label-desc" data-i18n="sell.condGoodDesc">Visible wear & tear</span>
                             </label>
 
                             <input type="radio" name="condition" id="cond-fair" value="fair" class="radio-input">
                             <label for="cond-fair" class="radio-label">
-                                <span class="radio-label-title">Fair</span>
-                                <span class="radio-label-desc">Heavy wear, intact</span>
+                                <span class="radio-label-title" data-i18n="sell.condFair">Fair</span>
+                                <span class="radio-label-desc" data-i18n="sell.condFairDesc">Heavy wear, intact</span>
                             </label>
                         </div>
                     </div>
 
                     <div class="form-group" style="margin-top: 2rem;">
-                        <label class="form-label">Accessories & Status</label>
+                        <label class="form-label" data-i18n="sell.accLabel">Accessories & Status</label>
                         <div class="checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="chkCharger" class="checkbox-input" checked>
-                                I have the original charger
+                                <span data-i18n="sell.chkCharger">I have the original charger</span>
                             </label>
                             <label class="checkbox-label">
                                 <input type="checkbox" id="chkBox" class="checkbox-input" checked>
-                                I have the original box
+                                <span data-i18n="sell.chkBox">I have the original box</span>
                             </label>
                             <label class="checkbox-label" style="color: #ef4444;">
                                 <input type="checkbox" id="chkDamage" class="checkbox-input">
-                                The device has screen/body damage or needs repair
+                                <span data-i18n="sell.chkDamage">The device has screen/body damage or needs repair</span>
                             </label>
                         </div>
                     </div>
@@ -267,7 +267,7 @@
                     <!-- Empty State -->
                     <div id="summaryEmptyState" class="empty-state">
                         <i class="fa-solid fa-mobile-screen"></i>
-                        <p>Select your device brand and model to see your estimated resale value.</p>
+                        <p data-i18n="sell.emptyState">Select your device brand and model to see your estimated resale value.</p>
                     </div>
 
                     <!-- Result State -->
@@ -280,28 +280,28 @@
                         </div>
 
                         <div class="estimate-box">
-                            <div class="estimate-label">Estimated Resale Value</div>
+                            <div class="estimate-label" data-i18n="sell.estimateLabel">Estimated Resale Value</div>
                             <div class="estimate-value" id="sumEstimate">$0</div>
-                            <div class="estimate-note">Based on your condition selection. Final offer may vary.</div>
+                            <div class="estimate-note" data-i18n="sell.estimateNote">Based on your condition selection. Final offer may vary.</div>
                         </div>
 
                         <div class="summary-details">
                             <div class="summary-row">
-                                <span class="lbl">Condition:</span>
+                                <span class="lbl" data-i18n="sell.summaryCondition">Condition:</span>
                                 <span class="val" id="sumCondition">Like New</span>
                             </div>
                             <div class="summary-row">
-                                <span class="lbl">Accessories:</span>
+                                <span class="lbl" data-i18n="sell.summaryAccessories">Accessories:</span>
                                 <span class="val" id="sumAccessories">Charger, Box</span>
                             </div>
                             <div class="summary-row">
-                                <span class="lbl">Major Damage:</span>
+                                <span class="lbl" data-i18n="sell.summaryDamage">Major Damage:</span>
                                 <span class="val" id="sumDamage" style="color: #ef4444;">No</span>
                             </div>
                         </div>
 
                         <button class="btn btn-primary sell-btn" id="sellCtaBtn">
-                            <span class="btn-text">Get Started</span>
+                            <span class="btn-text" data-i18n="sell.getStarted">Get Started</span>
                             <i class="fa-solid fa-arrow-right btn-icon"></i>
                         </button>
                     </div>

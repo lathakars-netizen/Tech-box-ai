@@ -114,6 +114,10 @@ function initMobilePage() {
         });
 
         grid.innerHTML = sorted.map((phone, idx) => buildCardHtml(phone, idx)).join('');
+        // Apply translations to newly injected content
+        if (window.techboxLang && typeof window.techboxLang.applyTranslations === 'function') {
+            window.techboxLang.applyTranslations(grid);
+        }
         wireCardButtons();
     }
 
@@ -167,11 +171,11 @@ function initMobilePage() {
                     <div class="phone-specs-pills">${specsHtml}</div>
                     <div class="card-footer">
                         <div class="price-box">
-                            <span class="price-lbl">Starting at</span>
+                            <span class="price-lbl" data-i18n="card.startingAt">Starting at</span>
                             <span class="price-val">${phone.price || 'N/A'}</span>
                         </div>
                         <a href="details.html?id=${phone.id || ''}" class="btn-view-details" aria-label="View Details for ${phone.name || 'Phone'}">
-                            <span>Details</span>
+                            <span data-i18n="card.details">Details</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>

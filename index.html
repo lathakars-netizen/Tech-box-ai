@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Main CSS -->
     <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
 </head>
 <body>
     <!-- Dynamic Animated Grid Canvas -->
@@ -132,8 +133,8 @@
 
             <!-- Heading Section -->
             <div class="heading-section">
-                <h1 class="main-heading">Choose Your Language</h1>
-                <p class="sub-heading">Select your preferred language to customize your AI experience</p>
+                <h1 class="main-heading" data-i18n="gateway.title">Choose Your Language</h1>
+                <p class="sub-heading" data-i18n="gateway.subtitle">Select your preferred language to customize your AI experience</p>
             </div>
 
             <!-- Language Buttons Group -->
@@ -147,7 +148,7 @@
                     </div>
                     <div class="lang-info">
                         <span class="lang-name lang-en">English</span>
-                        <span class="lang-subtitle">Default System Language</span>
+                        <span class="lang-subtitle" data-i18n="gateway.enSub">Default System Language</span>
                     </div>
                     <div class="btn-action">
                         <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
@@ -163,7 +164,7 @@
                     </div>
                     <div class="lang-info">
                         <span class="lang-name lang-hi">हिन्दी</span>
-                        <span class="lang-subtitle">हिंदी में अनुभव करें</span>
+                        <span class="lang-subtitle" data-i18n="gateway.hiSub">हिंदी में अनुभव करें</span>
                     </div>
                     <div class="btn-action">
                         <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
@@ -179,7 +180,7 @@
                     </div>
                     <div class="lang-info">
                         <span class="lang-name lang-te">తెలుగు</span>
-                        <span class="lang-subtitle">తెలుగులో అనుభవించండి</span>
+                        <span class="lang-subtitle" data-i18n="gateway.teSub">తెలుగులో అనుభవించండి</span>
                     </div>
                     <div class="btn-action">
                         <span class="btn-arrow"><i class="fa-solid fa-arrow-right"></i></span>
@@ -193,7 +194,7 @@
             <div class="card-footer">
                 <div class="status-indicator">
                     <span class="status-dot"></span>
-                    <span class="status-text">AI Engine Online • v3.8</span>
+                    <span class="status-text" data-i18n="gateway.status">AI Engine Online • v3.8</span>
                 </div>
             </div>
 

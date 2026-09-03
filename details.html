@@ -155,15 +155,15 @@
         <!-- Loading Skeleton -->
         <div class="details-loader" id="detailsLoader">
             <div class="loader-ring"></div>
-            <p class="loader-label">Loading device data…</p>
+            <p class="loader-label" data-i18n="details.loader">Loading device data…</p>
         </div>
 
         <!-- Error State -->
         <div class="details-error" id="detailsError" style="display:none;">
             <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <h2 class="error-title">Device Not Found</h2>
-            <p class="error-msg">The phone you're looking for doesn't exist in our database.</p>
-            <a href="mobiles.html" class="btn-back-err">
+            <h2 class="error-title" data-i18n="details.notFoundTitle">Device Not Found</h2>
+            <p class="error-msg" data-i18n="details.notFoundMsg">The phone you're looking for doesn't exist in our database.</p>
+            <a href="mobiles.html" class="btn-back-err" data-i18n="details.backToMobiles">
                 <i class="fa-solid fa-arrow-left"></i> Back to Mobiles
             </a>
         </div>
@@ -175,14 +175,14 @@
             <div class="breadcrumb-row" id="breadcrumbRow">
                 <button class="btn-back" id="btnBack" aria-label="Go back">
                     <i class="fa-solid fa-arrow-left"></i>
-                    <span>Back</span>
+                    <span data-i18n="details.back">Back</span>
                 </button>
                 <nav class="breadcrumb" aria-label="Breadcrumb">
-                    <a href="home.html" class="bc-link">Home</a>
+                    <a href="home.html" class="bc-link" data-i18n="details.bcHome">Home</a>
                     <i class="fa-solid fa-chevron-right bc-sep"></i>
-                    <a href="mobiles.html" class="bc-link">Mobiles</a>
+                    <a href="mobiles.html" class="bc-link" data-i18n="details.bcMobiles">Mobiles</a>
                     <i class="fa-solid fa-chevron-right bc-sep"></i>
-                    <span class="bc-current" id="bcCurrent">Device</span>
+                    <span class="bc-current" id="bcCurrent" data-i18n="details.bcDevice">Device</span>
                 </nav>
             </div>
 
@@ -230,7 +230,7 @@
                         </div>
                         <div class="verified-specs-badge" id="dhVerifiedBadge" title="Verified Specifications from TECH BOX AI Dataset">
                             <i class="fa-solid fa-shield-check"></i>
-                            <span>Verified Specs</span>
+                            <span data-i18n="details.verifiedSpecs">Verified Specs</span>
                         </div>
                     </div>
 
@@ -247,7 +247,7 @@
 
                     <!-- Price block -->
                     <div class="dh-price-block">
-                        <span class="dh-price-lbl">Starting at</span>
+                        <span class="dh-price-lbl" data-i18n="details.startingAt">Starting at</span>
                         <span class="dh-price-val" id="dhPrice"></span>
                     </div>
 
@@ -258,14 +258,14 @@
                     <div class="dh-action-row">
                         <button class="dh-btn-buy" id="btnBuy" aria-label="Buy Now">
                             <i class="fa-solid fa-bolt"></i>
-                            <span>Buy Now</span>
+                            <span data-i18n="details.buyNow">Buy Now</span>
                         </button>
                         <button class="dh-btn-fav" id="btnFav" aria-label="Add to Favorites">
                             <i class="fa-regular fa-heart" id="favIcon"></i>
                         </button>
                         <button class="dh-btn-compare" id="btnCompare" aria-label="Add to Compare">
                             <i class="fa-solid fa-code-compare"></i>
-                            <span data-i18n="nav.compare">Compare</span>
+                            <span data-i18n="card.compare">Compare</span>
                         </button>
                     </div>
 
@@ -282,15 +282,15 @@
                 <div class="dh-specs-header">
                     <div class="section-badge-inner">
                         <i class="fa-solid fa-microchip"></i>
-                        <span>FULL SPECIFICATIONS</span>
+                        <span data-i18n="details.fullSpecsBadge">FULL SPECIFICATIONS</span>
                     </div>
-                    <h2 class="dh-specs-title">Complete <span class="gradient-text">Tech Sheet</span></h2>
+                    <h2 class="dh-specs-title"><span data-i18n="details.fullSpecsTitle">Complete</span> <span class="gradient-text" data-i18n="details.fullSpecsAccent">Tech Sheet</span></h2>
                 </div>
 
                 <!-- Verified Specs Banner -->
                 <div class="specs-verified-banner" id="specsVerifiedBanner">
                     <i class="fa-solid fa-circle-check"></i>
-                    <span><strong>Verified Dataset Specifications</strong> — Sourced directly from official TECH BOX AI catalog dataset</span>
+                    <span data-i18n="details.verifiedBanner"><strong>Verified Dataset Specifications</strong> — Sourced directly from official TECH BOX AI catalog dataset</span>
                 </div>
 
                 <div class="dh-specs-grid" id="dhSpecsGrid">
@@ -360,7 +360,7 @@
                         <p>Compare with other top-rated smartphones in our database</p>
                     </div>
                     <a href="home.html#mobiles" class="dh-explore-btn">
-                        <span>View All Mobiles</span>
+                        <span data-i18n="section.viewAll">View All Mobiles</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>

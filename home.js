@@ -604,15 +604,6 @@ function initTrendingUI() {
             window.location.href = `compare.html?ids=${stored.join(',')}`;
         });
     });
-
-    // 4. Filter Tabs Toggle Handler
-    const filterTabs = document.querySelectorAll('.filter-tab');
-    filterTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            filterTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-        });
-    });
 }
 
 /**
@@ -643,7 +634,7 @@ function renderTrendingCards() {
                         <span class="card-brand-badge ${phone.brandClass || ''}">
                             <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
                         </span>
-                        <span class="verified-specs-pill" title="Verified Phone Specs from Dataset"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                        <span class="verified-specs-pill" title="Verified Phone Specs from Dataset"><i class="fa-solid fa-shield-check"></i> <span data-i18n="card.verified">Verified</span></span>
                     </div>
                     <div class="card-action-group">
                         <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id || ''}" aria-label="Compare ${phone.name || 'Phone'}">
@@ -685,11 +676,11 @@ function renderTrendingCards() {
 
                     <div class="card-footer">
                         <div class="price-box">
-                            <span class="price-lbl">Starting at</span>
+                            <span class="price-lbl" data-i18n="card.startingAt">Starting at</span>
                             <span class="price-val">${phone.price}</span>
                         </div>
                         <a href="details.html?id=${phone.id}" class="btn-view-details" aria-label="View Details for ${phone.name}">
-                            <span>Details</span>
+                            <span data-i18n="card.details">Details</span>
                             <i class="fa-solid fa-chevron-right"></i>
                         </a>
                     </div>
@@ -697,6 +688,10 @@ function renderTrendingCards() {
             </div>
         `;
     }).join('');
+
+    if (window.techboxLang) {
+        window.techboxLang.applyTranslations(grid);
+    }
 }
 
 /**
@@ -717,10 +712,8 @@ function renderUpcomingCards() {
                 <div class="no-results-icon" style="margin-bottom: 1.5rem;">
                     <i class="fa-regular fa-calendar-xmark" style="font-size: 3rem; color: var(--text-muted, #9ca3af);"></i>
                 </div>
-                <h3 class="no-results-title" style="margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--text-main, #f3f4f6);">Upcoming Mobiles</h3>
-                <p class="no-results-msg" style="color: var(--text-muted, #9ca3af); max-width: 400px; line-height: 1.5;">
-                    New launches will appear here when verified release information is available.
-                </p>
+                <h3 class="no-results-title" style="margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--text-main, #f3f4f6);" data-i18n="upcoming.emptyTitle"></h3>
+                <p class="no-results-msg" style="color: var(--text-muted, #9ca3af); max-width: 400px; line-height: 1.5;" data-i18n="upcoming.emptyMsg"></p>
             </div>
         `;
         return;

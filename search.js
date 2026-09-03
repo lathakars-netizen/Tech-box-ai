@@ -39,13 +39,13 @@
             <div class="global-search-modal" id="globalSearchModal">
                 <div class="search-modal-header">
                     <i class="fa-solid fa-magnifying-glass search-modal-search-icon"></i>
-                    <input type="text" id="globalSearchInput" class="search-modal-input" placeholder="Search phone name, brand, processor, camera, RAM, battery or price..." autocomplete="off" spellcheck="false" />
+                    <input type="text" id="globalSearchInput" class="search-modal-input" data-i18n-ph="search.modalPlaceholder" placeholder="Search phone name, brand, processor, camera, RAM, battery or price..." autocomplete="off" spellcheck="false" />
                     <div class="search-modal-actions">
                         <span class="search-modal-kbd">Ctrl + K</span>
-                        <button type="button" id="globalSearchClearBtn" class="search-modal-btn-clear" style="display:none;" aria-label="Clear search">
+                        <button type="button" id="globalSearchClearBtn" class="search-modal-btn-clear" style="display:none;" data-i18n-title="search.clearSearch" aria-label="Clear search">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button type="button" id="globalSearchCloseBtn" class="search-modal-btn-close" aria-label="Close search modal">
+                        <button type="button" id="globalSearchCloseBtn" class="search-modal-btn-close" data-i18n-title="search.closeModal" aria-label="Close search modal">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -53,9 +53,9 @@
                 <div class="search-modal-results" id="globalSearchResults"></div>
                 <div class="search-modal-footer">
                     <div class="search-modal-hints">
-                        <span class="search-hint-item"><kbd>ESC</kbd> Close</span>
-                        <span class="search-hint-item"><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
-                        <span class="search-hint-item"><kbd>↵</kbd> Select</span>
+                        <span class="search-hint-item"><kbd>ESC</kbd> <span data-i18n="search.escClose">Close</span></span>
+                        <span class="search-hint-item"><kbd>↑</kbd><kbd>↓</kbd> <span data-i18n="search.navigate">Navigate</span></span>
+                        <span class="search-hint-item"><kbd>↵</kbd> <span data-i18n="search.select">Select</span></span>
                     </div>
                     <div class="search-modal-branding">
                         TECH BOX <span style="color: var(--color-cyan-bright, #38bdf8); font-weight: 700;">AI</span>
@@ -65,6 +65,9 @@
         `;
 
         document.body.appendChild(overlay);
+        if (window.techboxLang && typeof window.techboxLang.applyTranslations === 'function') {
+            window.techboxLang.applyTranslations(overlay);
+        }
 
         // Bind inner modal event handlers
         const input = document.getElementById('globalSearchInput');
@@ -286,7 +289,7 @@
                             <span class="search-result-brand-pill">
                                 <i class="${brandIcon}"></i> ${phone.brand}
                             </span>
-                            <span class="verified-specs-pill" style="font-size:0.6rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                            <span class="verified-specs-pill" style="font-size:0.6rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> <span data-i18n="card.verified">Verified</span></span>
                             <span class="search-result-title">${highlightedName}</span>
                         </div>
                         <div class="search-result-specs">
@@ -303,6 +306,9 @@
         });
 
         container.innerHTML = html;
+        if (window.techboxLang && typeof window.techboxLang.applyTranslations === 'function') {
+            window.techboxLang.applyTranslations(container);
+        }
 
         // Mouse hover interactions
         const items = container.querySelectorAll('.search-result-item');
@@ -362,11 +368,11 @@
         container.innerHTML = `
             <div class="search-no-results">
                 <i class="fa-solid fa-magnifying-glass-minus search-no-results-icon"></i>
-                <div class="search-no-results-title">No Smartphones Found</div>
+                <div class="search-no-results-title" data-i18n="search.noResultsTitle">No Smartphones Found</div>
                 <div class="search-no-results-sub">
                     We couldn't find any results matching "<strong>${escapeHtml(rawQuery)}</strong>".
                 </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); margin-top: 4px;">Try searching for:</div>
+                <div style="font-size: 0.78rem; color: var(--text-muted, #64748b); margin-top: 4px;" data-i18n="search.try">Try searching for:</div>
                 <div class="search-suggestions-wrapper">
                     <span class="search-suggestion-pill" data-query="Apple">Apple</span>
                     <span class="search-suggestion-pill" data-query="Samsung">Samsung</span>
@@ -376,6 +382,10 @@
                 </div>
             </div>
         `;
+
+        if (window.techboxLang && typeof window.techboxLang.applyTranslations === 'function') {
+            window.techboxLang.applyTranslations(container);
+        }
 
         // Click handler for suggestion pills
         const pills = container.querySelectorAll('.search-suggestion-pill');

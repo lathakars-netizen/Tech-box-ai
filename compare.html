@@ -84,19 +84,19 @@
         <section class="compare-hero">
             <div class="compare-hero-inner">
                 <span class="hero-tag cyan-glow-pill">
-                    <i class="fa-solid fa-code-compare"></i> DEVICE MATRIX
+                    <i class="fa-solid fa-code-compare"></i> <span data-i18n="compare.matrixBadge">DEVICE MATRIX</span>
                 </span>
-                <h1 class="hero-headline">Compare <span class="text-gradient">Smartphones</span></h1>
-                <p class="hero-subtitle">Select up to 3 devices to evaluate specifications side-by-side with AI-driven spec highlighting.</p>
+                <h1 class="hero-headline"><span data-i18n="compare.title">Compare</span> <span class="text-gradient" data-i18n="compare.titleAccent">Smartphones</span></h1>
+                <p class="hero-subtitle" data-i18n="compare.subtitle">Select up to 3 devices to evaluate specifications side-by-side with AI-driven spec highlighting.</p>
 
                 <div class="compare-controls">
                     <button class="btn-compare-add" id="addPhoneBtn">
-                        <i class="fa-solid fa-plus"></i> Add Device
+                        <i class="fa-solid fa-plus"></i> <span data-i18n="compare.addBtn">Add Device</span>
                     </button>
                     <button class="btn-compare-clear" id="clearAllBtn" style="display:none;">
-                        <i class="fa-solid fa-trash-can"></i> Clear All
+                        <i class="fa-solid fa-trash-can"></i> <span data-i18n="compare.clearAll">Clear All</span>
                     </button>
-                    <span class="selection-counter" id="selectionCounter">0 of 3 Selected</span>
+                    <span class="selection-counter" id="selectionCounter" data-i18n="compare.selectedCount">0 of 3 Selected</span>
                 </div>
             </div>
         </section>
@@ -124,7 +124,7 @@
             <div class="modal-header">
                 <div class="modal-title-group">
                     <i class="fa-solid fa-mobile-screen modal-icon"></i>
-                    <h2>Select Smartphone</h2>
+                    <h2 data-i18n="compare.selectPhone">Select Smartphone</h2>
                 </div>
                 <button id="closeModalBtn" aria-label="Close modal" class="modal-close-btn">
                     <i class="fa-solid fa-xmark"></i>
@@ -133,7 +133,7 @@
             
             <div class="modal-search-wrapper">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="modalSearchInput" class="modal-search-input" placeholder="Search phone name or brand…" />
+                <input type="text" id="modalSearchInput" class="modal-search-input" data-i18n-ph="compare.modalSearchPh" placeholder="Search phone name or brand…" />
             </div>
 
             <ul id="phoneList" class="phone-select-list">

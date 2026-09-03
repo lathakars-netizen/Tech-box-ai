@@ -271,10 +271,14 @@ function renderChips() {
         slotCard.className = 'add-slot-card';
         slotCard.innerHTML = `
             <div class="add-slot-icon"><i class="fa-solid fa-plus"></i></div>
-            <div class="add-slot-text">Add Device to Compare</div>
+            <div class="add-slot-text" data-i18n="compare.clickToAdd">Add Device to Compare</div>
         `;
         slotCard.addEventListener('click', openModal);
         container.appendChild(slotCard);
+    }
+
+    if (window.techboxLang) {
+        window.techboxLang.applyTranslations(container);
     }
 }
 
@@ -290,13 +294,14 @@ function renderTable() {
         table.innerHTML = `
             <div class="compare-empty-state">
                 <i class="fa-solid fa-scale-balanced empty-icon"></i>
-                <h3>No Devices Selected</h3>
-                <p>Click the <strong>+ Add Device</strong> button above to start comparing specs side-by-side.</p>
-                <button class="btn-compare-add" onclick="openModal()" style="margin-top:0.5rem;">
-                    <i class="fa-solid fa-plus"></i> Select Smartphones
-                </button>
+                <h3 data-i18n="compare.emptyTitle">No Devices Selected</h3>
+                <p data-i18n="compare.emptyMsg">Click the <strong data-i18n="compare.addDevice">+ Add Device</strong> button above to start comparing specs side-by-side.</p>
+                <button class="btn-compare-add" onclick="openModal()" style="margin-top:0.5rem;" data-i18n="compare.selectSmartphones">Select Smartphones</button>
             </div>
         `;
+        if (window.techboxLang) {
+            window.techboxLang.applyTranslations(table);
+        }
         return;
     }
 
@@ -447,7 +452,7 @@ function renderTable() {
             
             if (isWinner) {
                 cell.innerHTML = `
-                    <span class="badge-best"><i class="fa-solid fa-crown"></i> BEST</span>
+                    <span class="badge-best"><i class="fa-solid fa-crown"></i> <span data-i18n="compare.winner">BEST</span></span>
                     <div>${rawHtml}</div>
                 `;
             } else {
@@ -459,6 +464,10 @@ function renderTable() {
 
         table.appendChild(rowEl);
     });
+
+    if (window.techboxLang) {
+        window.techboxLang.applyTranslations(table);
+    }
 }
 
 // ------------ 7. Parsing Utilities ------------ //

@@ -199,18 +199,18 @@
                     <div class="hero-badge anim-fade-up" style="--delay: 0.1s;">
                         <span class="badge-pulse"></span>
                         <i class="fa-solid fa-microchip"></i>
-                        <span>TECH BOX AI NEURAL ENGINE 3.0</span>
+                        <span data-i18n="hero.badge">TECH BOX AI NEURAL ENGINE 3.0</span>
                     </div>
 
                     <!-- Large Premium Headline -->
                     <h1 class="hero-headline anim-fade-up" style="--delay: 0.2s;">
-                        REVOLUTIONIZE YOUR <br>
-                        <span class="gradient-text">MOBILE EXPERIENCE</span> <br>
-                        WITH AI INTELLIGENCE
+                        <span data-i18n="hero.line1">REVOLUTIONIZE YOUR</span> <br>
+                        <span class="gradient-text" data-i18n="hero.line2">MOBILE EXPERIENCE</span> <br>
+                        <span data-i18n="hero.line3">WITH AI INTELLIGENCE</span>
                     </h1>
 
                     <!-- Subtitle -->
-                    <p class="hero-subtitle anim-fade-up" style="--delay: 0.3s;">
+                    <p class="hero-subtitle anim-fade-up" style="--delay: 0.3s;" data-i18n="hero.subtitle">
                         Discover flagship smartphones, evaluate real-world camera capabilities, benchmark neural processing power, and compare devices side-by-side with instant AI precision.
                     </p>
 
@@ -218,7 +218,7 @@
                     <div class="hero-search-box anim-fade-up" style="--delay: 0.4s;">
                         <div class="search-input-wrapper">
                             <i class="fa-solid fa-magnifying-glass search-box-icon"></i>
-                            <input type="text" id="heroSearchInput" class="hero-input" placeholder="Search phones e.g. 'Best camera phone under $900'..." autocomplete="off" aria-label="Search phones" aria-controls="searchResultsSection" aria-expanded="false">
+                            <input type="text" id="heroSearchInput" class="hero-input" data-i18n-ph="hero.searchPh" placeholder="Search phones e.g. 'Best camera phone under $900'..." autocomplete="off" aria-label="Search phones" aria-controls="searchResultsSection" aria-expanded="false">
                             <!-- Clear button (hidden until query exists) -->
                             <button class="search-clear-btn" id="searchClearBtn" aria-label="Clear search" style="display:none;" title="Clear search">
                                 <i class="fa-solid fa-xmark"></i>
@@ -226,11 +226,11 @@
                             <span class="kbd-badge" id="kbdBadge"><kbd>Ctrl</kbd> + <kbd>K</kbd></span>
                             <button class="search-action-btn" id="heroSearchBtn" aria-label="Execute search">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                <span>Search</span>
+                                <span data-i18n="hero.searchBtn">Search</span>
                             </button>
                         </div>
                         <div class="hero-search-tags" id="heroSearchTags">
-                            <span class="tag-title">Popular:</span>
+                            <span class="tag-title" data-i18n="hero.popularTags">Popular:</span>
                             <button class="hero-tag">iPhone 16 Pro</button>
                             <button class="hero-tag">Samsung S25</button>
                             <button class="hero-tag">Best 5G Camera</button>
@@ -240,12 +240,12 @@
                     <!-- Action Buttons -->
                     <div class="hero-cta-group anim-fade-up" style="--delay: 0.5s;">
                         <a href="#mobiles" class="btn btn-primary">
-                            <span class="btn-text">Explore Mobiles</span>
+                            <span class="btn-text" data-i18n="hero.exploreBtn">Explore Mobiles</span>
                             <i class="fa-solid fa-arrow-right btn-icon"></i>
                         </a>
                         <a href="#compare" class="btn btn-secondary">
                             <i class="fa-solid fa-code-compare btn-icon"></i>
-                            <span class="btn-text">Compare Phones</span>
+                            <span class="btn-text" data-i18n="hero.compareBtn">Compare Phones</span>
                         </a>
                     </div>
 
@@ -253,17 +253,17 @@
                     <div class="hero-metrics-bar anim-fade-up" style="--delay: 0.6s;">
                         <div class="metric-box">
                             <span class="metric-val" id="metricPhones">500+</span>
-                            <span class="metric-lbl">Devices Cataloged</span>
+                            <span class="metric-lbl" data-i18n="metrics.devices">Devices Cataloged</span>
                         </div>
                         <div class="metric-divider"></div>
                         <div class="metric-box">
                             <span class="metric-val">99.8%</span>
-                            <span class="metric-lbl">Neural Precision</span>
+                            <span class="metric-lbl" data-i18n="metrics.precision">Neural Precision</span>
                         </div>
                         <div class="metric-divider"></div>
                         <div class="metric-box">
                             <span class="metric-val">100%</span>
-                            <span class="metric-lbl">Unbiased Insights</span>
+                            <span class="metric-lbl" data-i18n="metrics.unbiased">Unbiased Insights</span>
                         </div>
                     </div>
 
@@ -421,12 +421,12 @@
                     <div class="section-header-left">
                         <div class="section-badge">
                             <i class="fa-solid fa-fire-flame-curved badge-fire"></i>
-                            <span>NEURAL RANKED FLAGSHIPS</span>
+                            <span data-i18n="section.trendingBadge">NEURAL RANKED FLAGSHIPS</span>
                         </div>
                         <h2 class="section-title">
-                            Trending <span class="gradient-text">Mobiles</span>
+                            <span data-i18n="section.trendingTitle">Trending</span> <span class="gradient-text" data-i18n="section.trendingAccent">Mobiles</span>
                         </h2>
-                        <p class="section-subtitle">
+                        <p class="section-subtitle" data-i18n="section.trendingSubtitle">
                             Explore top-rated smartphones benchmarked by AI performance, camera optics, and battery endurance.
                         </p>
                     </div>
@@ -434,7 +434,7 @@
                     <div class="section-header-right">
                         <!-- View All Button (UI only) -->
                         <button class="view-all-btn" id="viewAllMobilesBtn" aria-label="View All Mobiles">
-                            <span class="btn-text">View All</span>
+                            <span class="btn-text" data-i18n="section.viewAll">View All</span>
                             <div class="btn-arrow-box">
                                 <i class="fa-solid fa-arrow-right"></i>
                             </div>
@@ -446,19 +446,19 @@
                 <div class="filter-tabs-wrapper anim-fade-up" style="--delay: 0.15s;">
                     <div class="filter-tabs">
                         <button class="filter-tab active" data-filter="all">
-                            <i class="fa-solid fa-border-all"></i> All Mobiles
+                            <i class="fa-solid fa-border-all"></i> <span data-i18n="filter.all">All Mobiles</span>
                         </button>
                         <button class="filter-tab" data-filter="flagship">
-                            <i class="fa-solid fa-crown"></i> Flagship AI
+                            <i class="fa-solid fa-crown"></i> <span data-i18n="filter.flagship">Flagship AI</span>
                         </button>
                         <button class="filter-tab" data-filter="camera">
-                            <i class="fa-solid fa-camera"></i> Camera Beasts
+                            <i class="fa-solid fa-camera"></i> <span data-i18n="filter.camera">Camera Beasts</span>
                         </button>
                         <button class="filter-tab" data-filter="gaming">
-                            <i class="fa-solid fa-gamepad"></i> Gaming Beasts
+                            <i class="fa-solid fa-gamepad"></i> <span data-i18n="filter.gaming">Gaming Beasts</span>
                         </button>
                         <button class="filter-tab" data-filter="value">
-                            <i class="fa-solid fa-bolt"></i> Value Killers
+                            <i class="fa-solid fa-bolt"></i> <span data-i18n="filter.value">Value Killers</span>
                         </button>
                     </div>
                 </div>
@@ -482,12 +482,12 @@
                     <div class="section-header-left">
                         <div class="section-badge" style="color: var(--cyan); background: rgba(6, 182, 212, 0.1);">
                             <i class="fa-solid fa-rocket" style="color: var(--cyan);"></i>
-                            <span>FUTURE RELEASES</span>
+                            <span data-i18n="upcoming.badge">FUTURE RELEASES</span>
                         </div>
                         <h2 class="section-title">
-                            Upcoming <span class="gradient-text">Mobiles</span>
+                            <span data-i18n="upcoming.title">Upcoming</span> <span class="gradient-text" data-i18n="upcoming.accent">Mobiles</span>
                         </h2>
-                        <p class="section-subtitle">
+                        <p class="section-subtitle" data-i18n="upcoming.subtitle">
                             A preview of highly anticipated devices (Release dates not available in current data).
                         </p>
                     </div>

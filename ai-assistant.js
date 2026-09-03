@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
         msgDiv.className = 'message ai-message';
         msgDiv.innerHTML = `<div class="message-content">${htmlContent}</div>`;
         chatHistory.appendChild(msgDiv);
+        if (window.techboxLang && typeof window.techboxLang.applyTranslations === 'function') {
+            window.techboxLang.applyTranslations(msgDiv);
+        }
         scrollToBottom();
     }
 
@@ -390,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="phone-card-title" style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
                         <span>${phone.name}</span>
-                        <span class="verified-specs-pill" style="font-size:0.62rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                        <span class="verified-specs-pill" style="font-size:0.62rem; padding:2px 6px;" title="Verified Dataset Specs"><i class="fa-solid fa-shield-check"></i> <span data-i18n="card.verified">Verified</span></span>
                     </div>
                     <div class="phone-card-price">${phone.price}</div>
                     <div class="phone-card-specs">

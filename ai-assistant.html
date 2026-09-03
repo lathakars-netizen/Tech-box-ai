@@ -90,8 +90,8 @@
                             <div class="ai-status-dot"></div>
                         </div>
                         <div>
-                            <h1 class="chat-title">TECH BOX <span class="text-gradient">AI</span></h1>
-                            <p class="chat-subtitle">Your Neural Mobile Advisor</p>
+                            <h1 class="chat-title"><span data-i18n="ai.title">TECH BOX AI</span></h1>
+                            <p class="chat-subtitle" data-i18n="ai.subtitle">Your Neural Mobile Advisor</p>
                         </div>
                     </div>
                 </div>
@@ -100,13 +100,13 @@
                 <div class="chat-history" id="chatHistory">
                     <div class="message ai-message welcome-message">
                         <div class="message-content">
-                            <p>Hello! I'm the TECH BOX AI Assistant. I can help you find the perfect smartphone, compare specs, or answer questions about our devices based on our neural database.</p>
-                            <p>Try asking me:</p>
+                            <p data-i18n="ai.welcomeMsg">Hello! I'm the TECH BOX AI Assistant. I can help you find the perfect smartphone, compare specs, or answer questions about our devices based on our neural database.</p>
+                            <p data-i18n="ai.tryAsking">Try asking me:</p>
                             <div class="prompt-chips">
-                                <button class="prompt-chip">Best phone under $1,000</button>
-                                <button class="prompt-chip">Best camera phone</button>
-                                <button class="prompt-chip">Best gaming phone</button>
-                                <button class="prompt-chip">Compare Samsung and OnePlus</button>
+                                <button class="prompt-chip" data-i18n="ai.chip1">Best phone under $1,000</button>
+                                <button class="prompt-chip" data-i18n="ai.chip2">Best camera phone</button>
+                                <button class="prompt-chip" data-i18n="ai.chip3">Best gaming phone</button>
+                                <button class="prompt-chip" data-i18n="ai.chip4">Compare Samsung and OnePlus</button>
                             </div>
                         </div>
                     </div>
@@ -116,13 +116,13 @@
                 <div class="chat-input-area">
                     <form id="chatForm" class="chat-form">
                         <div class="chat-input-wrapper">
-                            <input type="text" id="chatInput" placeholder="Ask about phones, specs, or comparisons..." autocomplete="off">
+                            <input type="text" id="chatInput" data-i18n-ph="ai.inputPh" placeholder="Ask about phones, specs, or comparisons..." autocomplete="off">
                             <button type="submit" class="chat-send-btn" id="chatSendBtn" aria-label="Send message">
                                 <i class="fa-solid fa-paper-plane"></i>
                             </button>
                         </div>
                     </form>
-                    <p class="chat-disclaimer">AI recommendations are based exclusively on TECH BOX AI's secure device catalog.</p>
+                    <p class="chat-disclaimer" data-i18n="ai.disclaimer">AI recommendations are based exclusively on TECH BOX AI's secure device catalog.</p>
                 </div>
             </div>
         </section>

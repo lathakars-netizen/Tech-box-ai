@@ -206,6 +206,8 @@ function calculateEstimate() {
 
     const sumDamage = document.getElementById('sumDamage');
     if (sumDamage) {
-        sumDamage.textContent = hasDamage ? 'Yes (Value reduced)' : 'No';
+        const yesText = (window.techboxLang ? window.techboxLang.t('sell.yes') : 'Yes');
+        const noText = (window.techboxLang ? window.techboxLang.t('sell.no') : 'No');
+        sumDamage.textContent = hasDamage ? `${yesText} (Value reduced)` : noText;
     }
 }
