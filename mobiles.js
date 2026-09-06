@@ -18,12 +18,28 @@ function initMobilePage() {
     const priceSelect = document.getElementById('priceFilter');
     const sortSelect = document.getElementById('sortSelect');
 
+    // Read URL search params (e.g. from Home "View All" or direct search)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialFilter = urlParams.get('filter') || 'all';
+    const initialBrand = urlParams.get('brand') || 'All';
+    const initialSearch = urlParams.get('q') || '';
+
     // State
     const allPhones = typeof window.phonesData !== 'undefined' ? window.phonesData : [];
-    let currentBrand = 'All';
+    let currentCategory = initialFilter;
+    let currentBrand = initialBrand;
     let currentPrice = 'all';
     let currentSort = 'price-asc';
-    let searchQuery = '';
+    let searchQuery = initialSearch;
+
+    if (searchQuery && searchInput) {
+        searchInput.value = searchQuery;
+        toggleClearBtn(true);
+    }
+
+    if (currentBrand !== 'All') {
+        brandBtns.forEach(b => b.classList.toggle('active', (b.dataset.brand || '').toLowerCase() === currentBrand.toLowerCase()));
+    }
 
     // Render initially
     renderGrid();
@@ -33,6 +49,7 @@ function initMobilePage() {
     brandBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             currentBrand = btn.dataset.brand;
+            currentCategory = 'all'; // Reset category filter when clicking specific brand
             brandBtns.forEach(b => b.classList.toggle('active', b === btn));
             renderGrid();
         });
@@ -80,20 +97,51 @@ function initMobilePage() {
     function renderGrid() {
         if (!grid) return;
         const filtered = allPhones.filter(phone => {
-            // Brand filter
-            if (currentBrand !== 'All' && phone.brand !== currentBrand) return false;
-            // Price filter
-            const priceNum = parseNumber(phone.price.replace(/[^0-9.,]/g, ''));
-            if (currentPrice !== 'all') {
-                const [minStr, maxStr] = currentPrice.split('-');
-                const min = parseFloat(minStr);
-                const max = maxStr ? parseFloat(maxStr) : Infinity;
-                if (priceNum < min || priceNum > max) return false;
+            // Category filter (from Home "View All")
+            if (currentCategory && currentCategory !== 'all') {
+                const cat = (phone.category || '').toLowerCase();
+                if (!cat.includes(currentCategory.toLowerCase())) return false;
             }
-            // Search query
+
+            // Brand filter
+            if (currentBrand !== 'All' && (phone.brand || '').toLowerCase() !== currentBrand.toLowerCase()) return false;
+
+            // Price filter (INR tiers)
+            const priceNum = (typeof phone.priceNumericINR === 'number') ? phone.priceNumericINR : parseNumber(phone.price);
+            if (currentPrice !== 'all') {
+                if (currentPrice.endsWith('+')) {
+                    const min = parseFloat(currentPrice);
+                    if (priceNum < min) return false;
+                } else {
+                    const [minStr, maxStr] = currentPrice.split('-');
+                    const min = parseFloat(minStr);
+                    const max = maxStr ? parseFloat(maxStr) : Infinity;
+                    if (priceNum < min || priceNum > max) return false;
+                }
+            }
+
+            // Robust search query matching
             if (searchQuery) {
-                const corpus = `${phone.name} ${phone.brand} ${phone.price}`.toLowerCase();
-                if (!corpus.includes(searchQuery)) return false;
+                const q = searchQuery.trim().toLowerCase();
+                const normQ = q.replace(/[^a-z0-9]/g, '');
+
+                // 1. Check aliases
+                if (phone.aliases && phone.aliases.some(alias => {
+                    const normA = (alias || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    return normA.includes(normQ) || normQ.includes(normA);
+                })) {
+                    return true;
+                }
+
+                // 2. Check normalized name & brand
+                const normName = (phone.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                const normBrand = (phone.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (normName.includes(normQ) || normBrand.includes(normQ)) return true;
+
+                // 3. Multi-word match against full corpus
+                const corpus = `${phone.name} ${phone.brand} ${phone.price} ${phone.processor || ''} ${phone.camera || ''} ${phone.category || ''} ${phone.display || ''}`.toLowerCase();
+                const words = q.split(/\s+/).filter(Boolean);
+                if (!words.every(w => corpus.includes(w))) return false;
             }
             return true;
         });
@@ -101,9 +149,9 @@ function initMobilePage() {
         const sorted = filtered.slice().sort((a, b) => {
             switch (currentSort) {
                 case 'price-asc':
-                    return parseNumber(a.price.replace(/[^0-9.,]/g, '')) - parseNumber(b.price.replace(/[^0-9.,]/g, ''),);
+                    return ((a.priceNumericINR || parseNumber(a.price)) - (b.priceNumericINR || parseNumber(b.price)));
                 case 'price-desc':
-                    return parseNumber(b.price.replace(/[^0-9.,]/g, '')) - parseNumber(a.price.replace(/[^0-9.,]/g, ''));
+                    return ((b.priceNumericINR || parseNumber(b.price)) - (a.priceNumericINR || parseNumber(a.price)));
                 case 'rating-desc':
                     return (b.rating || 0) - (a.rating || 0);
                 case 'newest':

@@ -195,6 +195,26 @@
             const price = (phone.price || '').toLowerCase().replace(/[^0-9.]/g, '');
             const category = (phone.category || '').toLowerCase();
 
+            // Alias match (e.g., "iqoo neo 10", "neo 10", "s25 ultra", "s25ultra", "16 pro max")
+            const normQ = q.replace(/[^a-z0-9]/g, '');
+            if (phone.aliases && phone.aliases.some(alias => {
+                const a = (alias || '').toLowerCase();
+                const normA = a.replace(/[^a-z0-9]/g, '');
+                return a.includes(q) || normA.includes(normQ) || (normQ.length > 2 && normA === normQ);
+            })) {
+                score += 40;
+            }
+
+            // Normalized name & brand match
+            const normName = name.replace(/[^a-z0-9]/g, '');
+            const normBrand = brand.replace(/[^a-z0-9]/g, '');
+            if (normName.includes(normQ) || (normQ.length > 3 && normQ.includes(normName))) {
+                score += 30;
+            }
+            if (normBrand.includes(normQ)) {
+                score += 20;
+            }
+
             // Name match (highest weight)
             if (name.includes(q)) {
                 score += name.startsWith(q) ? 30 : 20;
@@ -283,7 +303,7 @@
                    class="search-result-item" 
                    data-index="${index}" 
                    data-id="${phone.id}">
-                    <img src="${phone.image}" alt="${phone.name}" class="search-result-thumb" onerror="this.src='assets/s25_ultra.jpg';" />
+                    <img src="${phone.image}" alt="${phone.name}" class="search-result-thumb" onerror="this.style.visibility='hidden';" />
                     <div class="search-result-info">
                         <div class="search-result-header" style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                             <span class="search-result-brand-pill">
@@ -331,7 +351,7 @@
                    class="search-result-item" 
                    data-index="${index}" 
                    data-id="${phone.id}">
-                    <img src="${phone.image}" alt="${phone.name}" class="search-result-thumb" onerror="this.src='assets/s25_ultra.jpg';" />
+                    <img src="${phone.image}" alt="${phone.name}" class="search-result-thumb" onerror="this.style.visibility='hidden';" />
                     <div class="search-result-info">
                         <div class="search-result-header">
                             <span class="search-result-brand-pill">

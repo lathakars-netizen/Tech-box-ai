@@ -379,7 +379,7 @@ function renderTable() {
             icon: 'fa-solid fa-tag',
             label: 'Starting Price',
             get: p => `<strong class="header-phone-price">${p.price}</strong>`,
-            numericGetter: p => parseNumber(p.price),
+            numericGetter: p => p.priceNumericINR || parseNumber(p.price),
             lowerIsBetter: true
         }
     ];

@@ -267,10 +267,23 @@ function initSearchUI() {
     function buildSearchCorpus(phone) {
         const parts = [
             phone.name,
+            phone.fallbackName,
             phone.brand,
             phone.category,
             phone.highlightTag && phone.highlightTag.text,
             phone.price,
+            phone.processor,
+            phone.processorSub,
+            phone.camera,
+            phone.cameraSub,
+            phone.battery,
+            phone.batterySub,
+            phone.display,
+            phone.displaySub,
+            phone.ram,
+            phone.storage,
+            phone.os,
+            ...(phone.aliases || [])
         ];
         // Add all spec text values
         if (phone.specs) {
@@ -282,16 +295,40 @@ function initSearchUI() {
     // Pre-build corpora once
     const corpora = dataList.map(buildSearchCorpus);
 
+    function normalizeSearchToken(str) {
+        return (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    }
+
     // ── Core search function ──────────────────────────────────────────────────
     function searchPhones(rawQuery) {
         const q = rawQuery.trim().toLowerCase();
         if (!q) return dataList; // empty → all
 
-        // Support multi-word: every word must appear somewhere in corpus
+        const normalizedQ = normalizeSearchToken(q);
         const words = q.split(/\s+/).filter(Boolean);
-        return dataList.filter((_, i) =>
-            words.every(word => corpora[i].includes(word))
-        );
+
+        return dataList.filter((phone, i) => {
+            // 1. Check alias direct or normalized match
+            if (phone.aliases && phone.aliases.some(alias => {
+                const normAlias = normalizeSearchToken(alias);
+                return normAlias.includes(normalizedQ) || normalizedQ.includes(normAlias);
+            })) {
+                return true;
+            }
+
+            // 2. Check normalized name / brand match (handles "s25ultra" or "iqooneo10")
+            const normName = normalizeSearchToken(phone.name);
+            const normBrand = normalizeSearchToken(phone.brand);
+            if (normName.includes(normalizedQ) || normalizedQ.includes(normName)) return true;
+            if (normBrand.includes(normalizedQ)) return true;
+
+            // 3. Multi-word match: every word appears in corpus
+            if (words.every(word => corpora[i].includes(word))) return true;
+
+            // 4. Normalized corpus match
+            const normCorpus = normalizeSearchToken(corpora[i]);
+            return normCorpus.includes(normalizedQ);
+        });
     }
 
     // ── Escape HTML (for safe injection) ─────────────────────────────────────
@@ -563,63 +600,104 @@ function initSearchUI() {
 /* ==========================================================================
    7. Trending Mobiles Section UI & Dynamic Rendering
    ========================================================================== */
+let currentTrendingFilter = 'all';
+
 function initTrendingUI() {
-    // 1. Dynamically render phone cards from phonesData array
-    renderTrendingCards();
-    renderUpcomingCards();
+    // 1. Initial render of trending cards
+    renderTrendingCards(currentTrendingFilter);
 
-    // 2. Favorite Heart Toggle Handler
-    const favButtons = document.querySelectorAll('.fav-btn');
-    favButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isActive = btn.classList.toggle('active');
-            const icon = btn.querySelector('i');
-            if (icon) {
-                if (isActive) {
-                    icon.classList.remove('fa-regular');
-                    icon.classList.add('fa-solid');
-                } else {
-                    icon.classList.remove('fa-solid');
-                    icon.classList.add('fa-regular');
-                }
-            }
+    // 2. Category Filter Tabs Click Handlers
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const filter = tab.dataset.filter || 'all';
+            currentTrendingFilter = filter;
+            filterTabs.forEach(t => t.classList.toggle('active', t === tab));
+            renderTrendingCards(currentTrendingFilter);
         });
     });
 
-    // 3. Compare Button Toggle Handler
-    const compareButtons = document.querySelectorAll('.compare-btn');
-    compareButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const phoneId = btn.dataset.id;
-            if (!phoneId) return;
-            const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
-            if (!stored.includes(phoneId)) {
-                if (stored.length < 3) {
-                    stored.push(phoneId);
-                }
-                localStorage.setItem('compareSelection', JSON.stringify(stored));
+    // 3. View All Button Handler: opens mobiles catalogue preserving filter
+    const viewAllBtn = document.getElementById('viewAllMobilesBtn');
+    if (viewAllBtn) {
+        viewAllBtn.addEventListener('click', () => {
+            if (currentTrendingFilter && currentTrendingFilter !== 'all') {
+                window.location.href = `mobiles.html?filter=${encodeURIComponent(currentTrendingFilter)}`;
+            } else {
+                window.location.href = 'mobiles.html';
             }
-            window.location.href = `compare.html?ids=${stored.join(',')}`;
         });
-    });
+    }
+
+    // 4. Delegated Click Handler for Favorite & Compare buttons on trendingGrid
+    const grid = document.getElementById('trendingGrid');
+    if (grid) {
+        grid.addEventListener('click', (e) => {
+            // Favorite toggle
+            const favBtn = e.target.closest('.fav-btn');
+            if (favBtn) {
+                e.stopPropagation();
+                const isActive = favBtn.classList.toggle('active');
+                const icon = favBtn.querySelector('i');
+                if (icon) {
+                    if (isActive) {
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                    } else {
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                    }
+                }
+                return;
+            }
+
+            // Compare toggle & navigate
+            const compBtn = e.target.closest('.compare-btn');
+            if (compBtn) {
+                e.stopPropagation();
+                const phoneId = compBtn.dataset.id;
+                if (!phoneId) return;
+                const stored = JSON.parse(localStorage.getItem('compareSelection') || '[]');
+                if (!stored.includes(phoneId)) {
+                    if (stored.length < 3) {
+                        stored.push(phoneId);
+                    }
+                    localStorage.setItem('compareSelection', JSON.stringify(stored));
+                }
+                window.location.href = `compare.html?ids=${stored.join(',')}`;
+            }
+        });
+    }
 }
 
 /**
  * Render phone cards into .trending-grid from centralized phonesData array
  */
-function renderTrendingCards() {
+function renderTrendingCards(categoryFilter = 'all') {
     const grid = document.getElementById('trendingGrid');
     if (!grid) return;
 
-    const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
-    if (!dataList || !dataList.length) return;
+    const rawList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
+    if (!rawList || !rawList.length) return;
+
+    const filterNorm = (categoryFilter || 'all').toLowerCase().trim();
+    const dataList = (filterNorm === 'all')
+        ? rawList
+        : rawList.filter(phone => (phone.category || '').toLowerCase().includes(filterNorm));
+
+    if (dataList.length === 0) {
+        grid.innerHTML = `
+            <div class="search-no-results" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 3rem 1rem; text-align: center;">
+                <p style="color: var(--text-muted, #9ca3af); font-size: 1.1rem;">No phones found for this category.</p>
+            </div>
+        `;
+        return;
+    }
 
     grid.innerHTML = dataList.map((phone, index) => {
         if (!phone) return ''; // Sanity check
         
-        const delay = ((index + 1) * 0.1).toFixed(1);
+        const delay = ((index + 1) * 0.08).toFixed(2);
         const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
         const specs = Array.isArray(phone.specs) ? phone.specs : [];
         const specsHtml = specs.map(spec => `
@@ -692,101 +770,5 @@ function renderTrendingCards() {
     if (window.techboxLang) {
         window.techboxLang.applyTranslations(grid);
     }
-}
-
-/**
- * Render phone cards into .upcomingGrid from centralized phonesData array
- */
-function renderUpcomingCards() {
-    const grid = document.getElementById('upcomingGrid');
-    if (!grid) return;
-
-    const dataList = (typeof phonesData !== 'undefined') ? phonesData : (window.phonesData || []);
-    
-    // Determine upcoming status strictly by checking if the data supports it
-    const upcomingData = dataList.filter(phone => phone && phone.status === 'upcoming');
-
-    if (upcomingData.length === 0) {
-        grid.innerHTML = `
-            <div class="search-no-results" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; padding: 4rem 1rem; text-align: center;">
-                <div class="no-results-icon" style="margin-bottom: 1.5rem;">
-                    <i class="fa-regular fa-calendar-xmark" style="font-size: 3rem; color: var(--text-muted, #9ca3af);"></i>
-                </div>
-                <h3 class="no-results-title" style="margin-bottom: 0.75rem; font-size: 1.5rem; color: var(--text-main, #f3f4f6);" data-i18n="upcoming.emptyTitle"></h3>
-                <p class="no-results-msg" style="color: var(--text-muted, #9ca3af); max-width: 400px; line-height: 1.5;" data-i18n="upcoming.emptyMsg"></p>
-            </div>
-        `;
-        return;
-    }
-
-    grid.innerHTML = upcomingData.map((phone, index) => {
-        if (!phone) return ''; // Sanity check
-
-        const delay = ((index + 1) * 0.1).toFixed(1);
-        const glowHtml = phone.glowClass ? ` ${phone.glowClass}` : '';
-        const specs = Array.isArray(phone.specs) ? phone.specs : [];
-        const specsHtml = specs.map(spec => `
-            <span class="spec-pill"><i class="${spec.icon || 'fa-solid fa-microchip'}"></i> ${spec.text || ''}</span>
-        `).join('');
-        const highlightTag = phone.highlightTag || { icon: '', text: '', colorClass: '' };
-
-        return `
-            <div class="phone-card anim-fade-up" style="--delay: ${delay}s;">
-                <div class="card-top-bar">
-                    <span class="card-brand-badge ${phone.brandClass || ''}">
-                        <i class="${phone.brandIcon || 'fa-solid fa-mobile'}"></i> ${phone.brand || 'Unknown'}
-                    </span>
-                    <div class="card-action-group">
-                        <button class="card-icon-btn compare-btn" title="Add to Compare" data-id="${phone.id || ''}" aria-label="Compare ${phone.name || 'Phone'}">
-                            <i class="fa-solid fa-code-compare"></i>
-                        </button>
-                        <button class="card-icon-btn fav-btn" title="Add to Favorites" aria-label="Favorite ${phone.name || 'Phone'}">
-                            <i class="fa-regular fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="card-img-wrapper">
-                    <span class="tech-highlight-tag ${highlightTag.colorClass}">
-                        <i class="${highlightTag.icon}"></i> ${highlightTag.text}
-                    </span>
-                    <div class="card-img-glow${glowHtml}"></div>
-                    <img src="${phone.image || ''}" alt="${phone.name || 'Phone'}" class="phone-card-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="phone-fallback-art" style="display:none;">
-                        <i class="fa-solid fa-mobile-screen-button"></i>
-                        <span>${phone.fallbackName || phone.name || 'Unknown'}</span>
-                    </div>
-                </div>
-
-                <div class="card-info">
-                    <div class="card-header-meta">
-                        <span class="phone-brand">${phone.brand || 'Unknown'}</span>
-                        <div class="star-rating" title="${phone.rating || 0} out of 5 stars">
-                            <i class="fa-solid fa-star"></i>
-                            <span class="rating-num">${phone.rating || 0}</span>
-                            <span class="rating-count">${phone.ratingCount || '(0)'}</span>
-                        </div>
-                    </div>
-
-                    <h3 class="phone-name">${phone.name || 'Unknown'}</h3>
-
-                    <div class="phone-specs-pills">
-                        ${specsHtml}
-                    </div>
-
-                    <div class="card-footer">
-                        <div class="price-box">
-                            <span class="price-lbl">Starting at</span>
-                            <span class="price-val">${phone.price || 'N/A'}</span>
-                        </div>
-                        <a href="details.html?id=${phone.id || ''}" class="btn-view-details" aria-label="View Details for ${phone.name || 'Phone'}">
-                            <span>Details</span>
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
 }
 

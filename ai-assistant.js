@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 3. Multi-Criteria Feature Extraction & Scoring Engine
-        let targetBudgetUSD = null;
+        let targetBudgetINR = null;
         let isBudgetQuery = false;
         let targetBrand = null;
         let intents = {
@@ -163,31 +163,31 @@ document.addEventListener('DOMContentLoaded', () => {
             value: false
         };
 
-        // Budget Parsing (USD and INR support)
+        // Budget Parsing (INR prioritized, USD supported)
         if (query.includes('under') || query.includes('below') || query.includes('budget') || query.includes('cheap') || query.includes('affordable') || query.includes('price') || query.match(/[$₹\d]/)) {
-            // Check for USD ($) or numeric threshold
-            const usdMatch = query.match(/\$\s*(\d+[,.]?\d*)/);
-            if (usdMatch) {
-                targetBudgetUSD = parseFloat(usdMatch[1].replace(/,/g, ''));
+            const lakhMatch = query.match(/(\d+(?:\.\d+)?)\s*(?:lakh|lac)/i);
+            if (lakhMatch) {
+                targetBudgetINR = parseFloat(lakhMatch[1]) * 100000;
                 isBudgetQuery = true;
             } else {
-                // Check for INR or raw numbers with k / thousand / rupees
-                const numMatch = query.match(/(\d+[,.]?\d*)\s*(k|thousand|rupees|rs)?/i);
-                if (numMatch) {
-                    let num = parseFloat(numMatch[1].replace(/,/g, ''));
-                    if (numMatch[2] && numMatch[2].toLowerCase() === 'k') num *= 1000;
-                    
-                    if (query.includes('₹') || query.includes('rs') || query.includes('rupees') || num > 3000) {
-                        targetBudgetUSD = num / 83; // Approx INR conversion
-                    } else if (num >= 300 && num <= 3000) {
-                        targetBudgetUSD = num; // USD direct range
-                    }
+                const usdMatch = query.match(/\$\s*(\d+[,.]?\d*)/);
+                if (usdMatch) {
+                    targetBudgetINR = parseFloat(usdMatch[1].replace(/,/g, '')) * 87;
                     isBudgetQuery = true;
+                } else {
+                    const numMatch = query.match(/(\d+[,.]?\d*)\s*(k|thousand|rupees|rs)?/i);
+                    if (numMatch) {
+                        let num = parseFloat(numMatch[1].replace(/,/g, ''));
+                        if (numMatch[2] && numMatch[2].toLowerCase() === 'k') num *= 1000;
+                        if (num < 2000) num *= 87; // Treat small numbers as USD conversion
+                        targetBudgetINR = num;
+                        isBudgetQuery = true;
+                    }
                 }
             }
             if (query.includes('budget') || query.includes('cheap') || query.includes('affordable')) {
                 intents.value = true;
-                if (!targetBudgetUSD) targetBudgetUSD = 900;
+                if (!targetBudgetINR) targetBudgetINR = 50000;
             }
         }
 
@@ -197,8 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'apple', names: ['apple', 'iphone', 'ios'] },
             { key: 'google', names: ['google', 'pixel'] },
             { key: 'oneplus', names: ['oneplus', '1+'] },
+            { key: 'iqoo', names: ['iqoo', 'neo'] },
             { key: 'xiaomi', names: ['xiaomi', 'mi', 'redmi', 'poco'] },
-            { key: 'vivo', names: ['vivo', 'iqoo'] },
+            { key: 'vivo', names: ['vivo'] },
             { key: 'realme', names: ['realme'] },
             { key: 'asus', names: ['asus', 'rog'] },
             { key: 'nothing', names: ['nothing'] }
@@ -237,15 +238,17 @@ document.addEventListener('DOMContentLoaded', () => {
             let score = 0;
             const reasons = [];
 
-            // Extract numeric USD price
-            const priceUSD = parseFloat(phone.price.replace(/[^0-9.]/g, '')) || 0;
+            // Extract numeric INR price
+            const priceINR = (typeof phone.priceNumericINR === 'number')
+                ? phone.priceNumericINR
+                : (parseFloat(String(phone.price).replace(/[^0-9.]/g, '')) || 0);
 
             // Budget Match
-            if (targetBudgetUSD !== null) {
-                if (priceUSD <= targetBudgetUSD) {
+            if (targetBudgetINR !== null) {
+                if (priceINR <= targetBudgetINR) {
                     score += 30;
                     reasons.push(`Fits within your budget at ${phone.price}`);
-                } else if (priceUSD <= targetBudgetUSD * 1.15) {
+                } else if (priceINR <= targetBudgetINR * 1.15) {
                     score += 10;
                     reasons.push(`Slightly above budget at ${phone.price} but offers top value`);
                 } else {
