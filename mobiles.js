@@ -104,7 +104,15 @@ function initMobilePage() {
             }
 
             // Brand filter
-            if (currentBrand !== 'All' && (phone.brand || '').toLowerCase() !== currentBrand.toLowerCase()) return false;
+            if (currentBrand !== 'All') {
+                const bLower = (phone.brand || '').toLowerCase();
+                const cLower = currentBrand.toLowerCase();
+                const matchesBrand = bLower === cLower || 
+                    (cLower.includes('asus') && bLower.includes('asus')) ||
+                    (cLower.includes('redmi') && (bLower.includes('xiaomi') || bLower.includes('redmi'))) ||
+                    (cLower.includes('cmf') && (bLower.includes('nothing') || bLower.includes('cmf')));
+                if (!matchesBrand) return false;
+            }
 
             // Price filter (INR tiers)
             const priceNum = (typeof phone.priceNumericINR === 'number') ? phone.priceNumericINR : parseNumber(phone.price);
@@ -128,7 +136,7 @@ function initMobilePage() {
                 // 1. Check aliases
                 if (phone.aliases && phone.aliases.some(alias => {
                     const normA = (alias || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                    return normA.includes(normQ) || normQ.includes(normA);
+                    return normA === normQ || normA.includes(normQ) || (normQ.length > 2 && normQ.includes(normA));
                 })) {
                     return true;
                 }
@@ -136,10 +144,14 @@ function initMobilePage() {
                 // 2. Check normalized name & brand
                 const normName = (phone.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
                 const normBrand = (phone.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (normName.includes(normQ) || normBrand.includes(normQ)) return true;
+                if (normName.includes(normQ) || normBrand.includes(normQ) || (normQ.length > 3 && normQ.includes(normName))) return true;
 
-                // 3. Multi-word match against full corpus
-                const corpus = `${phone.name} ${phone.brand} ${phone.price} ${phone.processor || ''} ${phone.camera || ''} ${phone.category || ''} ${phone.display || ''}`.toLowerCase();
+                // 3. Spaceless corpus match
+                const corpus = `${phone.name} ${phone.brand} ${phone.price} ${phone.processor || ''} ${phone.camera || ''} ${phone.category || ''} ${phone.display || ''} ${phone.ram || ''} ${phone.storage || ''} ${(phone.aliases || []).join(' ')}`.toLowerCase();
+                const normCorpus = corpus.replace(/[^a-z0-9]/g, '');
+                if (normCorpus.includes(normQ)) return true;
+
+                // 4. Multi-word match against full corpus
                 const words = q.split(/\s+/).filter(Boolean);
                 if (!words.every(w => corpus.includes(w))) return false;
             }

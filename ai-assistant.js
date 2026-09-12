@@ -198,11 +198,18 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'google', names: ['google', 'pixel'] },
             { key: 'oneplus', names: ['oneplus', '1+'] },
             { key: 'iqoo', names: ['iqoo', 'neo'] },
-            { key: 'xiaomi', names: ['xiaomi', 'mi', 'redmi', 'poco'] },
+            { key: 'xiaomi', names: ['xiaomi', 'mi', 'redmi'] },
+            { key: 'poco', names: ['poco'] },
             { key: 'vivo', names: ['vivo'] },
-            { key: 'realme', names: ['realme'] },
+            { key: 'oppo', names: ['oppo'] },
+            { key: 'realme', names: ['realme', 'narzo'] },
+            { key: 'motorola', names: ['motorola', 'moto'] },
             { key: 'asus', names: ['asus', 'rog'] },
-            { key: 'nothing', names: ['nothing'] }
+            { key: 'nothing', names: ['nothing', 'cmf'] },
+            { key: 'infinix', names: ['infinix'] },
+            { key: 'tecno', names: ['tecno', 'pova', 'camon'] },
+            { key: 'lava', names: ['lava', 'agni'] },
+            { key: 'honor', names: ['honor'] }
         ];
 
         for (const b of knownBrandsList) {
@@ -243,6 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? phone.priceNumericINR
                 : (parseFloat(String(phone.price).replace(/[^0-9.]/g, '')) || 0);
 
+            // Direct Model/Alias Match
+            const normQuery = query.replace(/[^a-z0-9]/g, '');
+            if (phone.aliases && phone.aliases.some(alias => {
+                const normA = (alias || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                return normA === normQuery || (normQuery.length > 3 && normA.includes(normQuery));
+            })) {
+                score += 120;
+                reasons.push(`Direct model match for "${phone.name}"`);
+            }
+
             // Budget Match
             if (targetBudgetINR !== null) {
                 if (priceINR <= targetBudgetINR) {
@@ -260,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetBrand) {
                 if (phone.brand.toLowerCase().includes(targetBrand) || phone.name.toLowerCase().includes(targetBrand)) {
                     score += 30;
-                    reasons.push(`Official ${phone.brand} flagship device`);
+                    reasons.push(`Official ${phone.brand} smartphone`);
                 } else {
                     score -= 15;
                 }

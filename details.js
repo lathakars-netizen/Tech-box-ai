@@ -144,9 +144,46 @@ function renderHero(phone) {
     const catEl = document.getElementById('dhCategory');
     if (catEl) catEl.textContent = phone.category || 'smartphone';
 
-    // Price
+    // Availability Badge
+    const availText = document.getElementById('dhAvailabilityText');
+    const availBadge = document.getElementById('dhAvailabilityBadge');
+    if (availText && availBadge) {
+        const avail = phone.availability || 'available';
+        if (avail === 'officially listed') {
+            availText.textContent = 'Officially Listed';
+            availBadge.style.background = 'rgba(6, 182, 212, 0.12)';
+            availBadge.style.color = '#06b6d4';
+            availBadge.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+        } else if (avail === 'discontinued') {
+            availText.textContent = 'Discontinued';
+            availBadge.style.background = 'rgba(239, 68, 68, 0.12)';
+            availBadge.style.color = '#ef4444';
+            availBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        } else {
+            availText.textContent = 'Available in India';
+            availBadge.style.background = 'rgba(16, 185, 129, 0.12)';
+            availBadge.style.color = '#10b981';
+            availBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        }
+    }
+
+    // Price & Storage Variant
     const priceEl = document.getElementById('dhPrice');
     if (priceEl) priceEl.textContent = phone.price;
+
+    const variantPill = document.getElementById('dhVariantPill');
+    if (variantPill) {
+        variantPill.textContent = `${phone.storageVariant || 'Base Variant'} • Verified ${phone.priceCheckDate || 'Sep 2026'}`;
+    }
+
+    // Verified Banner
+    const bannerEl = document.getElementById('specsVerifiedBanner');
+    if (bannerEl) {
+        bannerEl.innerHTML = `
+            <i class="fa-solid fa-circle-check"></i>
+            <span><strong>Verified Indian Market Specifications</strong> — Price check: ${phone.priceCheckDate || 'September 2026'} | Sources: <a href="${phone.sourceSpecsUrl || 'https://www.gsmarena.com'}" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:underline;">GSM Arena</a> & <a href="${phone.sourcePriceUrl || 'https://www.91mobiles.com'}" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:underline;">91mobiles</a></span>
+        `;
+    }
 
     // Quick spec pills
     renderSpecPills(phone.specs);

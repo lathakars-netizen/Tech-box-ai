@@ -148,6 +148,10 @@ function populateModalList() {
         const isSelected = selectedPhones.some(p => p.id === phone.id);
         const li = document.createElement('li');
         li.className = `phone-select-item${isSelected ? ' disabled' : ''}`;
+        li.dataset.name = (phone.name || '').toLowerCase();
+        li.dataset.brand = (phone.brand || '').toLowerCase();
+        li.dataset.aliases = (phone.aliases || []).join(' ').toLowerCase();
+        li.dataset.norm = `${phone.name} ${phone.brand} ${(phone.aliases || []).join(' ')}`.toLowerCase().replace(/[^a-z0-9]/g, '');
         
         li.innerHTML = `
             <div class="phone-item-main">
@@ -175,13 +179,24 @@ function populateModalList() {
 }
 
 function filterPhoneList() {
-    const query = (document.getElementById('modalSearchInput')?.value || '').trim().toLowerCase();
+    const raw = (document.getElementById('modalSearchInput')?.value || '').trim().toLowerCase();
+    const normQ = raw.replace(/[^a-z0-9]/g, '');
     const items = document.querySelectorAll('#phoneList .phone-select-item');
 
     items.forEach(item => {
-        const name = item.querySelector('.phone-item-name')?.textContent.toLowerCase() || '';
-        const sub = item.querySelector('.phone-item-sub')?.textContent.toLowerCase() || '';
-        const match = name.includes(query) || sub.includes(query);
+        if (!raw) {
+            item.style.display = 'flex';
+            return;
+        }
+        const name = item.dataset.name || '';
+        const brand = item.dataset.brand || '';
+        const aliases = item.dataset.aliases || '';
+        const norm = item.dataset.norm || '';
+
+        const match = name.includes(raw) ||
+            brand.includes(raw) ||
+            aliases.includes(raw) ||
+            (normQ.length > 1 && norm.includes(normQ));
         item.style.display = match ? 'flex' : 'none';
     });
 }

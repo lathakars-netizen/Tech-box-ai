@@ -195,80 +195,109 @@
             const price = (phone.price || '').toLowerCase().replace(/[^0-9.]/g, '');
             const category = (phone.category || '').toLowerCase();
 
-            // Alias match (e.g., "iqoo neo 10", "neo 10", "s25 ultra", "s25ultra", "16 pro max")
+            // Alias match (e.g., "oppok135g", "oppo k13", "iqooneo10", "s25ultra", "Nothing 2", "16promax")
             const normQ = q.replace(/[^a-z0-9]/g, '');
-            if (phone.aliases && phone.aliases.some(alias => {
-                const a = (alias || '').toLowerCase();
-                const normA = a.replace(/[^a-z0-9]/g, '');
-                return a.includes(q) || normA.includes(normQ) || (normQ.length > 2 && normA === normQ);
-            })) {
-                score += 40;
+            if (phone.aliases && phone.aliases.length > 0) {
+                for (const alias of phone.aliases) {
+                    const a = (alias || '').toLowerCase();
+                    const normA = a.replace(/[^a-z0-9]/g, '');
+                    if (normA && normQ && normA === normQ) {
+                        score += 100;
+                        break;
+                    } else if (normA && normQ && normA.startsWith(normQ)) {
+                        score += 70;
+                        break;
+                    } else if (a.includes(q) || (normQ.length > 2 && (normA.includes(normQ) || normQ.includes(normA)))) {
+                        score += 50;
+                        break;
+                    }
+                }
             }
 
             // Normalized name & brand match
             const normName = name.replace(/[^a-z0-9]/g, '');
             const normBrand = brand.replace(/[^a-z0-9]/g, '');
-            if (normName.includes(normQ) || (normQ.length > 3 && normQ.includes(normName))) {
-                score += 30;
+            if (normName === normQ) {
+                score += 100;
+            } else if (normName.startsWith(normQ)) {
+                score += 65;
+            } else if (normName.includes(normQ) || (normQ.length > 3 && normQ.includes(normName))) {
+                score += 40;
             }
-            if (normBrand.includes(normQ)) {
+
+            if (normBrand === normQ) {
+                score += 50;
+            } else if (normBrand.includes(normQ)) {
+                score += 25;
+            }
+
+            // Direct Name match
+            if (name.includes(q)) {
+                score += name.startsWith(q) ? 40 : 25;
+            }
+
+            // Direct Brand match
+            if (brand.includes(q)) {
                 score += 20;
             }
 
-            // Name match (highest weight)
-            if (name.includes(q)) {
-                score += name.startsWith(q) ? 30 : 20;
-            }
-
-            // Brand match
-            if (brand.includes(q)) {
-                score += 15;
-            }
-
             // Processor match
-            if (processor.includes(q)) {
-                score += 12;
+            if (processor.includes(q) || (normQ.length > 3 && processor.replace(/[^a-z0-9]/g, '').includes(normQ))) {
+                score += 15;
                 matchedSpecSnippet = `⚡ ${phone.processor}`;
             }
 
             // Camera match
-            if (camera.includes(q)) {
-                score += 12;
+            if (camera.includes(q) || (normQ.length > 3 && camera.replace(/[^a-z0-9]/g, '').includes(normQ))) {
+                score += 15;
                 if (!matchedSpecSnippet) matchedSpecSnippet = `📸 ${phone.camera.split('+')[0].trim()}`;
             }
 
             // RAM match
-            if (ram.includes(q)) {
-                score += 10;
+            if (ram.includes(q) || (normQ.length > 2 && ram.replace(/[^a-z0-9]/g, '').includes(normQ))) {
+                score += 12;
                 if (!matchedSpecSnippet) matchedSpecSnippet = `💾 ${phone.ram} RAM`;
             }
 
             // Battery match
-            if (battery.includes(q)) {
-                score += 10;
+            if (battery.includes(q) || (normQ.length > 3 && battery.replace(/[^a-z0-9]/g, '').includes(normQ))) {
+                score += 12;
                 if (!matchedSpecSnippet) matchedSpecSnippet = `🔋 ${phone.battery}`;
             }
 
             // Price match
             const rawQPrice = q.replace(/[^0-9]/g, '');
             if (rawQPrice && (price.includes(rawQPrice) || (phone.price || '').toLowerCase().includes(q))) {
-                score += 8;
+                score += 10;
                 if (!matchedSpecSnippet) matchedSpecSnippet = `🏷️ ${phone.price}`;
             }
 
             // Category match
             if (category.includes(q)) {
-                score += 6;
+                score += 8;
             }
 
             // Additional specs array match
             if (Array.isArray(phone.specs)) {
                 phone.specs.forEach(s => {
-                    if ((s.text || '').toLowerCase().includes(q)) {
-                        score += 5;
+                    const sText = (s.text || '').toLowerCase();
+                    if (sText.includes(q) || (normQ.length > 3 && sText.replace(/[^a-z0-9]/g, '').includes(normQ))) {
+                        score += 8;
                         if (!matchedSpecSnippet) matchedSpecSnippet = `✨ ${s.text}`;
                     }
                 });
+            }
+
+            // Multi-token match across full corpus
+            const tokens = q.split(/\s+/).filter(Boolean);
+            if (tokens.length > 1) {
+                const fullCorpus = `${name} ${brand} ${processor} ${camera} ${ram} ${battery} ${price} ${category} ${phone.display || ''} ${phone.build || ''} ${(phone.aliases || []).join(' ')}`.toLowerCase();
+                if (tokens.every(t => fullCorpus.includes(t))) {
+                    score += 35;
+                }
+            } else if (tokens.length === 1 && (phone.build || '').toLowerCase().includes(q)) {
+                score += 15;
+                if (!matchedSpecSnippet) matchedSpecSnippet = `🛡️ ${phone.build.split('+')[0].trim()}`;
             }
 
             if (score > 0) {

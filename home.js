@@ -603,6 +603,13 @@ function initSearchUI() {
 let currentTrendingFilter = 'all';
 
 function initTrendingUI() {
+    // 0. Sync Catalog Metrics Counter
+    const metricPhonesEl = document.getElementById('metricPhones');
+    const catalog = (typeof phonesData !== 'undefined' ? phonesData : null) || (window.phonesData || []);
+    if (metricPhonesEl && catalog && catalog.length) {
+        metricPhonesEl.textContent = `${catalog.length}+`;
+    }
+
     // 1. Initial render of trending cards
     renderTrendingCards(currentTrendingFilter);
 
