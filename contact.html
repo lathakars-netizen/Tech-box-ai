@@ -207,6 +207,12 @@
                         </p>
 
                         <form id="contactForm" novalidate>
+                            <!-- Spam Protection: Hidden honeypot field -->
+                            <div style="display:none !important;" aria-hidden="true">
+                                <label for="contactHoneypot">Leave this blank</label>
+                                <input type="text" id="contactHoneypot" name="contact_hp" tabindex="-1" autocomplete="off">
+                            </div>
+
                             <div class="form-row two-cols">
                                 <div class="form-group">
                                     <label for="fullName" class="form-label" data-i18n="contact.fullName">Full Name *</label>
@@ -541,6 +547,9 @@
     <!-- Scripts -->
     <script src="data/phones.js"></script>
     <script src="search.js"></script>
+    <!-- Supabase Integration Layer -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
     <script src="home.js"></script>
     <!-- Leaflet JS for Interactive Map -->

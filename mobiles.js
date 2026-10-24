@@ -25,12 +25,19 @@ function initMobilePage() {
     const initialSearch = urlParams.get('q') || '';
 
     // State
-    const allPhones = typeof window.phonesData !== 'undefined' ? window.phonesData : [];
+    let allPhones = typeof window.phonesData !== 'undefined' ? window.phonesData : [];
     let currentCategory = initialFilter;
     let currentBrand = initialBrand;
     let currentPrice = 'all';
     let currentSort = 'price-asc';
     let searchQuery = initialSearch;
+
+    window.addEventListener('techbox:catalogue-updated', (e) => {
+        if (Array.isArray(e.detail) && e.detail.length > 0) {
+            allPhones = e.detail;
+            renderGrid();
+        }
+    });
 
     if (searchQuery && searchInput) {
         searchInput.value = searchQuery;
@@ -63,6 +70,7 @@ function initMobilePage() {
 
     // Sort selector
     sortSelect && sortSelect.addEventListener('change', () => {
+        sortSelect.dataset.userChanged = 'true';
         currentSort = sortSelect.value;
         renderGrid();
     });
@@ -96,7 +104,17 @@ function initMobilePage() {
 
     function renderGrid() {
         if (!grid) return;
-        const filtered = allPhones.filter(phone => {
+
+        const isSearchActive = Boolean(searchQuery && searchQuery.trim());
+        let candidatePhones = allPhones;
+
+        if (isSearchActive) {
+            if (window.techboxSearch && typeof window.techboxSearch.search === 'function') {
+                candidatePhones = window.techboxSearch.search(searchQuery, allPhones);
+            }
+        }
+
+        const filtered = candidatePhones.filter(phone => {
             // Category filter (from Home "View All")
             if (currentCategory && currentCategory !== 'all') {
                 const cat = (phone.category || '').toLowerCase();
@@ -128,37 +146,25 @@ function initMobilePage() {
                 }
             }
 
-            // Robust search query matching
-            if (searchQuery) {
+            // Fallback search matching if window.techboxSearch was not loaded
+            if (isSearchActive && (!window.techboxSearch || typeof window.techboxSearch.search !== 'function')) {
                 const q = searchQuery.trim().toLowerCase();
                 const normQ = q.replace(/[^a-z0-9]/g, '');
-
-                // 1. Check aliases
-                if (phone.aliases && phone.aliases.some(alias => {
-                    const normA = (alias || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                    return normA === normQ || normA.includes(normQ) || (normQ.length > 2 && normQ.includes(normA));
-                })) {
-                    return true;
-                }
-
-                // 2. Check normalized name & brand
                 const normName = (phone.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
                 const normBrand = (phone.brand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (normName.includes(normQ) || normBrand.includes(normQ) || (normQ.length > 3 && normQ.includes(normName))) return true;
-
-                // 3. Spaceless corpus match
-                const corpus = `${phone.name} ${phone.brand} ${phone.price} ${phone.processor || ''} ${phone.camera || ''} ${phone.category || ''} ${phone.display || ''} ${phone.ram || ''} ${phone.storage || ''} ${(phone.aliases || []).join(' ')}`.toLowerCase();
-                const normCorpus = corpus.replace(/[^a-z0-9]/g, '');
-                if (normCorpus.includes(normQ)) return true;
-
-                // 4. Multi-word match against full corpus
-                const words = q.split(/\s+/).filter(Boolean);
-                if (!words.every(w => corpus.includes(w))) return false;
+                if (normName.includes(normQ) || (phone.aliases && phone.aliases.some(a => a.toLowerCase().replace(/[^a-z0-9]/g, '').includes(normQ)))) {
+                    return true;
+                }
+                const corpus = `${phone.name} ${phone.brand} ${phone.processor || ''} ${phone.camera || ''}`.toLowerCase();
+                if (!q.split(/\s+/).every(w => corpus.includes(w))) return false;
             }
             return true;
         });
 
         const sorted = filtered.slice().sort((a, b) => {
+            if (isSearchActive && (!sortSelect || !sortSelect.dataset.userChanged)) {
+                return 0; // preserve relevance score ranking from techboxSearch
+            }
             switch (currentSort) {
                 case 'price-asc':
                     return ((a.priceNumericINR || parseNumber(a.price)) - (b.priceNumericINR || parseNumber(b.price)));
@@ -246,15 +252,28 @@ function initMobilePage() {
     function wireCardButtons() {
         const storedCompare = JSON.parse(localStorage.getItem('compareSelection') || '[]');
 
-        // Favorite toggle
+        // Sync favorite heart icons from localStorage after rendering new cards
+        if (window.techboxFavorites && typeof window.techboxFavorites.syncUI === 'function') {
+            window.techboxFavorites.syncUI();
+        }
+
+        // Favorite toggle — delegate to favorites.js for localStorage persistence
         document.querySelectorAll('.fav-btn').forEach(btn => {
             btn.addEventListener('click', e => {
                 e.stopPropagation();
-                const isActive = btn.classList.toggle('active');
-                const icon = btn.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-regular', !isActive);
-                    icon.classList.toggle('fa-solid', isActive);
+                const phoneId = btn.getAttribute('data-fav-id') || btn.getAttribute('data-id');
+                if (!phoneId) return;
+                if (window.techboxFavorites && typeof window.techboxFavorites.toggle === 'function') {
+                    window.techboxFavorites.toggle(phoneId);
+                    // favorites.js syncUI() will update the icon, badge and drawer
+                } else {
+                    // Fallback visual toggle if favorites.js hasn't loaded
+                    const isActive = btn.classList.toggle('active');
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-regular', !isActive);
+                        icon.classList.toggle('fa-solid', isActive);
+                    }
                 }
             });
         });

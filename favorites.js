@@ -1,7 +1,12 @@
 /**
- * TECH BOX AI — Persistent Favorites / Saved Mobiles Module
- * Manages localStorage persistence for saved phone IDs, syncs heart buttons across all pages,
- * injects the navbar favorites trigger button and side drawer modal.
+ * TECH BOX AI — Persistent Favorites / Saved Mobiles Module (favorites.js)
+ * 
+ * 100% Client-Side Local Storage Architecture:
+ * - Saves and removes favorite smartphones using browser localStorage ('techbox_favorites').
+ * - Favorites persist across page refreshes and browser sessions.
+ * - Does not require sign-in, session, or Supabase user ID.
+ * - Does not upload local favorites to any remote server or cloud account.
+ * - Synchronizes heart icons across phone cards, detail pages, navbar badge, and side drawer.
  */
 
 (function () {

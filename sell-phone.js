@@ -63,11 +63,54 @@ function initSellPhone() {
         input.addEventListener('change', calculateEstimate);
     });
 
+    const SELL_COOLDOWN_KEY = 'techbox_last_sell_ts';
+    const SELL_COOLDOWN_SECONDS = 15;
+
     // 6. Form Submission / CTA
     const ctaBtn = document.getElementById('sellCtaBtn');
+    const contactInput = document.getElementById('sellContactInput');
+    const contactError = document.getElementById('sellContactError');
+    const statusBanner = document.getElementById('sellStatusBanner');
+
+    function showStatus(msg, isError = false) {
+        if (!statusBanner) return;
+        statusBanner.textContent = msg;
+        statusBanner.style.display = 'block';
+        if (isError) {
+            statusBanner.style.background = 'rgba(239, 68, 68, 0.15)';
+            statusBanner.style.border = '1px solid rgba(239, 68, 68, 0.4)';
+            statusBanner.style.color = '#fca5a5';
+        } else {
+            statusBanner.style.background = 'rgba(16, 185, 129, 0.15)';
+            statusBanner.style.border = '1px solid rgba(16, 185, 129, 0.4)';
+            statusBanner.style.color = '#6ee7b7';
+        }
+    }
+
+    if (contactInput) {
+        contactInput.addEventListener('input', () => {
+            if (contactError) contactError.style.display = 'none';
+        });
+    }
+
     if (ctaBtn) {
         ctaBtn.addEventListener('click', (e) => {
             e.preventDefault();
+
+            // Spam Protection 1: Honeypot check
+            const honeypot = document.getElementById('sellHoneypot');
+            if (honeypot && honeypot.value.trim() !== '') {
+                console.warn('[Sell] Bot submission blocked via honeypot.');
+                return;
+            }
+
+            // Spam Protection 2: Rate limit cooldown
+            const lastSellTs = parseInt(localStorage.getItem(SELL_COOLDOWN_KEY) || '0', 10);
+            const elapsed = Math.floor((Date.now() - lastSellTs) / 1000);
+            if (elapsed < SELL_COOLDOWN_SECONDS) {
+                showStatus(`Please wait ${SELL_COOLDOWN_SECONDS - elapsed} seconds before submitting another request.`, true);
+                return;
+            }
             
             let isValid = true;
             if (!brandSelect.value) {
@@ -79,13 +122,47 @@ function initSellPhone() {
                 validateSelect(modelSelect);
             }
 
+            const contactVal = (contactInput ? contactInput.value : '').trim();
+            const emailOrPhoneRegex = /^([^\s@]+@[^\s@]+\.[^\s@]+|\+?[0-9\s-]{10,15})$/;
+            if (!contactVal || !emailOrPhoneRegex.test(contactVal)) {
+                isValid = false;
+                if (contactError) contactError.style.display = 'block';
+            } else {
+                if (contactError) contactError.style.display = 'none';
+            }
+
             if (isValid) {
                 const phone = dataList.find(p => p.id === modelSelect.value);
                 if (phone) {
-                    alert(`Lead generated for ${phone.name}! A TECH BOX AI representative will contact you with the final quote.`);
+                    const conditionEl = document.querySelector('input[name="condition"]:checked');
+                    const condition = conditionEl ? conditionEl.value : 'like-new';
+                    const estText = document.getElementById('sumEstimate') ? document.getElementById('sumEstimate').textContent : '';
+                    const estNum = parseInt(estText.replace(/[^0-9]/g, '')) || 0;
+
+                    // Record cooldown timestamp
+                    localStorage.setItem(SELL_COOLDOWN_KEY, Date.now().toString());
+
+                    // Submit to Supabase without requiring user authentication (RLS allows public INSERT with CHECK true)
+                    if (window.techboxSupabase && typeof window.techboxSupabase.submitSellRequest === 'function') {
+                        window.techboxSupabase.submitSellRequest(null, {
+                            phone_id: phone.id,
+                            phone_name: phone.name,
+                            condition: condition,
+                            quoted_price: estNum,
+                            contact_email: contactVal
+                        }).catch(e => console.warn('[Sell] Supabase submit note:', e));
+                    }
+
+                    showStatus(`🎉 Valuation Request Received for ${phone.name}! A TECH BOX AI specialist will contact you at ${contactVal} with your official offer.`, false);
+                    ctaBtn.disabled = true;
+                    ctaBtn.innerHTML = '<i class="fa-solid fa-check"></i> Request Submitted';
+                    setTimeout(() => {
+                        ctaBtn.disabled = false;
+                        ctaBtn.innerHTML = '<span class="btn-text">Submit Another Device</span> <i class="fa-solid fa-arrow-right btn-icon"></i>';
+                    }, 4000);
                 }
             } else {
-                alert('Please select a Brand and Model first.');
+                showStatus('Please select a Brand, Model, and provide valid contact details.', true);
             }
         });
     }

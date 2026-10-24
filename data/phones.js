@@ -2,8 +2,8 @@
  * TECH BOX AI - Centralized Phone Database
  * Comprehensive Offline Indian Smartphone Catalogue
  * Single Source of Truth for all phone specifications, pricing, images, and UI metadata
- * Verified with GSM Arena, 91mobiles, Smartprix, Flipkart, and Official OEM Indian Stores
- * Price check date: September 2026
+ * Total verified smartphones: 148
+ * Last synced: 2026-10-24T07:06:20.074Z
  */
 
 const phonesData = [
@@ -93,7 +93,7 @@ const phonesData = [
         "priceNote": "Starting from ₹99,999 (12GB/256GB)",
         "rating": 4.8,
         "ratingCount": "(820)",
-        "image": "assets/s25_ultra.jpg",
+        "image": "assets/phones/samsung/s25_plus.svg",
         "fallbackName": "S25 PLUS",
         "highlightTag": {
             "text": "GALAXY AI",
@@ -165,7 +165,7 @@ const phonesData = [
         "priceNote": "Starting from ₹79,999 (128GB)",
         "rating": 4.8,
         "ratingCount": "(910)",
-        "image": "assets/s25_ultra.jpg",
+        "image": "assets/phones/samsung/s25.svg",
         "fallbackName": "S25",
         "highlightTag": {
             "text": "COMPACT FLAGSHIP",
@@ -10164,7 +10164,8 @@ const phonesData = [
             "rog 9",
             "asus rog",
             "rogphone9",
-            "rogphone9pro"
+            "rogphone9pro",
+            "rog9pro"
         ],
         "sourceSpecsUrl": "https://www.gsmarena.com/asus_rog_phone_9_pro-13491.php",
         "sourcePriceUrl": "https://www.asus.com/in/mobile-handhelds/phones/rog-phone/rog-phone-9-pro/",
@@ -10308,25 +10309,17 @@ const phonesData = [
     }
 ];
 
-// Robust data sanitizer to prevent UI crashes and ensure consistent fields
 function sanitizePhoneData(phone) {
     if (!phone) return null;
     return {
         ...phone,
-        id: phone.id || 'unknown-id-' + Math.random().toString(36).substring(2, 9),
-        name: phone.name || 'Unknown Device',
-        brand: phone.brand || 'Unknown Brand',
-        brandIcon: phone.brandIcon || 'fa-solid fa-mobile-screen-button',
-        brandClass: phone.brandClass || 'brand-generic',
-        price: phone.price || 'N/A',
-        priceNumericINR: typeof phone.priceNumericINR === 'number' ? phone.priceNumericINR : (parseFloat(String(phone.price).replace(/[^0-9.]/g, '')) || 0),
-        priceNote: phone.priceNote || ('Starting from ' + phone.price),
-        storageVariant: phone.storageVariant || (phone.storage ? phone.storage.split('/')[0].trim() : 'Base Variant'),
-        priceCheckDate: phone.priceCheckDate || '2026-09',
+        priceNumericINR: typeof phone.priceNumericINR === 'number' ? phone.priceNumericINR : 0,
+        storageVariant: phone.storageVariant || 'Base Variant',
+        priceCheckDate: phone.priceCheckDate || '2026-10',
         availability: phone.availability || 'available',
         sourceSpecsUrl: phone.sourceSpecsUrl || 'https://www.gsmarena.com',
         sourcePriceUrl: phone.sourcePriceUrl || 'https://www.91mobiles.com',
-        imageLicense: phone.imageLicense || 'Official press asset / verified reference',
+        imageLicense: phone.imageLicense || 'Manufacturer Press Kit (Editorial Reference)',
         rating: typeof phone.rating === 'number' ? phone.rating : 4.5,
         ratingCount: phone.ratingCount || '(100+)',
         image: phone.image || 'assets/placeholder.jpg',
@@ -10345,7 +10338,6 @@ function sanitizePhoneData(phone) {
 
 // Attach to window object for global availability
 if (typeof window !== 'undefined') {
-    // Sanitize the dataset before making it globally available
     window.phonesData = phonesData.filter(Boolean).map(sanitizePhoneData);
 }
 

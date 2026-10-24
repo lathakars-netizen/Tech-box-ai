@@ -63,9 +63,27 @@ function initContactForm() {
         });
     });
 
+    const CONTACT_COOLDOWN_KEY = 'techbox_last_contact_ts';
+    const CONTACT_COOLDOWN_SECONDS = 10;
+
     // Form submission
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        // Spam Protection 1: Honeypot check
+        const honeypot = document.getElementById('contactHoneypot');
+        if (honeypot && honeypot.value.trim() !== '') {
+            console.warn('[Contact] Bot submission blocked via honeypot.');
+            return;
+        }
+
+        // Spam Protection 2: Rate limit cooldown
+        const lastContactTs = parseInt(localStorage.getItem(CONTACT_COOLDOWN_KEY) || '0', 10);
+        const elapsed = Math.floor((Date.now() - lastContactTs) / 1000);
+        if (elapsed < CONTACT_COOLDOWN_SECONDS) {
+            alert(`Please wait ${CONTACT_COOLDOWN_SECONDS - elapsed} seconds before submitting another inquiry.`);
+            return;
+        }
 
         let isValid = true;
         let firstInvalidField = null;
@@ -129,10 +147,23 @@ function initContactForm() {
             return;
         }
 
+        // Record cooldown timestamp
+        localStorage.setItem(CONTACT_COOLDOWN_KEY, Date.now().toString());
+
         // Show Success Preview State
         const submitterNameSpan = document.getElementById('submittedName');
         if (submitterNameSpan) {
             submitterNameSpan.textContent = nameVal;
+        }
+
+        // Supabase Contact Submission (Non-blocking)
+        if (window.techboxSupabase && typeof window.techboxSupabase.submitContactForm === 'function') {
+            window.techboxSupabase.submitContactForm({
+                name: nameVal,
+                email: emailVal,
+                subject: subjectVal,
+                message: messageVal
+            }).catch(err => console.warn('[Contact] Supabase submit note:', err));
         }
 
         if (formContainer) formContainer.style.display = 'none';

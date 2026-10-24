@@ -1,0 +1,63 @@
+name: Automated Smartphone Catalogue Sync
+
+on:
+  schedule:
+    # Run weekly every Monday at 04:00 UTC (09:30 AM IST)
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+    # Allows manual execution on demand (e.g. after major phone launch events)
+
+permissions:
+  contents: write
+
+jobs:
+  sync-catalogue:
+    name: Sync Indian Smartphone Catalogue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install --production
+
+      - name: Execute Catalogue Ingestion & Supabase Upsert
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/sync_catalogue.js
+
+      - name: Run Schema & Catalogue Verification
+        run: |
+          node -e "
+            const { validatePhoneSchema } = require('./scripts/validate_phone_schema.js');
+            const phones = require('./data/phones.js').phonesData || require('./data/phones.js');
+            console.log('Verifying catalogue count after sync:', phones.length);
+            if (!Array.isArray(phones) || phones.length < 148) {
+              console.error('CRITICAL: Phone count dropped below verified baseline!');
+              process.exit(1);
+            }
+            phones.forEach(p => {
+              const res = validatePhoneSchema(p);
+              if (!res.valid) {
+                console.error('CRITICAL: Invalid phone record in catalogue:', p.id, res.errors);
+                process.exit(1);
+              }
+            });
+            console.log('All phones passed strict schema validation.');
+          "
+
+      - name: Commit and Push Updated Offline Fallback (If Changed)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated catalogue sync: data/phones.js updated [skip ci]"
+          file_pattern: "data/phones.js import_errors.log"

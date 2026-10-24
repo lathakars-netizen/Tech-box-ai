@@ -304,30 +304,57 @@ function initSearchUI() {
         const q = rawQuery.trim().toLowerCase();
         if (!q) return dataList; // empty → all
 
+        if (window.techboxSearch && typeof window.techboxSearch.search === 'function') {
+            return window.techboxSearch.search(q, dataList);
+        }
+
         const normalizedQ = normalizeSearchToken(q);
         const words = q.split(/\s+/).filter(Boolean);
+        const normTokens = words.map(w => normalizeSearchToken(w)).filter(Boolean);
 
         return dataList.filter((phone, i) => {
-            // 1. Check alias direct or normalized match
+            const normName  = normalizeSearchToken(phone.name);
+            const normBrand = normalizeSearchToken(phone.brand);
+
+            // 1. Exact / prefix normalized name match (handles "iqooneo10", "s25ultra")
+            if (normName === normalizedQ || normName.includes(normalizedQ) || normalizedQ.includes(normName)) return true;
+
+            // 2. Alias match — normalized alias vs normalized query
             if (phone.aliases && phone.aliases.some(alias => {
                 const normAlias = normalizeSearchToken(alias);
-                return normAlias.includes(normalizedQ) || normalizedQ.includes(normAlias);
+                return normAlias === normalizedQ ||
+                       normAlias.includes(normalizedQ) ||
+                       (normalizedQ.length >= 3 && normalizedQ.includes(normAlias) && normAlias.length >= 3);
             })) {
                 return true;
             }
 
-            // 2. Check normalized name / brand match (handles "s25ultra" or "iqooneo10")
-            const normName = normalizeSearchToken(phone.name);
-            const normBrand = normalizeSearchToken(phone.brand);
-            if (normName.includes(normalizedQ) || normalizedQ.includes(normName)) return true;
-            if (normBrand.includes(normalizedQ)) return true;
+            // 3. Brand-only match
+            if (normBrand === normalizedQ || (normalizedQ.length >= 3 && normBrand.startsWith(normalizedQ))) return true;
 
-            // 3. Multi-word match: every word appears in corpus
-            if (words.every(word => corpora[i].includes(word))) return true;
+            // 4. Multi-word match: check model words vs specs
+            if (words.length > 1) {
+                const hasBrandToken = normTokens.some(nt => nt === normBrand || normBrand.includes(nt));
+                const nonBrandTokens = hasBrandToken
+                    ? words.filter(w => normalizeSearchToken(w) !== normBrand)
+                    : words;
+                const normNonBrand = nonBrandTokens.map(w => normalizeSearchToken(w)).filter(Boolean);
 
-            // 4. Normalized corpus match
-            const normCorpus = normalizeSearchToken(corpora[i]);
-            return normCorpus.includes(normalizedQ);
+                const allModelInNameOrAlias = normNonBrand.length > 0 && normNonBrand.every(nt => {
+                    return normName.includes(nt) || (phone.aliases || []).some(a => normalizeSearchToken(a).includes(nt));
+                });
+                if (allModelInNameOrAlias) return true;
+
+                if (words.every(word => corpora[i].includes(word))) return true;
+            }
+
+            // 5. Normalized corpus match (fallback for spec/category searches)
+            if (normalizedQ.length >= 4) {
+                const normCorpus = normalizeSearchToken(corpora[i]);
+                return normCorpus.includes(normalizedQ);
+            }
+
+            return false;
         });
     }
 
@@ -376,6 +403,8 @@ function initSearchUI() {
                         </button>
                         <button class="card-icon-btn fav-btn"
                             title="Add to Favorites"
+                            data-id="${escapeHtml(phone.id)}"
+                            data-fav-id="${escapeHtml(phone.id)}"
                             aria-label="Favorite ${escapeHtml(phone.name)}">
                             <i class="fa-regular fa-heart"></i>
                         </button>
@@ -432,14 +461,26 @@ function initSearchUI() {
 
     // ── Attach interactive handlers to newly rendered search cards ────────────
     function wireSearchCardHandlers() {
+        // Sync heart icons for phones already in favorites
+        if (window.techboxFavorites && typeof window.techboxFavorites.syncUI === 'function') {
+            window.techboxFavorites.syncUI();
+        }
         resultsGrid.querySelectorAll('.fav-btn').forEach(btn => {
             btn.addEventListener('click', e => {
                 e.stopPropagation();
-                const isActive = btn.classList.toggle('active');
-                const icon = btn.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-regular', !isActive);
-                    icon.classList.toggle('fa-solid', isActive);
+                const phoneId = btn.getAttribute('data-fav-id') || btn.getAttribute('data-id');
+                if (!phoneId) return;
+                if (window.techboxFavorites && typeof window.techboxFavorites.toggle === 'function') {
+                    window.techboxFavorites.toggle(phoneId);
+                    // syncUI() in favorites.js updates the icon, badge and drawer automatically
+                } else {
+                    // Fallback visual toggle if favorites.js hasn't loaded
+                    const isActive = btn.classList.toggle('active');
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-regular', !isActive);
+                        icon.classList.toggle('fa-solid', isActive);
+                    }
                 }
             });
         });
@@ -613,6 +654,15 @@ function initTrendingUI() {
     // 1. Initial render of trending cards
     renderTrendingCards(currentTrendingFilter);
 
+    // Listen for live catalogue hydration from Supabase
+    window.addEventListener('techbox:catalogue-updated', () => {
+        const liveCatalog = window.phonesData || [];
+        if (metricPhonesEl && liveCatalog.length) {
+            metricPhonesEl.textContent = `${liveCatalog.length}+`;
+        }
+        renderTrendingCards(currentTrendingFilter);
+    });
+
     // 2. Category Filter Tabs Click Handlers
     const filterTabs = document.querySelectorAll('.filter-tab');
     filterTabs.forEach(tab => {
@@ -644,15 +694,22 @@ function initTrendingUI() {
             const favBtn = e.target.closest('.fav-btn');
             if (favBtn) {
                 e.stopPropagation();
-                const isActive = favBtn.classList.toggle('active');
-                const icon = favBtn.querySelector('i');
-                if (icon) {
-                    if (isActive) {
-                        icon.classList.remove('fa-regular');
-                        icon.classList.add('fa-solid');
-                    } else {
-                        icon.classList.remove('fa-solid');
-                        icon.classList.add('fa-regular');
+                const phoneId = favBtn.getAttribute('data-fav-id') || favBtn.getAttribute('data-id');
+                if (phoneId && window.techboxFavorites && typeof window.techboxFavorites.toggle === 'function') {
+                    window.techboxFavorites.toggle(phoneId);
+                    // favorites.js syncUI() updates icon, badge and drawer automatically
+                } else if (!phoneId) {
+                    // Fallback visual toggle (no ID available)
+                    const isActive = favBtn.classList.toggle('active');
+                    const icon = favBtn.querySelector('i');
+                    if (icon) {
+                        if (isActive) {
+                            icon.classList.remove('fa-regular');
+                            icon.classList.add('fa-solid');
+                        } else {
+                            icon.classList.remove('fa-solid');
+                            icon.classList.add('fa-regular');
+                        }
                     }
                 }
                 return;
@@ -776,6 +833,11 @@ function renderTrendingCards(categoryFilter = 'all') {
 
     if (window.techboxLang) {
         window.techboxLang.applyTranslations(grid);
+    }
+
+    // Sync heart icons for phones already in favorites after render
+    if (window.techboxFavorites && typeof window.techboxFavorites.syncUI === 'function') {
+        window.techboxFavorites.syncUI();
     }
 }
 

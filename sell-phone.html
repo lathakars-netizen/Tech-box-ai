@@ -300,6 +300,27 @@
                             </div>
                         </div>
 
+                        <!-- Contact Info & Spam Protection for Public Valuation -->
+                        <div class="sell-contact-box" style="margin-top: 1rem;">
+                            <label for="sellContactInput" class="form-label" style="font-size: 0.85rem; margin-bottom: 0.4rem; display: block;">
+                                Your Email or Phone Number <span style="color: #ef4444;">*</span>
+                            </label>
+                            <input type="text" id="sellContactInput" class="form-input" placeholder="e.g. name@example.com or 9876543210" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15,23,42,0.6); color: #f8fafc; font-size: 0.9rem;" required>
+                            <span class="field-error" id="sellContactError" style="display:none; color: #ef4444; font-size: 0.8rem; margin-top: 0.35rem;">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span>Please enter a valid email or phone number.</span>
+                            </span>
+                        </div>
+
+                        <!-- Anti-spam Honeypot -->
+                        <div style="display:none !important;" aria-hidden="true">
+                            <label for="sellHoneypot">Leave blank</label>
+                            <input type="text" id="sellHoneypot" name="sell_bot_check" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <!-- Submission Status Banner -->
+                        <div id="sellStatusBanner" style="display:none; padding: 0.85rem; border-radius: 8px; font-size: 0.85rem; margin-top: 0.5rem; text-align: center;"></div>
+
                         <button class="btn btn-primary sell-btn" id="sellCtaBtn">
                             <span class="btn-text" data-i18n="sell.getStarted">Get Started</span>
                             <i class="fa-solid fa-arrow-right btn-icon"></i>
@@ -314,6 +335,9 @@
     <!-- Scripts -->
     <script src="data/phones.js"></script>
     <script src="search.js"></script>
+    <!-- Supabase Integration Layer -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="auth.js"></script>
     <script src="home.js"></script>
     <script src="sell-phone.js"></script>

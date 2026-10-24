@@ -1,5 +1,5 @@
 /**
- * TECH BOX AI — Zero-Dependency Integration & Unit Test Suite for Auth & Review Submission
+ * TECH BOX AI — Zero-Dependency Verification for Public Access & Public Review Engine
  * Runs cleanly on standard Node.js without requiring third-party npm packages.
  */
 
@@ -21,7 +21,7 @@ class ElementMock {
             add: (...cs) => cs.forEach(c => this.classList._classes.add(c)),
             remove: (...cs) => cs.forEach(c => this.classList._classes.delete(c)),
             contains: (c) => this.classList._classes.has(c),
-            toggle: (c) => this.classList.contains(c) ? (this.classList.remove(c), false) : (this.classList.add(c), true)
+            toggle: (c) => this.classList._classes.has(c) ? (this.classList.remove(c), false) : (this.classList.add(c), true)
         };
         this.style = {};
         this.attributes = {};
@@ -37,14 +37,13 @@ class ElementMock {
     set innerHTML(val) {
         this._innerHTML = String(val);
         this._textContent = String(val).replace(/<[^>]*>/g, '');
-        // Extract IDs from the new innerHTML for getElementById lookups (non-recursive)
+        // Extract IDs from the new innerHTML for getElementById lookups
         const idRe = /id=["']([^"']+)["']/g;
         let m;
         while ((m = idRe.exec(this._innerHTML)) !== null) {
             const foundId = m[1];
             if (!elementsById[foundId]) {
                 const el = new ElementMock('div', foundId);
-                // Don't recursively set innerHTML to avoid stack overflow
                 el._innerHTML = '';
                 el._textContent = '';
             }
@@ -58,145 +57,186 @@ class ElementMock {
     }
 
     setAttribute(k, v) { this.attributes[k] = String(v); }
-    getAttribute(k) { return this.attributes[k] !== undefined ? this.attributes[k] : null; }
-    
-    addEventListener(evt, fn) {
-        if (!this.listeners[evt]) this.listeners[evt] = [];
-        this.listeners[evt].push(fn);
-    }
-
-    dispatchEvent(evt) {
-        const type = typeof evt === 'string' ? evt : (evt.type || 'click');
-        const eObj = typeof evt === 'string' ? { type: evt, target: this, preventDefault: () => {} } : evt;
-        (this.listeners[type] || []).forEach(fn => fn(eObj));
-    }
-
-    click() { this.dispatchEvent('click'); }
+    getAttribute(k) { return this.attributes[k] || null; }
+    removeAttribute(k) { delete this.attributes[k]; }
 
     appendChild(child) {
+        if (!child) return child;
         child.parentNode = this;
         this.children.push(child);
+        if (child.id) elementsById[child.id] = child;
         return child;
     }
 
-    insertBefore(newChild, refChild) {
-        newChild.parentNode = this;
-        const idx = this.children.indexOf(refChild);
-        if (idx >= 0) this.children.splice(idx, 0, newChild);
-        else this.children.push(newChild);
-        return newChild;
+    insertBefore(newNode, refNode) {
+        if (!newNode) return newNode;
+        newNode.parentNode = this;
+        const idx = this.children.indexOf(refNode);
+        if (idx !== -1) {
+            this.children.splice(idx, 0, newNode);
+        } else {
+            this.children.push(newNode);
+        }
+        if (newNode.id) elementsById[newNode.id] = newNode;
+        return newNode;
     }
 
-    contains(el) {
-        if (el === this) return true;
-        return this.children.some(c => c.contains ? c.contains(el) : c === el);
+    removeChild(child) {
+        const idx = this.children.indexOf(child);
+        if (idx !== -1) {
+            this.children.splice(idx, 1);
+            child.parentNode = null;
+        }
+        return child;
     }
 
-    querySelector(sel) {
-        if (sel.startsWith('#')) return elementsById[sel.substring(1)] || null;
-        if (sel.startsWith('.')) {
-            const cls = sel.substring(1);
+    addEventListener(event, handler) {
+        if (!this.listeners[event]) this.listeners[event] = [];
+        this.listeners[event].push(handler);
+    }
+
+    dispatchEvent(event) {
+        const type = typeof event === 'string' ? event : event.type;
+        const handlers = this.listeners[type] || [];
+        handlers.forEach(h => h(event));
+    }
+
+    querySelector(selector) {
+        if (selector.startsWith('#')) {
+            const targetId = selector.substring(1);
+            return elementsById[targetId] || null;
+        }
+        if (selector.startsWith('.')) {
+            const cls = selector.substring(1);
             if (this.classList.contains(cls)) return this;
-            for (let child of this.children) {
-                const found = child.querySelector(sel);
-                if (found) return found;
+            for (const child of this.children) {
+                if (child.querySelector) {
+                    const found = child.querySelector(selector);
+                    if (found) return found;
+                }
             }
         }
         return null;
     }
 
-    querySelectorAll(sel) {
+    querySelectorAll(selector) {
         const results = [];
-        if (sel.startsWith('.')) {
-            const cls = sel.substring(1);
+        if (selector.startsWith('.')) {
+            const cls = selector.substring(1);
             if (this.classList.contains(cls)) results.push(this);
-            for (let child of this.children) {
-                results.push(...child.querySelectorAll(sel));
+        }
+        for (const child of this.children) {
+            if (child.querySelectorAll) {
+                results.push(...child.querySelectorAll(selector));
             }
         }
         return results;
     }
 }
 
-// Create default UI container mocks
-const navActionsMock = new ElementMock('div');
-navActionsMock.classList.add('nav-actions');
-const themeToggleMock = new ElementMock('button', 'themeToggle');
-themeToggleMock.parentNode = navActionsMock;
-navActionsMock.children.push(themeToggleMock);
+// Setup Global Browser Environment
+function setupEnvironment() {
+    // Clear mocks
+    Object.keys(storageStore).forEach(k => delete storageStore[k]);
+    Object.keys(elementsById).forEach(k => delete elementsById[k]);
+    domLoadedCallbacks.length = 0;
 
-const mobileNavListMock = new ElementMock('ul');
-mobileNavListMock.classList.add('mobile-nav-list');
+    const mockBody = new ElementMock('body', 'mockBody');
 
-// Setup Global Browser Mocks
-global.window = {
-    location: { search: '?id=s25-ultra', hostname: 'localhost' },
-    innerWidth: 1024,
-    innerHeight: 768,
-    addEventListener: (evt, fn) => {
-        if (evt === 'DOMContentLoaded') domLoadedCallbacks.push(fn);
-    },
-    localStorage: {
+    // Setup base DOM elements needed by auth & reviews
+    const navActions = new ElementMock('div', 'navActions');
+    navActions.className = 'nav-actions';
+    const themeBtn = new ElementMock('button', 'themeToggle');
+    navActions.appendChild(themeBtn);
+    mockBody.appendChild(navActions);
+
+    const mobileList = new ElementMock('ul', 'mobileNavList');
+    mobileList.className = 'mobile-nav-list';
+    mockBody.appendChild(mobileList);
+
+    // Reviews containers
+    const reviewsSection = new ElementMock('section', 'dhReviewsSection');
+    const formContainer = new ElementMock('div', 'revFormContainer');
+    const listContainer = new ElementMock('div', 'revListContainer');
+    const scoreEl = new ElementMock('div', 'revSummaryScore');
+    const starsEl = new ElementMock('div', 'revSummaryStars');
+    const countEl = new ElementMock('div', 'revSummaryCount');
+    const barsEl = new ElementMock('div', 'revSummaryBars');
+
+    reviewsSection.appendChild(formContainer);
+    reviewsSection.appendChild(listContainer);
+    reviewsSection.appendChild(scoreEl);
+    reviewsSection.appendChild(starsEl);
+    reviewsSection.appendChild(countEl);
+    reviewsSection.appendChild(barsEl);
+    mockBody.appendChild(reviewsSection);
+
+    // Global document mock
+    global.document = {
+        readyState: 'complete',
+        body: mockBody,
+        getElementById: (id) => elementsById[id] || null,
+        querySelector: (sel) => {
+            if (sel === '.nav-actions') return navActions;
+            if (sel === '.mobile-nav-list') return mobileList;
+            if (sel.startsWith('#')) return elementsById[sel.substring(1)] || null;
+            return mockBody.querySelector(sel);
+        },
+        querySelectorAll: (sel) => mockBody.querySelectorAll(sel),
+        createElement: (tag) => new ElementMock(tag),
+        addEventListener: (event, handler) => {
+            if (event === 'DOMContentLoaded') {
+                domLoadedCallbacks.push(handler);
+            }
+        }
+    };
+
+    // Global localStorage mock
+    global.localStorage = {
         getItem: (k) => storageStore[k] || null,
         setItem: (k, v) => { storageStore[k] = String(v); },
         removeItem: (k) => { delete storageStore[k]; },
         clear: () => { Object.keys(storageStore).forEach(k => delete storageStore[k]); }
-    }
-};
+    };
 
-global.localStorage = global.window.localStorage;
-
-global.document = {
-    body: new ElementMock('body', 'body'),
-    createElement: (tag) => new ElementMock(tag),
-    getElementById: (id) => elementsById[id] || null,
-    querySelector: (sel) => {
-        if (sel.startsWith('#')) return elementsById[sel.substring(1)] || null;
-        if (sel === '.nav-actions') return navActionsMock;
-        if (sel === '.mobile-nav-list') return mobileNavListMock;
-        return null;
-    },
-    querySelectorAll: () => [],
-    addEventListener: (evt, fn) => {
-        if (evt === 'DOMContentLoaded') domLoadedCallbacks.push(fn);
-    }
-};
-
-// Setup mock details elements
-new ElementMock('div', 'dhRatingNum');
-new ElementMock('div', 'dhRatingCount');
-new ElementMock('div', 'dhStars');
-new ElementMock('section', 'dhReviewsSection');
-new ElementMock('div', 'revSummaryScore');
-new ElementMock('div', 'revSummaryStars');
-new ElementMock('div', 'revSummaryCount');
-new ElementMock('div', 'revSummaryBars');
-new ElementMock('div', 'revFormContainer');
-new ElementMock('div', 'revListContainer');
-
-function triggerDOMContentLoaded() {
-    for (const cb of domLoadedCallbacks) {
-        try { cb(); } catch (e) { /* swallow DOM mock errors */ }
-    }
+    // Global window mock
+    global.window = {
+        localStorage: global.localStorage,
+        location: {
+            search: '?id=s25-ultra',
+            pathname: '/details.html'
+        }
+    };
 }
 
+function triggerDOMContentLoaded() {
+    domLoadedCallbacks.forEach(cb => {
+        try { cb(); } catch (e) { console.error('DOMContentLoaded callback error:', e); }
+    });
+}
+
+// --------------------------------------------------------------------------
+// TEST EXECUTION
+// --------------------------------------------------------------------------
 function runTestSuite() {
     console.log('\n============================================================');
-    console.log('  TECH BOX AI — Auth & Reviews Test Suite (Zero-Dependency)');
+    console.log('  TECH BOX AI — Public Access & Reviews Verification Suite');
     console.log('============================================================\n');
 
     let passed = 0;
     let failed = 0;
 
-    function assert(cond, desc) {
-        if (cond) {
-            console.log(`  ✅ PASS: ${desc}`);
+    function assert(condition, message) {
+        if (condition) {
+            console.log(`  ✅ PASS: ${message}`);
             passed++;
         } else {
-            console.error(`  ❌ FAIL: ${desc}`);
+            console.error(`  ❌ FAIL: ${message}`);
             failed++;
         }
     }
+
+    setupEnvironment();
 
     // Load source code
     const phonesCode = fs.readFileSync('./data/phones.js', 'utf8');
@@ -222,83 +262,34 @@ function runTestSuite() {
     triggerDOMContentLoaded();
 
     // --------------------------------------------------------------------------
-    // Test Case 1: Initial Unauthenticated State
+    // Test Case 1: Initial Public State — No Sign In Buttons Injected
     // --------------------------------------------------------------------------
-    console.log('\n--- 1. Testing Unauthenticated State ---');
+    console.log('\n--- 1. Testing Public Access State (No Sign In Controls) ---');
 
     const currUser = global.window.techboxAuth.getCurrentUser();
-    assert(currUser === null, 'No active user session initially in localStorage');
+    assert(currUser === null, 'No active user session in localStorage (Public visitor)');
+    assert(global.window.techboxAuth.isPublic === true, 'techboxAuth reports isPublic: true');
 
-    // After DOMContentLoaded, the reviews section should have rendered the
-    // "Sign In to Review" prompt since no session exists.
+    // In public mode, there must be NO "Sign In to Review" prompt
     const promptBtn = elementsById['btnPromptSignIn'];
-    assert(promptBtn !== undefined && promptBtn !== null, '"Sign In to Review" prompt rendered for unauthenticated users');
+    assert(promptBtn === undefined || promptBtn === null, 'No "Sign In to Review" prompt rendered for public visitors');
 
-    // Auth.js should have injected a Sign In button in the navbar
+    // In public mode, there must be NO Sign In button injected in navbar
     const signInNav = elementsById['btnNavbarSignIn'];
-    assert(signInNav !== undefined && signInNav !== null, 'Navbar displays "Sign In" button for guest users');
+    assert(signInNav === undefined || signInNav === null, 'Navbar contains NO "Sign In" button');
+
+    // In public mode, the review write card must be rendered directly for visitors
+    const writeForm = elementsById['revSubmitForm'];
+    assert(writeForm !== undefined && writeForm !== null, 'Public review submission form rendered directly for visitors');
+
+    // Honeypot spam field must be present
+    const honeypot = elementsById['revHoneypot'];
+    assert(honeypot !== undefined && honeypot !== null, 'Review form contains hidden honeypot spam protection');
 
     // --------------------------------------------------------------------------
-    // Test Case 2: Signup Validation & Registration
+    // Test Case 2: Public Review Submission & Local Storage Persistence
     // --------------------------------------------------------------------------
-    console.log('\n--- 2. Testing Signup Validation & Registration ---');
-
-    const invalidShortPass = global.window.techboxAuth.signup('John Doe', 'john@techbox.ai', '123');
-    assert(invalidShortPass.success === false, 'Rejects password under 6 characters');
-
-    const invalidShortName = global.window.techboxAuth.signup('J', 'john@techbox.ai', 'password123');
-    assert(invalidShortName.success === false, 'Rejects name under 2 characters');
-
-    const invalidEmailFormat = global.window.techboxAuth.signup('John Doe', 'invalid-email', 'password123');
-    assert(invalidEmailFormat.success === false, 'Rejects invalid email format');
-
-    const emptyEmail = global.window.techboxAuth.signup('John Doe', '', 'password123');
-    assert(emptyEmail.success === false, 'Rejects empty email');
-
-    const validSignup = global.window.techboxAuth.signup('John Doe', 'john@techbox.ai', 'secret123');
-    assert(validSignup.success === true, 'Successfully creates user account for valid inputs');
-    assert(validSignup.user.name === 'John Doe', 'User name stored accurately');
-
-    const dupSignup = global.window.techboxAuth.signup('John Clone', 'JOHN@TECHBOX.AI', 'password999');
-    assert(dupSignup.success === false, 'Prevents duplicate email registration (case-insensitive)');
-
-    // --------------------------------------------------------------------------
-    // Test Case 3: Session State & Logout
-    // --------------------------------------------------------------------------
-    console.log('\n--- 3. Testing Session State & Logout ---');
-
-    const sessionUser = global.window.techboxAuth.getCurrentUser();
-    assert(sessionUser !== null && sessionUser.email === 'john@techbox.ai', 'Active session persisted in localStorage after signup');
-
-    const userPill = elementsById['userProfilePill'];
-    assert(userPill !== undefined && userPill !== null, 'Navbar displays user profile pill after signup');
-
-    global.window.techboxAuth.logout();
-    assert(global.window.techboxAuth.getCurrentUser() === null, 'Logout clears user session');
-    assert(elementsById['btnNavbarSignIn'] !== undefined, 'Navbar reverts to "Sign In" button after logout');
-
-    // --------------------------------------------------------------------------
-    // Test Case 4: Login Credentials & Failure Handling
-    // --------------------------------------------------------------------------
-    console.log('\n--- 4. Testing Login Validation ---');
-
-    const wrongPass = global.window.techboxAuth.login('john@techbox.ai', 'wrongpassword');
-    assert(wrongPass.success === false, 'Rejects incorrect password');
-
-    const nonExistent = global.window.techboxAuth.login('unknown@techbox.ai', 'password123');
-    assert(nonExistent.success === false, 'Rejects non-existent email address');
-
-    const emptyPass = global.window.techboxAuth.login('john@techbox.ai', '');
-    assert(emptyPass.success === false, 'Rejects empty password');
-
-    const loginSuccess = global.window.techboxAuth.login('john@techbox.ai', 'secret123');
-    assert(loginSuccess.success === true, 'Successfully logs in with registered credentials');
-    assert(global.window.techboxAuth.getCurrentUser().name === 'John Doe', 'Session restored after login');
-
-    // --------------------------------------------------------------------------
-    // Test Case 5: Review Submission & Local Storage Persistence
-    // --------------------------------------------------------------------------
-    console.log('\n--- 5. Testing Review Submission & Storage ---');
+    console.log('\n--- 2. Testing Review Submission & Storage ---');
 
     const initialRevs = global.window.techboxReviews.getReviews('s25-ultra');
     const seedCount = initialRevs.length;
@@ -306,14 +297,15 @@ function runTestSuite() {
 
     const submittedRev = global.window.techboxReviews.addReview(
         's25-ultra',
-        'John Doe',
-        'john@techbox.ai',
+        'Priya Sharma',
+        '',
         5,
         'Spectacular flagship experience!',
         'The Galaxy S25 Ultra screen clarity and battery efficiency are top tier. Best phone of 2026.'
     );
 
     assert(submittedRev && submittedRev.id.startsWith('rev_'), 'Generates unique review ID');
+    assert(submittedRev.userName === 'Priya Sharma', 'Stores visitor display name');
     assert(submittedRev.rating === 5, 'Stores correct star rating');
 
     const updatedRevs = global.window.techboxReviews.getReviews('s25-ultra');
@@ -325,18 +317,12 @@ function runTestSuite() {
     assert(pixelRevs.length >= 1, 'Seed reviews for other phones remain intact');
 
     // --------------------------------------------------------------------------
-    // Test Case 6: Refresh Persistence Simulation
+    // Test Case 3: Refresh Persistence Simulation
     // --------------------------------------------------------------------------
-    console.log('\n--- 6. Testing Refresh Persistence ---');
+    console.log('\n--- 3. Testing Refresh Persistence ---');
 
-    const savedUsers = storageStore['techbox_users'];
-    const savedSession = storageStore['techbox_session'];
     const savedReviews = storageStore['techbox_reviews'];
-
-    assert(Boolean(savedUsers && savedSession && savedReviews), 'All data exists in localStorage after operations');
-
-    const parsedUsers = JSON.parse(savedUsers);
-    assert(Array.isArray(parsedUsers) && parsedUsers.length === 1, 'Users array contains exactly 1 registered account');
+    assert(Boolean(savedReviews), 'Reviews data exists in localStorage after operations');
 
     const parsedReviews = JSON.parse(savedReviews);
     assert(Array.isArray(parsedReviews) && parsedReviews.length === 1, 'Reviews array contains exactly 1 user-submitted review');
@@ -345,10 +331,21 @@ function runTestSuite() {
     eval(authCode);
 
     const reloadedSession = global.window.techboxAuth.getCurrentUser();
-    assert(reloadedSession !== null && reloadedSession.name === 'John Doe', 'Session restored upon page reload');
+    assert(reloadedSession === null, 'User remains public guest upon page reload');
 
     const reloadedRevs = global.window.techboxReviews.getReviews('s25-ultra');
     assert(reloadedRevs.some(r => r.title.includes('Spectacular flagship')), 'User review persisted across page reloads');
+
+    // --------------------------------------------------------------------------
+    // Test Case 4: Auth Shim Safety
+    // --------------------------------------------------------------------------
+    console.log('\n--- 4. Testing Auth Shim Safety ---');
+
+    const signupRes = global.window.techboxAuth.signup('John Doe', 'john@example.com', 'pass123');
+    assert(signupRes.success === false, 'Signup returns graceful public notice');
+
+    const loginRes = global.window.techboxAuth.login('john@example.com', 'pass123');
+    assert(loginRes.success === false, 'Login returns graceful public notice');
 
     // --------------------------------------------------------------------------
     // Final Summary

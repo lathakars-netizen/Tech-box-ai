@@ -435,24 +435,57 @@ const btnBack = document.getElementById("btnBack");
         });
     }
 
-    // Favorite button
+    // Favorite button — uses shared techbox_favorites localStorage via favorites.js
     const btnFav = document.getElementById('btnFav');
     const favIcon = document.getElementById('favIcon');
     if (btnFav) {
-        // Restore saved state
-        const favKey = `fav_${phone.id}`;
-        if (localStorage.getItem(favKey) === 'true') {
-            btnFav.classList.add('active');
-            if (favIcon) { favIcon.className = 'fa-solid fa-heart'; }
-        }
+        // Restore initial state from the shared favorites array
+        const restoreFavState = () => {
+            const isFav = window.techboxFavorites
+                ? window.techboxFavorites.isFavorite(phone.id)
+                : (() => {
+                    try {
+                        const ids = JSON.parse(localStorage.getItem('techbox_favorites') || '[]');
+                        return ids.includes(phone.id);
+                    } catch (e) { return false; }
+                })();
 
-        btnFav.addEventListener('click', () => {
-            const isActive = btnFav.classList.toggle('active');
-            if (favIcon) {
-                favIcon.className = isActive ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+            if (isFav) {
+                btnFav.classList.add('active');
+                if (favIcon) { favIcon.className = 'fa-solid fa-heart'; favIcon.style.color = '#f43f5e'; }
+            } else {
+                btnFav.classList.remove('active');
+                if (favIcon) { favIcon.className = 'fa-regular fa-heart'; favIcon.style.color = ''; }
             }
-            localStorage.setItem(favKey, isActive ? 'true' : 'false');
-            showToast(isActive ? `❤️ Added ${phone.name} to Favorites` : `💔 Removed from Favorites`);
+        };
+
+        restoreFavState();
+
+        btnFav.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.techboxFavorites && typeof window.techboxFavorites.toggle === 'function') {
+                // favorites.js handles localStorage write, toast, badge update, and drawer sync
+                window.techboxFavorites.toggle(phone.id);
+                restoreFavState();
+            } else {
+                // Fallback: write directly to techbox_favorites array
+                try {
+                    const ids = JSON.parse(localStorage.getItem('techbox_favorites') || '[]');
+                    const idx = ids.indexOf(phone.id);
+                    if (idx === -1) {
+                        ids.push(phone.id);
+                        showToast(`❤️ Added ${phone.name} to Favorites`);
+                    } else {
+                        ids.splice(idx, 1);
+                        showToast(`💔 Removed from Favorites`);
+                    }
+                    localStorage.setItem('techbox_favorites', JSON.stringify(ids));
+                    restoreFavState();
+                } catch (e) {
+                    console.error('Failed to update favorites:', e);
+                }
+            }
         });
     }
 

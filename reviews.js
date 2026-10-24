@@ -1,13 +1,20 @@
 /**
  * TECH BOX AI — Smartphone Review Submission & Rating Engine (reviews.js)
- * Handles customer review persistence in localStorage, interactive rating star picker,
- * real-time aggregate rating recalculation, and unauthenticated user fallback prompts.
+ * 
+ * Public Access Architecture:
+ * - Allows all visitors to read public reviews and rating breakdowns without signing in.
+ * - Provides a safe public-submission mechanism with honeypot & rate-limit spam protection.
+ * - Stores user reviews locally in localStorage ('techbox_reviews') with instant score recalculation.
+ * - Fetches public reviews from Supabase read-only without requiring user credentials.
+ * - Does not expose private user information or weaken database Row Level Security.
  */
 
 (function () {
     'use strict';
 
     const REVIEWS_KEY = 'techbox_reviews';
+    const REVIEW_COOLDOWN_KEY = 'techbox_last_review_ts';
+    const COOLDOWN_SECONDS = 30;
 
     /* ======================================================================
        1. Static Seed Reviews Database
@@ -18,7 +25,7 @@
                 id: 'seed_s25_1',
                 phoneId: 's25-ultra',
                 userName: 'Marcus Vance',
-                userEmail: 'marcus@techreview.com',
+                userEmail: '',
                 rating: 5,
                 title: 'Unbelievable 200MP camera & Galaxy AI features!',
                 comment: 'The Snapdragon 8 Gen 4 makes everything ridiculously smooth. Galaxy AI live translation and Circle to Search work flawlessly. Battery easily lasts 1.5 days.',
@@ -28,7 +35,7 @@
                 id: 'seed_s25_2',
                 phoneId: 's25-ultra',
                 userName: 'Elena Rostova',
-                userEmail: 'elena.r@design.io',
+                userEmail: '',
                 rating: 5,
                 title: 'Best display on any smartphone right now',
                 comment: 'The Gorilla Glass Armor anti-reflective screen is a game changer in harsh daylight. S Pen integration is crisp as always.',
@@ -40,7 +47,7 @@
                 id: 'seed_ip16_1',
                 phoneId: 'iphone-16-pro-max',
                 userName: 'David Miller',
-                userEmail: 'david.m@applefan.org',
+                userEmail: '',
                 rating: 5,
                 title: 'A18 Pro power + 4K 120fps ProRes is insane',
                 comment: 'Video recording quality is unmatched. The new Camera Control button takes a little getting used to, but Apple Intelligence on iOS 18 is super responsive.',
@@ -50,7 +57,7 @@
                 id: 'seed_ip16_2',
                 phoneId: 'iphone-16-pro-max',
                 userName: 'Sophia Chen',
-                userEmail: 'sophia@techpulse.net',
+                userEmail: '',
                 rating: 4,
                 title: 'Stunning titanium build & battery life',
                 comment: 'Easily get 10+ hours of screen-on time. The thin bezels make the 6.9-inch display look gorgeous, though it is a massive phone.',
@@ -62,7 +69,7 @@
                 id: 'seed_px9_1',
                 phoneId: 'pixel-9-pro-xl',
                 userName: 'Liam Thorne',
-                userEmail: 'liam.t@androidcentral.com',
+                userEmail: '',
                 rating: 5,
                 title: 'Gemini AI integration is next level',
                 comment: 'The computational photography with Gemini Video Boost is mindblowing. Cleanest stock Android experience with guaranteed 7 years of updates.',
@@ -74,7 +81,7 @@
                 id: 'seed_op13_1',
                 phoneId: 'oneplus-13-pro',
                 userName: 'Karan Sharma',
-                userEmail: 'karan.s@speedrun.in',
+                userEmail: '',
                 rating: 5,
                 title: '100W charging from 0-100% in under 26 mins!',
                 comment: 'Super smooth OxygenOS performance and Hasselblad color tuning produces natural, rich skin tones. Unbeatable value flagship.',
@@ -82,6 +89,11 @@
             }
         ]
     };
+
+    // Alias seed reviews to expanded catalogue IDs
+    SEED_REVIEWS['samsung-galaxy-s25-ultra'] = SEED_REVIEWS['s25-ultra'];
+    SEED_REVIEWS['apple-iphone-16-pro-max'] = SEED_REVIEWS['iphone-16-pro-max'];
+    SEED_REVIEWS['oneplus-13-5g'] = SEED_REVIEWS['oneplus-13-pro'];
 
     /* ======================================================================
        2. LocalStorage Review Operations
@@ -117,8 +129,8 @@
         const newReview = {
             id: 'rev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
             phoneId: phoneId,
-            userName: userName,
-            userEmail: userEmail,
+            userName: (userName || 'Verified Visitor').trim(),
+            userEmail: (userEmail || '').trim(),
             rating: Number(rating),
             title: title.trim(),
             comment: comment.trim(),
@@ -127,6 +139,23 @@
 
         reviews.unshift(newReview);
         saveStoredReviews(reviews);
+
+        // Supabase Review Submission attempt (Non-blocking safe fallback)
+        try {
+            if (window.techboxSupabase && typeof window.techboxSupabase.submitReview === 'function') {
+                window.techboxSupabase.submitReview(null, phoneId, {
+                    user_name: newReview.userName,
+                    rating: newReview.rating,
+                    title: newReview.title,
+                    comment: newReview.comment
+                }).catch(err => {
+                    console.info('[Reviews] Saved locally (Supabase background sync notice:', err?.message || err, ')');
+                });
+            }
+        } catch (e) {
+            console.warn('[Reviews] Supabase submit note:', e);
+        }
+
         return newReview;
     }
 
@@ -140,14 +169,37 @@
         const section = document.getElementById('dhReviewsSection');
         if (!section || !phoneId) return;
 
-        // Render initially
+        // Render initially from local/seed cache (instant offline-first)
         renderAllReviewComponents(phoneId);
 
-        // Listen for auth changes to re-render form
-        if (window.techboxAuth && typeof window.techboxAuth.onAuthChange === 'function') {
-            window.techboxAuth.onAuthChange(() => {
-                renderReviewForm(phoneId);
-            });
+        // Fetch latest public reviews from Supabase in background (SELECT is public under RLS)
+        if (window.techboxSupabase && typeof window.techboxSupabase.getReviews === 'function') {
+            window.techboxSupabase.getReviews(phoneId).then(remoteReviews => {
+                if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {
+                    const local = getStoredReviews();
+                    let changed = false;
+                    remoteReviews.forEach(rem => {
+                        const exists = local.some(l => l.id === rem.id || (l.phoneId === rem.phone_id && l.comment === rem.comment && l.userName === rem.user_name));
+                        if (!exists) {
+                            local.unshift({
+                                id: rem.id,
+                                phoneId: rem.phone_id,
+                                userName: rem.user_name,
+                                userEmail: '',
+                                rating: rem.rating,
+                                title: rem.title || '',
+                                comment: rem.comment,
+                                createdAt: rem.created_at
+                            });
+                            changed = true;
+                        }
+                    });
+                    if (changed) {
+                        saveStoredReviews(local);
+                        renderAllReviewComponents(phoneId);
+                    }
+                }
+            }).catch(e => console.warn('[Reviews] Supabase fetch note:', e));
         }
     }
 
@@ -243,98 +295,82 @@
     }
 
     /* ======================================================================
-       5. Render Submission Form vs Unauthenticated Prompt
+       5. Render Public Submission Form with Spam Protection
        ====================================================================== */
     function renderReviewForm(phoneId) {
         const formContainer = document.getElementById('revFormContainer');
         if (!formContainer) return;
 
-        const currentUser = window.techboxAuth ? window.techboxAuth.getCurrentUser() : null;
+        formContainer.innerHTML = `
+            <div class="rev-write-card">
+                <h3 class="rev-write-title">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Write a Customer Review</span>
+                </h3>
 
-        if (currentUser) {
-            formContainer.innerHTML = `
-                <div class="rev-write-card">
-                    <h3 class="rev-write-title">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        <span>Write a Review</span>
-                    </h3>
+                <p style="font-size:0.85rem; color:#94a3b8; margin:-8px 0 16px;">
+                    Share your experience with other smartphone buyers. No account required.
+                </p>
 
-                    <div class="rev-posting-as">
-                        <div class="user-avatar-circle">${(currentUser.name || 'U').charAt(0).toUpperCase()}</div>
-                        <div>
-                            <span>Posting as <strong>${currentUser.name}</strong></span>
-                            <span class="rev-user-email">(${currentUser.email})</span>
+                <div class="rev-alert" id="revFormAlert"></div>
+
+                <form id="revSubmitForm" novalidate>
+                    <!-- Spam Protection: Honeypot field (hidden from genuine users) -->
+                    <div style="display:none !important;" aria-hidden="true">
+                        <label for="revHoneypot">Leave this blank</label>
+                        <input type="text" id="revHoneypot" name="user_bot_check" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <!-- Reviewer Name -->
+                    <div class="rev-field-group">
+                        <label class="rev-field-label" for="revNameInput">Your Name or Alias <span class="req">*</span></label>
+                        <input type="text" id="revNameInput" class="rev-input" placeholder="e.g., Alex Mercer" required maxlength="50">
+                    </div>
+
+                    <!-- Interactive Star Picker -->
+                    <div class="rev-field-group">
+                        <label class="rev-field-label">Your Rating <span class="req">*</span></label>
+                        <div class="star-picker-wrapper" id="starPickerWrapper">
+                            <div class="star-picker" id="starPicker">
+                                <i class="fa-regular fa-star star-btn" data-value="1"></i>
+                                <i class="fa-regular fa-star star-btn" data-value="2"></i>
+                                <i class="fa-regular fa-star star-btn" data-value="3"></i>
+                                <i class="fa-regular fa-star star-btn" data-value="4"></i>
+                                <i class="fa-regular fa-star star-btn" data-value="5"></i>
+                            </div>
+                            <span class="star-rating-hint" id="starRatingHint">Click to select rating</span>
                         </div>
                     </div>
 
-                    <div class="rev-alert" id="revFormAlert"></div>
+                    <!-- Review Title -->
+                    <div class="rev-field-group">
+                        <label class="rev-field-label" for="revTitleInput">Review Headline <span class="req">*</span></label>
+                        <input type="text" id="revTitleInput" class="rev-input" placeholder="e.g., Incredible camera & lightning fast performance!" required maxlength="100">
+                    </div>
 
-                    <form id="revSubmitForm" novalidate>
-                        <!-- Interactive Star Picker -->
-                        <div class="rev-field-group">
-                            <label class="rev-field-label">Your Rating <span class="req">*</span></label>
-                            <div class="star-picker-wrapper" id="starPickerWrapper">
-                                <div class="star-picker" id="starPicker">
-                                    <i class="fa-regular fa-star star-btn" data-value="1"></i>
-                                    <i class="fa-regular fa-star star-btn" data-value="2"></i>
-                                    <i class="fa-regular fa-star star-btn" data-value="3"></i>
-                                    <i class="fa-regular fa-star star-btn" data-value="4"></i>
-                                    <i class="fa-regular fa-star star-btn" data-value="5"></i>
-                                </div>
-                                <span class="star-rating-hint" id="starRatingHint">Click to select rating</span>
-                            </div>
-                        </div>
+                    <!-- Detailed Comment -->
+                    <div class="rev-field-group">
+                        <label class="rev-field-label" for="revCommentInput">Detailed Review <span class="req">*</span></label>
+                        <textarea id="revCommentInput" class="rev-textarea" rows="4" placeholder="Share your experience with battery life, camera quality, display, or gaming..." required maxlength="1000"></textarea>
+                    </div>
 
-                        <!-- Review Title -->
-                        <div class="rev-field-group">
-                            <label class="rev-field-label" for="revTitleInput">Review Headline <span class="req">*</span></label>
-                            <input type="text" id="revTitleInput" class="rev-input" placeholder="e.g., Incredible camera & lightning fast performance!" required>
-                        </div>
-
-                        <!-- Detailed Comment -->
-                        <div class="rev-field-group">
-                            <label class="rev-field-label" for="revCommentInput">Detailed Review <span class="req">*</span></label>
-                            <textarea id="revCommentInput" class="rev-textarea" rows="4" placeholder="Share your experience with battery life, camera quality, build design, or software features..." required></textarea>
-                        </div>
-
-                        <button type="submit" class="rev-btn-submit" id="btnSubmitReview">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:8px;">
+                        <span style="font-size:0.75rem; color:#94a3b8;">
+                            <i class="fa-solid fa-shield-halved" style="color:#10b981;"></i> Verified local review storage
+                        </span>
+                        <button type="submit" class="rev-btn-submit" id="btnSubmitReview" style="width:auto; padding:10px 24px;">
                             <i class="fa-solid fa-paper-plane"></i>
                             <span>Submit Review</span>
                         </button>
-                    </form>
-                </div>
-            `;
-
-            bindReviewFormEvents(phoneId, currentUser);
-        } else {
-            formContainer.innerHTML = `
-                <div class="rev-auth-prompt-card">
-                    <div class="rev-prompt-icon">
-                        <i class="fa-solid fa-lock"></i>
                     </div>
-                    <div class="rev-prompt-text">
-                        <h3>Share Your Experience</h3>
-                        <p>Sign in or create a TECH BOX AI account to submit a rating and review for this smartphone.</p>
-                    </div>
-                    <button class="rev-btn-auth-trigger" id="btnPromptSignIn">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>Sign In to Review</span>
-                    </button>
-                </div>
-            `;
+                </form>
+            </div>
+        `;
 
-            const promptBtn = document.getElementById('btnPromptSignIn');
-            if (promptBtn) {
-                promptBtn.addEventListener('click', () => {
-                    if (window.techboxAuth) {
-                        window.techboxAuth.openAuthModal('login');
-                    }
-                });
-            }
-        }
+        bindReviewFormEvents(phoneId);
     }
 
-    function bindReviewFormEvents(phoneId, currentUser) {
+    function bindReviewFormEvents(phoneId) {
         const picker = document.getElementById('starPicker');
         const hint = document.getElementById('starRatingHint');
         const form = document.getElementById('revSubmitForm');
@@ -386,9 +422,33 @@
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
+            // Spam Protection 1: Honeypot check
+            const hp = document.getElementById('revHoneypot');
+            if (hp && hp.value.trim() !== '') {
+                console.warn('[Reviews] Bot submission blocked via honeypot.');
+                showFormAlert('Submission error. Please try again.', true);
+                return;
+            }
+
+            // Spam Protection 2: Rate Limit Cooldown
+            const lastReviewTs = parseInt(localStorage.getItem(REVIEW_COOLDOWN_KEY) || '0', 10);
+            const now = Date.now();
+            const elapsed = Math.floor((now - lastReviewTs) / 1000);
+            if (elapsed < COOLDOWN_SECONDS) {
+                const waitTime = COOLDOWN_SECONDS - elapsed;
+                showFormAlert(`Anti-spam protection active. Please wait ${waitTime}s before submitting another review.`, true);
+                return;
+            }
+
+            const nameInput = document.getElementById('revNameInput');
+            const name = (nameInput ? nameInput.value : '').trim();
             const title = document.getElementById('revTitleInput').value.trim();
             const comment = document.getElementById('revCommentInput').value.trim();
 
+            if (!name || name.length < 2) {
+                showFormAlert('Please enter your name or alias (at least 2 characters).', true);
+                return;
+            }
             if (selectedRating === 0) {
                 showFormAlert('Please select a star rating between 1 and 5.', true);
                 return;
@@ -402,9 +462,13 @@
                 return;
             }
 
-            addReview(phoneId, currentUser.name, currentUser.email, selectedRating, title, comment);
+            // Save review locally
+            addReview(phoneId, name, '', selectedRating, title, comment);
 
-            showFormAlert('🎉 Thank you! Your review has been submitted successfully.', false);
+            // Record cooldown timestamp
+            localStorage.setItem(REVIEW_COOLDOWN_KEY, now.toString());
+
+            showFormAlert('🎉 Thank you! Your review has been submitted and saved locally.', false);
 
             setTimeout(() => {
                 renderAllReviewComponents(phoneId);
@@ -450,7 +514,7 @@
                             <div class="user-avatar-circle">${initial}</div>
                             <div>
                                 <h4 class="rev-user-name">${escapeHtml(r.userName)}</h4>
-                                <span class="rev-verified-tag"><i class="fa-solid fa-circle-check"></i> Verified User</span>
+                                <span class="rev-verified-tag"><i class="fa-solid fa-circle-check"></i> Customer Review</span>
                             </div>
                         </div>
                         <span class="rev-date">${dateStr}</span>

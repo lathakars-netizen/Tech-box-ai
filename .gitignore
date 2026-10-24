@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment variables and credentials
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+import_errors.log
+
+# Local backups
+backups/
+
+# One-off scratch & obsolete scripts
+test_images.js
+test_live_verification.js
+
+# Operating System metadata
+.DS_Store
+Thumbs.db
