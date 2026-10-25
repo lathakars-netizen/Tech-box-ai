@@ -105,12 +105,25 @@ async function syncCatalogue(candidateRecords = []) {
     let supabaseSyncStatus = 'Skipped (credentials not provided)';
     if (supabaseUrl && serviceRoleKey) {
         try {
+            // Validate and normalize SUPABASE_URL to pure origin base URL (e.g. https://xyz.supabase.co)
+            // Strips accidental paths like /rest/v1 or trailing slashes to prevent duplicated paths in SDK
+            let cleanUrl = null;
+            try {
+                const parsedUrl = new URL(supabaseUrl.trim());
+                if (!['https:', 'http:'].includes(parsedUrl.protocol)) {
+                    throw new Error('Protocol must be https: or http:');
+                }
+                cleanUrl = parsedUrl.origin;
+            } catch {
+                throw new Error('Malformed SUPABASE_URL. Expected format: https://YOUR_PROJECT_REF.supabase.co');
+            }
+
             console.log('[Supabase] Initializing privileged client with SUPABASE_SERVICE_ROLE_KEY...');
             let supabaseClient = null;
 
             // Load @supabase/supabase-js
             const { createClient } = require('@supabase/supabase-js');
-            supabaseClient = createClient(supabaseUrl, serviceRoleKey, {
+            supabaseClient = createClient(cleanUrl, serviceRoleKey.trim(), {
                 auth: { persistSession: false, autoRefreshToken: false }
             });
 
