@@ -1,0 +1,13 @@
+{
+  "name": "mobile-verse",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TECH BOX AI — Indian Smartphone Catalogue & Discovery Platform",
+  "scripts": {
+    "test": "node test_catalogue.js && node test_public_website.js && node test_favorites_search.js && node test_auth_reviews.js && node test_cloud_sync.js",
+    "sync": "node scripts/sync_catalogue.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0"
+  }
+}

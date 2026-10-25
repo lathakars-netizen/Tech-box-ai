@@ -25,10 +25,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci || npm install --production
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "Lock file detected. Installing dependencies via npm ci..."
+            npm ci --omit=dev
+          elif [ -f package.json ]; then
+            echo "package.json detected without lock file. Installing via npm install..."
+            npm install --omit=dev
+          else
+            echo "No package manifest detected. Installing required dependency directly..."
+            npm install --no-save @supabase/supabase-js
+          fi
 
       - name: Execute Catalogue Ingestion & Supabase Upsert
         env:
