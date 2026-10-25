@@ -205,8 +205,27 @@ async function syncCatalogue(candidateRecords = []) {
 
 // Allow CLI invocation
 if (require.main === module) {
-    syncCatalogue().catch(err => {
-        console.error('Fatal sync failure:', err);
+    syncCatalogue().then(res => {
+        if (!res || !res.success) {
+            console.error('Fatal sync failure:', res ? res.error : 'Unknown error');
+            process.exit(1);
+        }
+
+        const hasCredentials = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+        // In CI (GitHub Actions), credentials are strictly required
+        if (process.env.CI && !hasCredentials) {
+            console.error('CRITICAL: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing in CI environment.');
+            process.exit(1);
+        }
+
+        // Whenever credentials are provided (in CI or manual run), Supabase sync must succeed
+        if (hasCredentials && res.supabaseSyncStatus !== 'Synchronized successfully') {
+            console.error('CRITICAL: Supabase synchronization failed:', res.supabaseSyncStatus);
+            process.exit(1);
+        }
+    }).catch(err => {
+        console.error('Fatal unhandled sync failure:', err);
         process.exit(1);
     });
 }

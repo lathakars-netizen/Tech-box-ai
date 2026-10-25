@@ -60,4 +60,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Automated catalogue sync: data/phones.js updated [skip ci]"
-          file_pattern: "data/phones.js import_errors.log"
+          file_pattern: "data/phones.js"
