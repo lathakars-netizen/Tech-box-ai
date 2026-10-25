@@ -71,6 +71,12 @@ CREATE TABLE IF NOT EXISTS public.phones (
 -- Enable Row Level Security on phones
 ALTER TABLE public.phones ENABLE ROW LEVEL SECURITY;
 
+-- PostgreSQL object-level GRANTs (required BEFORE RLS policies take effect)
+-- service_role needs full CRUD for the automated catalogue sync workflow
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.phones TO service_role;
+-- anon and authenticated need only read access (public catalogue browsing)
+GRANT SELECT ON TABLE public.phones TO anon, authenticated;
+
 -- Public Read Policy: All visitors can read phones without authentication
 DROP POLICY IF EXISTS "Allow public read access to phones" ON public.phones;
 CREATE POLICY "Allow public read access to phones"
@@ -82,6 +88,8 @@ CREATE POLICY "Allow public read access to phones"
 -- With RLS enabled and NO public INSERT/UPDATE/DELETE policies,
 -- anonymous and authenticated visitors CANNOT modify the catalogue.
 -- Only backend workers using SUPABASE_SERVICE_ROLE_KEY can insert or update.
+-- The service_role key bypasses RLS, and the GRANT above provides the
+-- required PostgreSQL table-level permission for INSERT/UPDATE/DELETE.
 
 
 -- ---------------------------------------------------------------------
