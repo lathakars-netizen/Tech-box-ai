@@ -3,7 +3,7 @@
  * Comprehensive Offline Indian Smartphone Catalogue
  * Single Source of Truth for all phone specifications, pricing, images, and UI metadata
  * Total verified smartphones: 148
- * Last synced: 2026-10-25T13:05:21.987Z
+ * Last synced: 2026-10-26T09:31:08.036Z
  */
 
 const phonesData = [
