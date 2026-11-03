@@ -1,5 +1,5 @@
-/**
- * TECH BOX AI — Persistent Favorites / Saved Mobiles Module (favorites.js)
+﻿/**
+ * TECH BOX AI â€” Persistent Favorites / Saved Mobiles Module (favorites.js)
  * 
  * 100% Client-Side Local Storage Architecture:
  * - Saves and removes favorite smartphones using browser localStorage ('techbox_favorites').
@@ -48,7 +48,7 @@
             favs.push(phoneId);
             saveFavorites(favs);
             onFavoritesChanged();
-            showToast('❤️ Added to Saved Mobiles');
+            showToast('â¤ï¸ Added to Saved Mobiles');
             return true;
         }
         return false;
@@ -61,7 +61,7 @@
         if (favs.length !== updated.length) {
             saveFavorites(updated);
             onFavoritesChanged();
-            showToast('💔 Removed from Saved Mobiles');
+            showToast('ðŸ’” Removed from Saved Mobiles');
             return true;
         }
         return false;
@@ -254,7 +254,7 @@
                 if (getFavorites().length === 0) return;
                 saveFavorites([]);
                 onFavoritesChanged();
-                showToast('🧹 Saved Mobiles Cleared');
+                showToast('ðŸ§¹ Saved Mobiles Cleared');
             });
         }
     }
@@ -305,7 +305,7 @@
         savedPhones.forEach(phone => {
             html += `
                 <div class="fav-item-card" data-phone-id="${phone.id}">
-                    <img src="${phone.image || 'assets/s25_ultra.jpg'}" alt="${phone.name}" class="fav-item-img" onerror="this.src='assets/s25_ultra.jpg';" />
+                    <img src="${phone.image || 'assets/phones/placeholder.svg'}" alt="${phone.name}" class="fav-item-img" onerror="this.src='assets/phones/placeholder.svg';" />
                     <div class="fav-item-info">
                         <span class="fav-item-brand">${phone.brand}</span>
                         <h4 class="fav-item-name">${phone.name}</h4>
@@ -394,3 +394,4 @@
     };
 
 })();
+
